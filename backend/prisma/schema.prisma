@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Registration model - Đăng ký
+model DangKy {
+  id          String  @id @default(uuid())
+  hoTen       String // Họ và tên (required)
+  soDienThoai String // Phone (required) - encrypted
+  tinhThanh   String // Province (required)
+  quanHuyen   String // City/District (required)
+  diaChi      String? // Address (optional)
+
+  trangThai   TrangThai @default(CHO_XU_LY)
+  nguonDangKy String    @default("landing_page")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([soDienThoai])
+  @@index([trangThai])
+  @@index([createdAt])
+  @@map("dang_ky")
+}
+
+enum TrangThai {
+  CHO_XU_LY
+  DA_LIEN_HE
+  THANH_CONG
+  TU_CHOI
+}
+
+// Content Management model - Nội dung
+model NoiDung {
+  id      String      @id @default(uuid())
+  loai    LoaiNoiDung // HERO, FEATURE, FAQ, etc
+  tieuDe  String
+  moTa    String?     @db.Text
+  noiDung Json // Flexible JSON content
+  thuTu   Int         @default(0)
+  hienThi Boolean     @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([loai, thuTu])
+  @@map("noi_dung")
+}
+
+enum LoaiNoiDung {
+  HERO
+  FEATURE
+  STATISTIC
+  FAQ
+  PARTNER
+  TESTIMONIAL
+}
+
+// Settings/Config model - Cấu hình
+model CauHinh {
+  id    String  @id @default(uuid())
+  key   String  @unique
+  value Json
+  moTa  String?
+
+  @@map("cau_hinh")
+}
+
+// Admin User model - Quản trị viên
+model QuanTriVien {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  matKhau  String // Hashed password
+  hoTen    String
+  vaiTro   VaiTro  @default(ADMIN)
+  hoatDong Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("quan_tri_vien")
+}
+
+enum VaiTro {
+  SUPER_ADMIN
+  ADMIN
+}
