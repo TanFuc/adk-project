@@ -35,7 +35,106 @@ enum TrangThai {
   TU_CHOI
 }
 
-// Content Management model - Nội dung
+// Page Sections - Dynamic Layout Engine - Phần Mục Trang
+model PhanMuc {
+  id         String      @id @default(uuid())
+  key        String      @unique // hero_main, concept_intro, etc.
+  loaiBoCuc  LoaiBoCuc   // Layout type
+  noiDung    Json        // { title, subtitle, richText }
+  hinhAnh    String[]    // Array of image URLs
+  ctaLink    String?     // Optional external redirect URL
+  thuTu      Int         @default(0)
+  hienThi    Boolean     @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@index([loaiBoCuc, thuTu])
+  @@map("phan_muc")
+}
+
+enum LoaiBoCuc {
+  HERO_VIDEO
+  HERO_IMAGE
+  SPLIT_IMAGE_TEXT
+  BENTO_GRID
+  CAROUSEL
+  MASONRY_GRID
+  TEXT_ONLY
+  CTA_BANNER
+}
+
+// Popup Banners - Banner Popup
+model BannerPopup {
+  id           String  @id @default(uuid())
+  hinhAnh      String  // Image URL
+  duongDan     String  // Redirect URL
+  hoatDong     Boolean @default(true)
+  doTreHienThi Int     @default(3000) // Display delay in ms
+  thuTuUuTien  Int     @default(0) // Priority order
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([hoatDong, thuTuUuTien])
+  @@map("banner_popup")
+}
+
+// Campaign Events - Sự Kiện
+model SuKien {
+  id          String    @id @default(uuid())
+  tieuDe      String    // Title
+  moTa        String?   @db.Text // Description
+  ngayBatDau  DateTime  // Start date
+  ngayKetThuc DateTime? // End date (optional for ongoing events)
+  anhBia      String    // Cover image
+  boSuuTapAnh String[]  // Gallery images array
+  noiDung     Json?     // Additional rich content
+  noiBat      Boolean   @default(false) // Is featured
+  hienThi     Boolean   @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ngayBatDau])
+  @@index([noiBat, hienThi])
+  @@map("su_kien")
+}
+
+// Business Modules - Mô Hình Kinh Doanh (B2B)
+model MoHinhKinhDoanh {
+  id              String  @id @default(uuid())
+  ten             String  // Module name
+  moTa            String  @db.Text // Description
+  anhIcon         String? // Icon URL
+  tiemNangLoiNhuan String? // Profit potential description
+  thuTu           Int     @default(0)
+  hienThi         Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([thuTu])
+  @@map("mo_hinh_kinh_doanh")
+}
+
+// Partnership FAQs - Hỏi Đáp Hợp Tác (B2B)
+model HoiDapHopTac {
+  id      String @id @default(uuid())
+  cauHoi  String // Question
+  traLoi  String @db.Text // Answer
+  thuTu   Int    @default(0)
+  hienThi Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([thuTu])
+  @@map("hoi_dap_hop_tac")
+}
+
+// Content Management model - Nội dung (Legacy support)
 model NoiDung {
   id      String      @id @default(uuid())
   loai    LoaiNoiDung // HERO, FEATURE, FAQ, etc
@@ -61,10 +160,10 @@ enum LoaiNoiDung {
   TESTIMONIAL
 }
 
-// Settings/Config model - Cấu hình
+// Settings/Config model - Cấu hình (GlobalSettings)
 model CauHinh {
   id    String  @id @default(uuid())
-  key   String  @unique
+  key   String  @unique // primary_register_url, site_name, etc.
   value Json
   moTa  String?
 

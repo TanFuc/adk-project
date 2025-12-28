@@ -1,11 +1,6 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { Request } from 'express';
-import { AuthService } from '../auth.service';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common";
+import { Request } from "express";
+import { AuthService } from "../auth.service";
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -16,13 +11,13 @@ export class JwtAuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
-      throw new UnauthorizedException('Vui lòng đăng nhập để tiếp tục.');
+      throw new UnauthorizedException("Vui lòng đăng nhập để tiếp tục.");
     }
 
     const payload = await this.authService.validateToken(token);
 
     if (!payload) {
-      throw new UnauthorizedException('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+      throw new UnauthorizedException("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
     }
 
     // Attach user info to request
@@ -37,7 +32,7 @@ export class JwtAuthGuard implements CanActivate {
       return null;
     }
 
-    const [type, token] = authHeader.split(' ');
-    return type === 'Bearer' ? token : null;
+    const [type, token] = authHeader.split(" ");
+    return type === "Bearer" ? token : null;
   }
 }

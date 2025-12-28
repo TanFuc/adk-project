@@ -1,1 +1,1 @@
-export * from './create-noi-dung.dto';
+export * from "./create-noi-dung.dto";

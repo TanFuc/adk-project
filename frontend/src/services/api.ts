@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError } from "axios";
 import type {
   ApiResponse,
   ApiError,
@@ -10,20 +10,20 @@ import type {
   LoginRequest,
   LoginResponse,
   TrangThai,
-} from '@/types';
+} from "@/types";
 
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const API_URL = import.meta.env.VITE_API_URL || "/api";
 
 const api = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // Request interceptor to add auth token
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem("accessToken");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -35,10 +35,13 @@ api.interceptors.response.use(
   (response) => response,
   (error: AxiosError<ApiError>) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('admin');
-      if (window.location.pathname.startsWith('/admin') && !window.location.pathname.includes('/login')) {
-        window.location.href = '/admin/login';
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("admin");
+      if (
+        window.location.pathname.startsWith("/admin") &&
+        !window.location.pathname.includes("/login")
+      ) {
+        window.location.href = "/admin/login";
       }
     }
     return Promise.reject(error);
@@ -49,13 +52,13 @@ api.interceptors.response.use(
 export const publicApi = {
   // Registration
   async createDangKy(data: DangKyRequest): Promise<DangKyResponse> {
-    const response = await api.post<ApiResponse<DangKyResponse>>('/dang-ky', data);
+    const response = await api.post<ApiResponse<DangKyResponse>>("/dang-ky", data);
     return response.data.data;
   },
 
   // Content
   async getPublicContent(): Promise<Record<string, NoiDung[]>> {
-    const response = await api.get<ApiResponse<Record<string, NoiDung[]>>>('/noi-dung/public');
+    const response = await api.get<ApiResponse<Record<string, NoiDung[]>>>("/noi-dung/public");
     return response.data.data;
   },
 
@@ -66,7 +69,7 @@ export const publicApi = {
 
   // Config
   async getPublicConfig(): Promise<Record<string, unknown>> {
-    const response = await api.get<ApiResponse<Record<string, unknown>>>('/cau-hinh/public');
+    const response = await api.get<ApiResponse<Record<string, unknown>>>("/cau-hinh/public");
     return response.data.data;
   },
 };
@@ -74,12 +77,12 @@ export const publicApi = {
 // Auth API
 export const authApi = {
   async login(data: LoginRequest): Promise<LoginResponse> {
-    const response = await api.post<ApiResponse<LoginResponse>>('/auth/login', data);
+    const response = await api.post<ApiResponse<LoginResponse>>("/auth/login", data);
     return response.data.data;
   },
 
   async getMe(): Promise<{ email: string; vaiTro: string }> {
-    const response = await api.get<ApiResponse<{ email: string; vaiTro: string }>>('/auth/me');
+    const response = await api.get<ApiResponse<{ email: string; vaiTro: string }>>("/auth/me");
     return response.data.data;
   },
 };
@@ -93,15 +96,15 @@ export const adminApi = {
     trangThai?: TrangThai
   ): Promise<{ data: DangKyDetail[]; total: number; pages: number }> {
     const params = new URLSearchParams({ page: String(page), limit: String(limit) });
-    if (trangThai) params.append('trangThai', trangThai);
-    const response = await api.get<ApiResponse<{ data: DangKyDetail[]; total: number; pages: number }>>(
-      `/dang-ky/admin?${params}`
-    );
+    if (trangThai) params.append("trangThai", trangThai);
+    const response = await api.get<
+      ApiResponse<{ data: DangKyDetail[]; total: number; pages: number }>
+    >(`/dang-ky/admin?${params}`);
     return response.data.data;
   },
 
   async getRegistrationStats(): Promise<DangKyStats> {
-    const response = await api.get<ApiResponse<DangKyStats>>('/dang-ky/admin/stats');
+    const response = await api.get<ApiResponse<DangKyStats>>("/dang-ky/admin/stats");
     return response.data.data;
   },
 
@@ -111,10 +114,9 @@ export const adminApi = {
   },
 
   async updateRegistrationStatus(id: string, trangThai: TrangThai): Promise<DangKyDetail> {
-    const response = await api.patch<ApiResponse<DangKyDetail>>(
-      `/dang-ky/admin/${id}/trang-thai`,
-      { trangThai }
-    );
+    const response = await api.patch<ApiResponse<DangKyDetail>>(`/dang-ky/admin/${id}/trang-thai`, {
+      trangThai,
+    });
     return response.data.data;
   },
 
@@ -124,12 +126,12 @@ export const adminApi = {
 
   // Content
   async getAllContent(): Promise<NoiDung[]> {
-    const response = await api.get<ApiResponse<NoiDung[]>>('/noi-dung/admin');
+    const response = await api.get<ApiResponse<NoiDung[]>>("/noi-dung/admin");
     return response.data.data;
   },
 
   async createContent(data: Partial<NoiDung>): Promise<NoiDung> {
-    const response = await api.post<ApiResponse<NoiDung>>('/noi-dung/admin', data);
+    const response = await api.post<ApiResponse<NoiDung>>("/noi-dung/admin", data);
     return response.data.data;
   },
 

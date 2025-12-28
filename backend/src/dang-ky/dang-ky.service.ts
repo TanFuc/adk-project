@@ -1,22 +1,11 @@
-import {
-  Injectable,
-  ConflictException,
-  NotFoundException,
-  Inject,
-  Logger,
-} from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
-import { ConfigService } from '@nestjs/config';
-import { TrangThai } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
-import {
-  CreateDangKyDto,
-  DangKyResponseDto,
-  DangKyDetailDto,
-  DangKyStatsDto,
-} from './dto';
-import { encrypt, decrypt, hashForSearch } from '../common/utils/encryption.util';
+import { Injectable, ConflictException, NotFoundException, Inject, Logger } from "@nestjs/common";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
+import { ConfigService } from "@nestjs/config";
+import { TrangThai } from "@prisma/client";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateDangKyDto, DangKyResponseDto, DangKyDetailDto, DangKyStatsDto } from "./dto";
+import { encrypt, decrypt, hashForSearch } from "../common/utils/encryption.util";
 
 @Injectable()
 export class DangKyService {
@@ -36,9 +25,7 @@ export class DangKyService {
 
     if (cached) {
       this.logger.warn(`Đăng ký trùng (cache): ${dto.soDienThoai.slice(0, 4)}****`);
-      throw new ConflictException(
-        'Bạn đã đăng ký gần đây. Vui lòng chờ 24 giờ để đăng ký lại.',
-      );
+      throw new ConflictException("Bạn đã đăng ký gần đây. Vui lòng chờ 24 giờ để đăng ký lại.");
     }
 
     // 2. Check DB duplicate (24h)
@@ -64,7 +51,7 @@ export class DangKyService {
     if (isDuplicate) {
       this.logger.warn(`Đăng ký trùng (DB): ${dto.soDienThoai.slice(0, 4)}****`);
       throw new ConflictException(
-        'Số điện thoại này đã đăng ký trong 24 giờ qua. Vui lòng thử lại sau.',
+        "Số điện thoại này đã đăng ký trong 24 giờ qua. Vui lòng thử lại sau.",
       );
     }
 
@@ -80,7 +67,7 @@ export class DangKyService {
         quanHuyen: dto.quanHuyen,
         diaChi: dto.diaChi,
         trangThai: TrangThai.CHO_XU_LY,
-        nguonDangKy: 'landing_page',
+        nguonDangKy: "landing_page",
       },
       select: { id: true, hoTen: true },
     });
@@ -89,10 +76,10 @@ export class DangKyService {
     await this.cache.set(cacheKey, dangKy.id, 86400000);
 
     // 6. Invalidate stats cache
-    await this.cache.del('dang-ky:stats');
+    await this.cache.del("dang-ky:stats");
 
     // 7. Get redirect URL from config
-    const redirectUrl = this.config.get<string>('REDIRECT_URL') || undefined;
+    const redirectUrl = this.config.get<string>("REDIRECT_URL") || undefined;
 
     this.logger.log(`Đăng ký mới thành công: ${dangKy.id}`);
 
@@ -117,7 +104,7 @@ export class DangKyService {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       }),
       this.prisma.dangKy.count({ where }),
     ]);
@@ -141,7 +128,7 @@ export class DangKyService {
     });
 
     if (!registration) {
-      throw new NotFoundException('Không tìm thấy đăng ký với ID này.');
+      throw new NotFoundException("Không tìm thấy đăng ký với ID này.");
     }
 
     return {
@@ -157,7 +144,7 @@ export class DangKyService {
     });
 
     if (!existing) {
-      throw new NotFoundException('Không tìm thấy đăng ký với ID này.');
+      throw new NotFoundException("Không tìm thấy đăng ký với ID này.");
     }
 
     const updated = await this.prisma.dangKy.update({
@@ -166,7 +153,7 @@ export class DangKyService {
     });
 
     // Invalidate stats cache
-    await this.cache.del('dang-ky:stats');
+    await this.cache.del("dang-ky:stats");
 
     this.logger.log(`Cập nhật trạng thái đăng ký ${id}: ${trangThai}`);
 
@@ -178,7 +165,7 @@ export class DangKyService {
   }
 
   async getStats(): Promise<DangKyStatsDto> {
-    const cacheKey = 'dang-ky:stats';
+    const cacheKey = "dang-ky:stats";
     const cached = await this.cache.get<DangKyStatsDto>(cacheKey);
 
     if (cached) {
@@ -213,19 +200,19 @@ export class DangKyService {
     });
 
     if (!existing) {
-      throw new NotFoundException('Không tìm thấy đăng ký với ID này.');
+      throw new NotFoundException("Không tìm thấy đăng ký với ID này.");
     }
 
     await this.prisma.dangKy.delete({ where: { id } });
 
     // Invalidate stats cache
-    await this.cache.del('dang-ky:stats');
+    await this.cache.del("dang-ky:stats");
 
     this.logger.log(`Xóa đăng ký: ${id}`);
   }
 
   private maskPhone(phone: string): string {
     if (phone.length < 6) return phone;
-    return phone.slice(0, 4) + '****' + phone.slice(-2);
+    return phone.slice(0, 4) + "****" + phone.slice(-2);
   }
 }

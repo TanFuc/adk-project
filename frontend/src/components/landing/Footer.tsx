@@ -1,82 +1,181 @@
-import { Phone, Mail, MapPin } from 'lucide-react';
+import { Link } from "react-router-dom";
+import { Phone, Mail, MapPin, Facebook, Youtube } from "lucide-react";
+import { motion } from "framer-motion";
+import RedirectButton from "@/components/common/RedirectButton";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-12">
-      <div className="container-full">
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Company Info */}
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
+    <footer className="bg-gray-900 text-gray-300">
+      {/* CTA Section - B2B Focus */}
+      <div className="border-b border-gray-800">
+        <div className="container-full py-12">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+            <div className="text-center lg:text-left">
+              <h3 className="text-2xl font-bold text-white mb-2">
+                Sẵn sàng trở thành Đối Tác ADK?
+              </h3>
+              <p className="text-gray-400">
+                Đăng ký ngay để nhận tư vấn miễn phí và bảng dự toán chi tiết
+              </p>
+            </div>
+            <RedirectButton href="https://bizmall.vn" size="lg" variant="primary">
+              Đăng Ký Hợp Tác
+            </RedirectButton>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Footer */}
+      <div className="container-full py-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Company Info - B2B Focused */}
+          <div className="lg:col-span-1">
+            <Link to="/" className="flex items-center gap-3 mb-4">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="w-12 h-12 rounded-full bg-white flex items-center justify-center"
+              >
                 <img
                   src="/logo.png"
                   alt="ADK Logo"
                   className="w-10 h-10 object-contain rounded-full"
                 />
-              </div>
-              <span className="text-xl font-bold text-white">Nhà Thuốc ADK</span>
-            </div>
-            <p className="text-gray-400 mb-4">
-              Nhà thuốc uy tín hàng đầu Việt Nam với hơn 10 năm kinh nghiệm trong
-              lĩnh vực chăm sóc sức khỏe.
+              </motion.div>
+              <span className="text-xl font-bold text-white">ADK Franchise</span>
+            </Link>
+            <p className="text-gray-400 mb-6">
+              Dự án phát triển chuỗi Siêu Thị Thuốc & Thực phẩm sạch. Mô hình kinh doanh bền vững,
+              xu hướng 2025.
             </p>
+
+            {/* Social Links */}
+            <div className="flex gap-3">
+              <a
+                href="https://facebook.com/adkpharma"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-adk-green flex items-center justify-center transition-colors"
+              >
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a
+                href="https://youtube.com/@adkpharma"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-red-600 flex items-center justify-center transition-colors"
+              >
+                <Youtube className="w-5 h-5" />
+              </a>
+              <a
+                href="https://zalo.me/adkpharma"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-blue-500 flex items-center justify-center transition-colors"
+              >
+                <span className="text-sm font-bold">Z</span>
+              </a>
+            </div>
           </div>
 
-          {/* Contact Info */}
+          {/* B2B Navigation Links */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Liên Hệ</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">Khám Phá Dự Án</h3>
             <ul className="space-y-3">
-              <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-adk-green" />
-                <a href="tel:1900xxxx" className="hover:text-adk-green transition-colors">
-                  1900 xxxx
-                </a>
+              <li>
+                <Link to="/" className="hover:text-adk-green transition-colors">
+                  Giới Thiệu Dự Án
+                </Link>
               </li>
-              <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-adk-green" />
-                <a href="mailto:info@adk.vn" className="hover:text-adk-green transition-colors">
-                  info@adk.vn
-                </a>
+              <li>
+                <Link to="/mo-hinh" className="hover:text-adk-green transition-colors">
+                  Mô Hình Hợp Tác
+                </Link>
               </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-adk-green flex-shrink-0" />
-                <span>123 Đường ABC, Quận 1, TP. Hồ Chí Minh</span>
+              <li>
+                <Link to="/su-kien" className="hover:text-adk-green transition-colors">
+                  Sự Kiện Đầu Tư
+                </Link>
+              </li>
+              <li>
+                <Link to="/thu-vien" className="hover:text-adk-green transition-colors">
+                  Tiêu Chuẩn Cửa Hàng
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Quick Links */}
+          {/* Partnership Contact */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Liên Kết</h3>
-            <ul className="space-y-2">
+            <h3 className="text-lg font-semibold text-white mb-4">Liên Hệ Hợp Tác</h3>
+            <ul className="space-y-3">
+              <li className="flex items-center gap-3">
+                <Phone className="w-5 h-5 text-adk-green flex-shrink-0" />
+                <a href="tel:18001234" className="hover:text-adk-green transition-colors">
+                  1800-1234 (Miễn phí)
+                </a>
+              </li>
+              <li className="flex items-center gap-3">
+                <Mail className="w-5 h-5 text-adk-green flex-shrink-0" />
+                <a
+                  href="mailto:partnership@adkpharma.vn"
+                  className="hover:text-adk-green transition-colors"
+                >
+                  partnership@adkpharma.vn
+                </a>
+              </li>
+              <li className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-adk-green flex-shrink-0 mt-0.5" />
+                <span>Trụ sở: Số 123, Đường ABC, Quận XYZ, TP.HCM</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Partnership Info */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-4">Thông Tin Đối Tác</h3>
+            <ul className="space-y-3">
               <li>
                 <a href="#" className="hover:text-adk-green transition-colors">
-                  Về Chúng Tôi
+                  Quy Trình Hợp Tác
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-adk-green transition-colors">
-                  Chính Sách Bảo Mật
+                  Điều Kiện Nhượng Quyền
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-adk-green transition-colors">
-                  Điều Khoản Sử Dụng
+                  Hỏi Đáp Hợp Tác
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-adk-green transition-colors">
-                  Hỏi Đáp
+                  Tải Hồ Sơ Dự Án
                 </a>
               </li>
             </ul>
           </div>
         </div>
+      </div>
 
-        {/* Copyright */}
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
-          <p>&copy; {new Date().getFullYear()} Nhà Thuốc ADK. Bảo lưu mọi quyền.</p>
+      {/* Copyright */}
+      <div className="border-t border-gray-800">
+        <div className="container-full py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+            <p>&copy; {new Date().getFullYear()} Dự Án ADK Franchise. Bảo lưu mọi quyền.</p>
+            <p>
+              Phát triển bởi{" "}
+              <a
+                href="https://bizmall.vn"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-adk-green hover:underline"
+              >
+                BizMall
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

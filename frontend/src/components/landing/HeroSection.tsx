@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion';
-import DangKyForm from './DangKyForm';
+import { motion } from "framer-motion";
+import DangKyForm from "./DangKyForm";
 
 export default function HeroSection() {
   return (
@@ -23,7 +23,7 @@ export default function HeroSection() {
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
               className="inline-flex items-center justify-center w-24 h-24 lg:w-32 lg:h-32 rounded-full bg-white shadow-xl shadow-adk-green/20 mb-8"
             >
               <img
@@ -49,9 +49,8 @@ export default function HeroSection() {
               transition={{ delay: 0.4 }}
               className="text-xl text-gray-600 mb-8 max-w-xl mx-auto lg:mx-0"
             >
-              Nhà thuốc uy tín hàng đầu với hơn 10 năm kinh nghiệm. Đăng ký ngay
-              để nhận ưu đãi đặc biệt và được tư vấn miễn phí từ dược sĩ chuyên
-              nghiệp.
+              Nhà thuốc uy tín hàng đầu với hơn 10 năm kinh nghiệm. Đăng ký ngay để nhận ưu đãi đặc
+              biệt và được tư vấn miễn phí từ dược sĩ chuyên nghiệp.
             </motion.p>
 
             {/* Stats */}
@@ -84,12 +83,8 @@ export default function HeroSection() {
           >
             <div className="glass rounded-2xl p-6 lg:p-8 shadow-2xl max-w-md mx-auto lg:mx-0 lg:ml-auto">
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Đăng Ký Nhận Ưu Đãi
-                </h2>
-                <p className="text-gray-600">
-                  Điền thông tin để nhận ưu đãi đặc biệt
-                </p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Đăng Ký Nhận Ưu Đãi</h2>
+                <p className="text-gray-600">Điền thông tin để nhận ưu đãi đặc biệt</p>
               </div>
               <DangKyForm />
             </div>

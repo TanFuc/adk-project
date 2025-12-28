@@ -1,0 +1,133 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "adk-backend"
+        DOCKER_TAG = "${env.BUILD_NUMBER}"
+        DOCKER_REGISTRY = "" // Add your registry URL if using one
+        DATABASE_URL = credentials('adk-database-url')
+        REDIS_HOST = credentials('adk-redis-host')
+    }
+
+    tools {
+        nodejs "NodeJS-20" // Configure this in Jenkins Global Tool Configuration
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out code...'
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                dir('backend') {
+                    echo 'Installing dependencies...'
+                    sh 'npm ci'
+                }
+            }
+        }
+
+        stage('Lint') {
+            steps {
+                dir('backend') {
+                    echo 'Running linter...'
+                    sh 'npm run lint'
+                }
+            }
+        }
+
+        stage('Generate Prisma Client') {
+            steps {
+                dir('backend') {
+                    echo 'Generating Prisma Client...'
+                    sh 'npm run prisma:generate'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                dir('backend') {
+                    echo 'Running tests...'
+                    sh 'npm run test'
+                }
+            }
+            post {
+                always {
+                    junit '**/backend/coverage/junit.xml'
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('backend') {
+                    echo 'Building application...'
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('backend') {
+                    script {
+                        echo 'Building Docker image...'
+                        docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                        docker.build("${DOCKER_IMAGE}:latest")
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    echo 'Pushing Docker image...'
+                    docker.withRegistry("${DOCKER_REGISTRY}", 'docker-credentials') {
+                        docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
+                        docker.image("${DOCKER_IMAGE}:latest").push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    echo 'Deploying application...'
+                    // Add your deployment commands here
+                    // Example: SSH to server and run docker-compose
+                    sh '''
+                        echo "Deployment step - configure based on your infrastructure"
+                        # ssh user@server "cd /path/to/app && docker-compose pull && docker-compose up -d backend"
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+            // Add notifications here (Slack, email, etc.)
+        }
+        failure {
+            echo 'Pipeline failed!'
+            // Add failure notifications here
+        }
+        always {
+            echo 'Cleaning up...'
+            cleanWs()
+        }
+    }
+}

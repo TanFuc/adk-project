@@ -1,14 +1,9 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  ConflictException,
-  Logger,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'crypto';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoginDto, LoginResponseDto, CreateAdminDto } from './dto';
-import { VaiTro } from '@prisma/client';
+import { Injectable, UnauthorizedException, ConflictException, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { createHash, randomBytes, scryptSync, timingSafeEqual } from "crypto";
+import { PrismaService } from "../prisma/prisma.service";
+import { LoginDto, LoginResponseDto, CreateAdminDto } from "./dto";
+import { VaiTro } from "@prisma/client";
 
 interface JwtPayload {
   sub: string;
@@ -28,8 +23,8 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
   ) {
-    this.jwtSecret = this.config.get<string>('JWT_SECRET') || 'adk-secret-key-2024';
-    this.jwtExpiresIn = this.config.get<number>('JWT_EXPIRES_IN') || 86400; // 24 hours
+    this.jwtSecret = this.config.get<string>("JWT_SECRET") || "adk-secret-key-2024";
+    this.jwtExpiresIn = this.config.get<number>("JWT_EXPIRES_IN") || 86400; // 24 hours
   }
 
   async login(dto: LoginDto): Promise<LoginResponseDto> {
@@ -39,18 +34,18 @@ export class AuthService {
 
     if (!admin) {
       this.logger.warn(`Login failed - email not found: ${dto.email}`);
-      throw new UnauthorizedException('Email hoặc mật khẩu không đúng.');
+      throw new UnauthorizedException("Email hoặc mật khẩu không đúng.");
     }
 
     if (!admin.hoatDong) {
       this.logger.warn(`Login failed - account disabled: ${dto.email}`);
-      throw new UnauthorizedException('Tài khoản đã bị vô hiệu hóa.');
+      throw new UnauthorizedException("Tài khoản đã bị vô hiệu hóa.");
     }
 
     const isValid = this.verifyPassword(dto.matKhau, admin.matKhau);
     if (!isValid) {
       this.logger.warn(`Login failed - wrong password: ${dto.email}`);
-      throw new UnauthorizedException('Email hoặc mật khẩu không đúng.');
+      throw new UnauthorizedException("Email hoặc mật khẩu không đúng.");
     }
 
     const token = this.generateToken({
@@ -63,7 +58,7 @@ export class AuthService {
 
     return {
       accessToken: token,
-      tokenType: 'Bearer',
+      tokenType: "Bearer",
       expiresIn: this.jwtExpiresIn,
       admin: {
         id: admin.id,
@@ -80,7 +75,7 @@ export class AuthService {
     });
 
     if (existing) {
-      throw new ConflictException('Email đã được sử dụng.');
+      throw new ConflictException("Email đã được sử dụng.");
     }
 
     const hashedPassword = this.hashPassword(dto.matKhau);
@@ -121,21 +116,21 @@ export class AuthService {
   }
 
   private hashPassword(password: string): string {
-    const salt = randomBytes(16).toString('hex');
-    const hash = scryptSync(password, salt, 64).toString('hex');
+    const salt = randomBytes(16).toString("hex");
+    const hash = scryptSync(password, salt, 64).toString("hex");
     return `${salt}:${hash}`;
   }
 
   private verifyPassword(password: string, storedHash: string): boolean {
-    const [salt, hash] = storedHash.split(':');
-    const hashBuffer = Buffer.from(hash, 'hex');
+    const [salt, hash] = storedHash.split(":");
+    const hashBuffer = Buffer.from(hash, "hex");
     const suppliedBuffer = scryptSync(password, salt, 64);
     return timingSafeEqual(hashBuffer, suppliedBuffer);
   }
 
   private generateToken(payload: { sub: string; email: string; vaiTro: string }): string {
     const now = Math.floor(Date.now() / 1000);
-    const header = { alg: 'HS256', typ: 'JWT' };
+    const header = { alg: "HS256", typ: "JWT" };
 
     const tokenPayload: JwtPayload = {
       ...payload,
@@ -151,43 +146,40 @@ export class AuthService {
   }
 
   private verifyToken(token: string): JwtPayload {
-    const parts = token.split('.');
+    const parts = token.split(".");
     if (parts.length !== 3) {
-      throw new Error('Invalid token format');
+      throw new Error("Invalid token format");
     }
 
     const [headerBase64, payloadBase64, signature] = parts;
     const expectedSignature = this.sign(`${headerBase64}.${payloadBase64}`);
 
     if (signature !== expectedSignature) {
-      throw new Error('Invalid token signature');
+      throw new Error("Invalid token signature");
     }
 
     const payload = JSON.parse(this.base64UrlDecode(payloadBase64)) as JwtPayload;
 
     if (payload.exp < Math.floor(Date.now() / 1000)) {
-      throw new Error('Token expired');
+      throw new Error("Token expired");
     }
 
     return payload;
   }
 
   private sign(data: string): string {
-    const hmac = createHash('sha256');
+    const hmac = createHash("sha256");
     hmac.update(data + this.jwtSecret);
     return this.base64UrlEncode(hmac.digest());
   }
 
   private base64UrlEncode(data: string | Buffer): string {
-    const str = typeof data === 'string' ? Buffer.from(data) : data;
-    return str.toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
+    const str = typeof data === "string" ? Buffer.from(data) : data;
+    return str.toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
   }
 
   private base64UrlDecode(data: string): string {
-    const padded = data + '='.repeat((4 - data.length % 4) % 4);
-    return Buffer.from(padded.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString();
+    const padded = data + "=".repeat((4 - (data.length % 4)) % 4);
+    return Buffer.from(padded.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString();
   }
 }

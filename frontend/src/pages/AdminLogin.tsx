@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Loader2, LogIn } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
-import { authApi } from '@/services/api';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Loader2, LogIn } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { authApi } from "@/services/api";
 
 const loginSchema = z.object({
-  email: z.string().email('Email không đúng định dạng'),
-  matKhau: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
+  email: z.string().email("Email không đúng định dạng"),
+  matKhau: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -29,8 +29,8 @@ export default function AdminLogin() {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      matKhau: '',
+      email: "",
+      matKhau: "",
     },
   });
 
@@ -38,22 +38,22 @@ export default function AdminLogin() {
     setIsLoading(true);
     try {
       const response = await authApi.login(values);
-      localStorage.setItem('accessToken', response.accessToken);
-      localStorage.setItem('admin', JSON.stringify(response.admin));
+      localStorage.setItem("accessToken", response.accessToken);
+      localStorage.setItem("admin", JSON.stringify(response.admin));
 
       toast({
-        title: 'Đăng nhập thành công',
+        title: "Đăng nhập thành công",
         description: `Xin chào, ${response.admin.hoTen}!`,
-        variant: 'success',
+        variant: "success",
       });
 
-      navigate('/admin');
+      navigate("/admin");
     } catch (error) {
       const apiError = error as { response?: { data?: { error?: { message?: string } } } };
       toast({
-        title: 'Đăng nhập thất bại',
-        description: apiError.response?.data?.error?.message || 'Email hoặc mật khẩu không đúng',
-        variant: 'destructive',
+        title: "Đăng nhập thất bại",
+        description: apiError.response?.data?.error?.message || "Email hoặc mật khẩu không đúng",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -85,12 +85,10 @@ export default function AdminLogin() {
                 id="email"
                 type="email"
                 placeholder="admin@adk.vn"
-                {...register('email')}
-                className={errors.email ? 'border-red-500' : ''}
+                {...register("email")}
+                className={errors.email ? "border-red-500" : ""}
               />
-              {errors.email && (
-                <p className="text-sm text-red-500">{errors.email.message}</p>
-              )}
+              {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
@@ -99,20 +97,13 @@ export default function AdminLogin() {
                 id="matKhau"
                 type="password"
                 placeholder="••••••••"
-                {...register('matKhau')}
-                className={errors.matKhau ? 'border-red-500' : ''}
+                {...register("matKhau")}
+                className={errors.matKhau ? "border-red-500" : ""}
               />
-              {errors.matKhau && (
-                <p className="text-sm text-red-500">{errors.matKhau.message}</p>
-              )}
+              {errors.matKhau && <p className="text-sm text-red-500">{errors.matKhau.message}</p>}
             </div>
 
-            <Button
-              type="submit"
-              variant="adk"
-              className="w-full"
-              disabled={isLoading}
-            >
+            <Button type="submit" variant="adk" className="w-full" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -129,10 +120,7 @@ export default function AdminLogin() {
 
           {/* Back to home link */}
           <div className="mt-6 text-center">
-            <a
-              href="/"
-              className="text-sm text-gray-600 hover:text-adk-green transition-colors"
-            >
+            <a href="/" className="text-sm text-gray-600 hover:text-adk-green transition-colors">
               Quay về trang chủ
             </a>
           </div>

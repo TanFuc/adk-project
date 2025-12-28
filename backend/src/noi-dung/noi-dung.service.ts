@@ -1,14 +1,9 @@
-import {
-  Injectable,
-  NotFoundException,
-  Inject,
-  Logger,
-} from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
-import { LoaiNoiDung, NoiDung } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateNoiDungDto, UpdateNoiDungDto } from './dto';
+import { Injectable, NotFoundException, Inject, Logger } from "@nestjs/common";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
+import { LoaiNoiDung, NoiDung, Prisma } from "@prisma/client";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateNoiDungDto, UpdateNoiDungDto } from "./dto";
 
 @Injectable()
 export class NoiDungService {
@@ -29,7 +24,7 @@ export class NoiDungService {
 
     const noiDung = await this.prisma.noiDung.findMany({
       where: { loai, hienThi: true },
-      orderBy: { thuTu: 'asc' },
+      orderBy: { thuTu: "asc" },
     });
 
     // Cache for 5 minutes
@@ -39,7 +34,7 @@ export class NoiDungService {
   }
 
   async findAll(): Promise<NoiDung[]> {
-    const cacheKey = 'noi-dung:all';
+    const cacheKey = "noi-dung:all";
     const cached = await this.cache.get<NoiDung[]>(cacheKey);
 
     if (cached) {
@@ -47,7 +42,7 @@ export class NoiDungService {
     }
 
     const noiDung = await this.prisma.noiDung.findMany({
-      orderBy: [{ loai: 'asc' }, { thuTu: 'asc' }],
+      orderBy: [{ loai: "asc" }, { thuTu: "asc" }],
     });
 
     // Cache for 5 minutes
@@ -57,7 +52,7 @@ export class NoiDungService {
   }
 
   async findPublic(): Promise<Record<string, NoiDung[]>> {
-    const cacheKey = 'noi-dung:public';
+    const cacheKey = "noi-dung:public";
     const cached = await this.cache.get<Record<string, NoiDung[]>>(cacheKey);
 
     if (cached) {
@@ -66,7 +61,7 @@ export class NoiDungService {
 
     const allContent = await this.prisma.noiDung.findMany({
       where: { hienThi: true },
-      orderBy: { thuTu: 'asc' },
+      orderBy: { thuTu: "asc" },
     });
 
     // Group by loai
@@ -90,7 +85,7 @@ export class NoiDungService {
     });
 
     if (!noiDung) {
-      throw new NotFoundException('Không tìm thấy nội dung với ID này.');
+      throw new NotFoundException("Không tìm thấy nội dung với ID này.");
     }
 
     return noiDung;
@@ -102,7 +97,7 @@ export class NoiDungService {
         loai: dto.loai,
         tieuDe: dto.tieuDe,
         moTa: dto.moTa,
-        noiDung: dto.noiDung,
+        noiDung: dto.noiDung as Prisma.InputJsonValue,
         thuTu: dto.thuTu ?? 0,
         hienThi: dto.hienThi ?? true,
       },
@@ -122,12 +117,18 @@ export class NoiDungService {
     });
 
     if (!existing) {
-      throw new NotFoundException('Không tìm thấy nội dung với ID này.');
+      throw new NotFoundException("Không tìm thấy nội dung với ID này.");
     }
 
     const noiDung = await this.prisma.noiDung.update({
       where: { id },
-      data: dto,
+      data: {
+        tieuDe: dto.tieuDe,
+        moTa: dto.moTa,
+        noiDung: dto.noiDung ? (dto.noiDung as Prisma.InputJsonValue) : undefined,
+        thuTu: dto.thuTu,
+        hienThi: dto.hienThi,
+      },
     });
 
     // Invalidate caches
@@ -144,7 +145,7 @@ export class NoiDungService {
     });
 
     if (!existing) {
-      throw new NotFoundException('Không tìm thấy nội dung với ID này.');
+      throw new NotFoundException("Không tìm thấy nội dung với ID này.");
     }
 
     await this.prisma.noiDung.delete({ where: { id } });
@@ -177,8 +178,8 @@ export class NoiDungService {
   private async invalidateCaches(loai: LoaiNoiDung): Promise<void> {
     await Promise.all([
       this.cache.del(`noi-dung:${loai}`),
-      this.cache.del('noi-dung:all'),
-      this.cache.del('noi-dung:public'),
+      this.cache.del("noi-dung:all"),
+      this.cache.del("noi-dung:public"),
     ]);
   }
 }

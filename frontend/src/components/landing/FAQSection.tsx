@@ -1,41 +1,42 @@
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
+} from "@/components/ui/accordion";
 
-const faqs = [
+// B2B Partnership FAQs - NOT B2C customer questions
+const partnershipFaqs = [
   {
-    question: 'Làm thế nào để đăng ký nhận ưu đãi?',
+    question: "Tôi cần bao nhiêu vốn để bắt đầu?",
     answer:
-      'Bạn chỉ cần điền đầy đủ thông tin vào form đăng ký ở phần đầu trang. Sau khi đăng ký thành công, chúng tôi sẽ liên hệ với bạn trong vòng 24 giờ để xác nhận và gửi ưu đãi.',
+      "Vốn đầu tư linh hoạt từ 500 triệu - 2 tỷ đồng tùy theo quy mô mặt bằng (40-100m²). Liên hệ để nhận bảng dự toán chi tiết phù hợp với điều kiện của bạn.",
   },
   {
-    question: 'Thuốc có được bảo đảm chính hãng không?',
+    question: "ADK hỗ trợ nguồn hàng như thế nào?",
     answer:
-      'Tất cả sản phẩm tại Nhà Thuốc ADK đều là thuốc chính hãng, có nguồn gốc xuất xứ rõ ràng và được cấp phép lưu hành bởi Bộ Y tế. Chúng tôi cam kết hoàn tiền 200% nếu phát hiện hàng giả.',
+      "Cung cấp danh mục sản phẩm chuẩn hóa gồm Thuốc, TPCN, Thực phẩm sạch và OCOP. Giá tốt nhất từ kho tổng, giao hàng định kỳ, hỗ trợ đổi trả hàng chậm luân chuyển.",
   },
   {
-    question: 'Thời gian giao hàng là bao lâu?',
+    question: "Tôi có được đào tạo nhân sự không?",
     answer:
-      'Đối với nội thành TP.HCM và Hà Nội, thời gian giao hàng từ 2-4 giờ. Đối với các tỉnh thành khác, thời gian giao hàng từ 1-3 ngày làm việc tùy theo khu vực.',
+      "Có. ADK đào tạo toàn diện cho dược sĩ và nhân viên về: Kỹ năng bán lẻ, Tư vấn dinh dưỡng, Sử dụng hệ thống ERP, và Quy trình vận hành chuẩn GPP.",
   },
   {
-    question: 'Có được tư vấn sử dụng thuốc không?',
+    question: "Thời gian hoàn vốn dự kiến là bao lâu?",
     answer:
-      'Có, đội ngũ dược sĩ của chúng tôi luôn sẵn sàng tư vấn miễn phí về cách sử dụng thuốc, liều lượng và các lưu ý khi dùng thuốc. Bạn có thể gọi hotline hoặc chat trực tiếp để được hỗ trợ.',
+      "Với vị trí tốt và vận hành đúng quy trình, thời gian hoàn vốn trung bình từ 18-24 tháng. Doanh thu trung bình từ 300-500 triệu/tháng tùy quy mô.",
   },
   {
-    question: 'Chính sách đổi trả như thế nào?',
+    question: "ADK hỗ trợ marketing như thế nào?",
     answer:
-      'Chúng tôi hỗ trợ đổi trả trong vòng 7 ngày nếu sản phẩm còn nguyên seal, không bị hư hỏng. Đối với thuốc bảo quản đặc biệt hoặc thuốc kê đơn đã mở, không áp dụng đổi trả.',
+      "Hỗ trợ marketing đa kênh: Fanpage chung, SEO địa phương, Chương trình khuyến mãi toàn hệ thống, Tài liệu truyền thông sẵn có. Chi phí marketing được chia sẻ trong hệ thống.",
   },
   {
-    question: 'Có thể mua thuốc kê đơn không?',
+    question: "Quy trình hợp tác như thế nào?",
     answer:
-      'Thuốc kê đơn chỉ được bán khi có đơn thuốc hợp lệ từ bác sĩ. Bạn có thể gửi ảnh đơn thuốc qua Zalo/Messenger hoặc mang đơn trực tiếp đến nhà thuốc để mua.',
+      "Quy trình 5 bước: (1) Đăng ký tư vấn → (2) Khảo sát mặt bằng → (3) Ký hợp đồng → (4) Setup cửa hàng (30-45 ngày) → (5) Khai trương và vận hành.",
   },
 ];
 
@@ -52,11 +53,14 @@ export default function FAQSection() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
+            <span className="inline-block px-4 py-1.5 bg-adk-green/10 text-adk-green rounded-full text-sm font-medium mb-4">
+              Hỏi Đáp Hợp Tác
+            </span>
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Câu Hỏi <span className="text-adk-green">Thường Gặp</span>
             </h2>
             <p className="text-lg text-gray-600">
-              Giải đáp các thắc mắc phổ biến của khách hàng
+              Giải đáp thắc mắc cho nhà đầu tư và đối tác tiềm năng
             </p>
           </motion.div>
 
@@ -68,7 +72,7 @@ export default function FAQSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <Accordion type="single" collapsible className="w-full">
-              {faqs.map((faq, index) => (
+              {partnershipFaqs.map((faq, index) => (
                 <AccordionItem
                   key={index}
                   value={`item-${index}`}
@@ -77,12 +81,26 @@ export default function FAQSection() {
                   <AccordionTrigger className="text-left hover:no-underline hover:text-adk-green">
                     <span className="font-semibold">{faq.question}</span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-gray-600">
-                    {faq.answer}
-                  </AccordionContent>
+                  <AccordionContent className="text-gray-600">{faq.answer}</AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
+          </motion.div>
+
+          {/* CTA after FAQ */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="mt-10 text-center"
+          >
+            <p className="text-gray-600 mb-4">
+              Còn thắc mắc khác? Liên hệ ngay để được tư vấn chi tiết.
+            </p>
+            <a href="tel:18001234" className="text-adk-green font-semibold hover:underline">
+              Hotline: 1800-1234
+            </a>
           </motion.div>
         </div>
       </div>

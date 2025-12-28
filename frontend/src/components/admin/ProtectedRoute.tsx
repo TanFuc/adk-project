@@ -1,7 +1,7 @@
-import { ReactNode, useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { authApi } from '@/services/api';
-import { Loader2 } from 'lucide-react';
+import { ReactNode, useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
+import { authApi } from "@/services/api";
+import { Loader2 } from "lucide-react";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -13,7 +13,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem('accessToken');
+      const token = localStorage.getItem("accessToken");
 
       if (!token) {
         setIsLoading(false);
@@ -25,8 +25,8 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
         await authApi.getMe();
         setIsAuthenticated(true);
       } catch {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('admin');
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("admin");
         setIsAuthenticated(false);
       } finally {
         setIsLoading(false);

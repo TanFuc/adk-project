@@ -1,15 +1,9 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-  Inject,
-  Logger,
-} from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
-import { CauHinh } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateCauHinhDto, UpdateCauHinhDto } from './dto';
+import { Injectable, NotFoundException, ConflictException, Inject, Logger } from "@nestjs/common";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
+import { CauHinh, Prisma } from "@prisma/client";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateCauHinhDto, UpdateCauHinhDto } from "./dto";
 
 @Injectable()
 export class CauHinhService {
@@ -21,7 +15,7 @@ export class CauHinhService {
   ) {}
 
   async findAll(): Promise<CauHinh[]> {
-    const cacheKey = 'cau-hinh:all';
+    const cacheKey = "cau-hinh:all";
     const cached = await this.cache.get<CauHinh[]>(cacheKey);
 
     if (cached) {
@@ -59,7 +53,7 @@ export class CauHinhService {
   }
 
   async findPublic(): Promise<Record<string, unknown>> {
-    const cacheKey = 'cau-hinh:public';
+    const cacheKey = "cau-hinh:public";
     const cached = await this.cache.get<Record<string, unknown>>(cacheKey);
 
     if (cached) {
@@ -91,7 +85,11 @@ export class CauHinhService {
     }
 
     const cauHinh = await this.prisma.cauHinh.create({
-      data: dto,
+      data: {
+        key: dto.key,
+        value: dto.value as Prisma.InputJsonValue,
+        moTa: dto.moTa,
+      },
     });
 
     // Invalidate caches
@@ -113,7 +111,10 @@ export class CauHinhService {
 
     const cauHinh = await this.prisma.cauHinh.update({
       where: { key },
-      data: dto,
+      data: {
+        value: dto.value ? (dto.value as Prisma.InputJsonValue) : undefined,
+        moTa: dto.moTa,
+      },
     });
 
     // Invalidate caches
@@ -144,8 +145,8 @@ export class CauHinhService {
   private async invalidateCaches(key: string): Promise<void> {
     await Promise.all([
       this.cache.del(`cau-hinh:${key}`),
-      this.cache.del('cau-hinh:all'),
-      this.cache.del('cau-hinh:public'),
+      this.cache.del("cau-hinh:all"),
+      this.cache.del("cau-hinh:public"),
     ]);
   }
 }

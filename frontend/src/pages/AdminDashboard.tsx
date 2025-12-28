@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Users,
   FileText,
@@ -11,52 +11,48 @@ import {
   CheckCircle,
   XCircle,
   Phone,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
-import { adminApi } from '@/services/api';
-import type { DangKyDetail, DangKyStats, TrangThai } from '@/types';
-import { getProvinceLabel, getDistrictLabel } from '@/data/locations';
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { adminApi } from "@/services/api";
+import type { DangKyDetail, DangKyStats, TrangThai } from "@/types";
+import { getProvinceLabel, getDistrictLabel } from "@/data/locations";
 
 const STATUS_LABELS: Record<TrangThai, { label: string; color: string }> = {
-  CHO_XU_LY: { label: 'Chờ xử lý', color: 'bg-yellow-100 text-yellow-800' },
-  DA_LIEN_HE: { label: 'Đã liên hệ', color: 'bg-blue-100 text-blue-800' },
-  THANH_CONG: { label: 'Thành công', color: 'bg-green-100 text-green-800' },
-  TU_CHOI: { label: 'Từ chối', color: 'bg-red-100 text-red-800' },
+  CHO_XU_LY: { label: "Chờ xử lý", color: "bg-yellow-100 text-yellow-800" },
+  DA_LIEN_HE: { label: "Đã liên hệ", color: "bg-blue-100 text-blue-800" },
+  THANH_CONG: { label: "Thành công", color: "bg-green-100 text-green-800" },
+  TU_CHOI: { label: "Từ chối", color: "bg-red-100 text-red-800" },
 };
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [statusFilter, setStatusFilter] = useState<TrangThai | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<TrangThai | "all">("all");
 
   // Get admin info from localStorage
-  const adminInfo = JSON.parse(localStorage.getItem('admin') || '{}');
+  const adminInfo = JSON.parse(localStorage.getItem("admin") || "{}");
 
   // Fetch stats
   const { data: stats } = useQuery<DangKyStats>({
-    queryKey: ['registrationStats'],
+    queryKey: ["registrationStats"],
     queryFn: () => adminApi.getRegistrationStats(),
   });
 
   // Fetch registrations
   const { data: registrationsData, isLoading } = useQuery({
-    queryKey: ['registrations', statusFilter],
+    queryKey: ["registrations", statusFilter],
     queryFn: () =>
-      adminApi.getRegistrations(
-        1,
-        100,
-        statusFilter === 'all' ? undefined : statusFilter
-      ),
+      adminApi.getRegistrations(1, 100, statusFilter === "all" ? undefined : statusFilter),
   });
 
   // Update status mutation
@@ -64,36 +60,36 @@ export default function AdminDashboard() {
     mutationFn: ({ id, trangThai }: { id: string; trangThai: TrangThai }) =>
       adminApi.updateRegistrationStatus(id, trangThai),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['registrations'] });
-      queryClient.invalidateQueries({ queryKey: ['registrationStats'] });
+      queryClient.invalidateQueries({ queryKey: ["registrations"] });
+      queryClient.invalidateQueries({ queryKey: ["registrationStats"] });
       toast({
-        title: 'Cập nhật thành công',
-        description: 'Trạng thái đăng ký đã được cập nhật.',
-        variant: 'success',
+        title: "Cập nhật thành công",
+        description: "Trạng thái đăng ký đã được cập nhật.",
+        variant: "success",
       });
     },
     onError: () => {
       toast({
-        title: 'Cập nhật thất bại',
-        description: 'Đã xảy ra lỗi. Vui lòng thử lại.',
-        variant: 'destructive',
+        title: "Cập nhật thất bại",
+        description: "Đã xảy ra lỗi. Vui lòng thử lại.",
+        variant: "destructive",
       });
     },
   });
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('admin');
-    navigate('/admin/login');
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("admin");
+    navigate("/admin/login");
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Date(dateString).toLocaleString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -104,16 +100,10 @@ export default function AdminDashboard() {
         <div className="container-full py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-adk-green/10 flex items-center justify-center">
-              <img
-                src="/logo.png"
-                alt="ADK Logo"
-                className="w-8 h-8 object-contain rounded-full"
-              />
+              <img src="/logo.png" alt="ADK Logo" className="w-8 h-8 object-contain rounded-full" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">
-                Admin Dashboard
-              </h1>
+              <h1 className="text-xl font-bold text-gray-900">Admin Dashboard</h1>
               <p className="text-sm text-gray-500">Nhà Thuốc ADK</p>
             </div>
           </div>
@@ -209,9 +199,7 @@ export default function AdminDashboard() {
                 <div className="flex items-center gap-4">
                   <Select
                     value={statusFilter}
-                    onValueChange={(value) =>
-                      setStatusFilter(value as TrangThai | 'all')
-                    }
+                    onValueChange={(value) => setStatusFilter(value as TrangThai | "all")}
                   >
                     <SelectTrigger className="w-40">
                       <SelectValue placeholder="Lọc trạng thái" />
@@ -229,7 +217,7 @@ export default function AdminDashboard() {
                     size="sm"
                     onClick={() =>
                       queryClient.invalidateQueries({
-                        queryKey: ['registrations'],
+                        queryKey: ["registrations"],
                       })
                     }
                   >
@@ -246,9 +234,7 @@ export default function AdminDashboard() {
                       <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
                         Họ tên
                       </th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
-                        SĐT
-                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">SĐT</th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
                         Địa chỉ
                       </th>
@@ -287,7 +273,7 @@ export default function AdminDashboard() {
                             </div>
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-600">
-                            {getDistrictLabel(reg.tinhThanh, reg.quanHuyen)},{' '}
+                            {getDistrictLabel(reg.tinhThanh, reg.quanHuyen)},{" "}
                             {getProvinceLabel(reg.tinhThanh)}
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-500">
@@ -316,15 +302,9 @@ export default function AdminDashboard() {
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="CHO_XU_LY">
-                                  Chờ xử lý
-                                </SelectItem>
-                                <SelectItem value="DA_LIEN_HE">
-                                  Đã liên hệ
-                                </SelectItem>
-                                <SelectItem value="THANH_CONG">
-                                  Thành công
-                                </SelectItem>
+                                <SelectItem value="CHO_XU_LY">Chờ xử lý</SelectItem>
+                                <SelectItem value="DA_LIEN_HE">Đã liên hệ</SelectItem>
+                                <SelectItem value="THANH_CONG">Thành công</SelectItem>
                                 <SelectItem value="TU_CHOI">Từ chối</SelectItem>
                               </SelectContent>
                             </Select>
