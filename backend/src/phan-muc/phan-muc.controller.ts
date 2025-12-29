@@ -13,7 +13,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagg
 import { SkipThrottle } from "@nestjs/throttler";
 import { PhanMuc, LoaiBoCuc } from "@prisma/client";
 import { PhanMucService } from "./phan-muc.service";
-import { CreatePhanMucDto, UpdatePhanMucDto } from "./dto";
+import { CreatePhanMucDto, UpdatePhanMucDto, ReorderDto } from "./dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 @ApiTags("Phần Mục Trang")
@@ -84,5 +84,13 @@ export class PhanMucController {
   @ApiOperation({ summary: "Xóa phần mục (Admin)" })
   async delete(@Param("id", ParseUUIDPipe) id: string): Promise<void> {
     return this.phanMucService.delete(id);
+  }
+
+  @Patch("admin/reorder")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Sắp xếp lại thứ tự phần mục (Admin)" })
+  async reorder(@Body() dto: ReorderDto): Promise<void> {
+    return this.phanMucService.reorder(dto);
   }
 }

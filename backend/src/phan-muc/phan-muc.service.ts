@@ -3,7 +3,7 @@ import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
 import { PhanMuc, LoaiBoCuc, Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreatePhanMucDto, UpdatePhanMucDto } from "./dto";
+import { CreatePhanMucDto, UpdatePhanMucDto, ReorderDto } from "./dto";
 
 @Injectable()
 export class PhanMucService {
@@ -157,6 +157,21 @@ export class PhanMucService {
     await this.invalidateCaches();
 
     this.logger.log(`Xóa phần mục: ${id}`);
+  }
+
+  async reorder(dto: ReorderDto): Promise<void> {
+    await this.prisma.$transaction(
+      dto.items.map((item) =>
+        this.prisma.phanMuc.update({
+          where: { id: item.id },
+          data: { thuTu: item.thuTu },
+        }),
+      ),
+    );
+
+    await this.invalidateCaches();
+
+    this.logger.log(`Sắp xếp lại ${dto.items.length} phần mục`);
   }
 
   private async invalidateCaches(): Promise<void> {

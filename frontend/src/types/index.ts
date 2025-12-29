@@ -173,3 +173,33 @@ export interface CauHinh {
   value: Record<string, unknown>;
   moTa?: string;
 }
+
+// Business Model Types
+export interface MoHinhKinhDoanh {
+  id: string;
+  ten: string;
+  moTa: string;
+  anhIcon?: string;
+  tiemNangLoiNhuan?: string;
+  thuTu: number;
+  hienThi: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Partnership FAQ Types
+export interface HoiDapHopTac {
+  id: string;
+  cauHoi: string;
+  traLoi: string;
+  thuTu: number;
+  hienThi: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Reorder Types
+export interface ReorderItem {
+  id: string;
+  thuTu: number;
+}

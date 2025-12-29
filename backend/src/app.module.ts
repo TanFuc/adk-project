@@ -11,6 +11,8 @@ import { AuthModule } from "./auth/auth.module";
 import { PhanMucModule } from "./phan-muc/phan-muc.module";
 import { BannerPopupModule } from "./banner-popup/banner-popup.module";
 import { SuKienModule } from "./su-kien/su-kien.module";
+import { MoHinhKinhDoanhModule } from "./mo-hinh-kinh-doanh/mo-hinh-kinh-doanh.module";
+import { HoiDapHopTacModule } from "./hoi-dap-hop-tac/hoi-dap-hop-tac.module";
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { SuKienModule } from "./su-kien/su-kien.module";
     PhanMucModule,
     BannerPopupModule,
     SuKienModule,
+    MoHinhKinhDoanhModule,
+    HoiDapHopTacModule,
   ],
   providers: [
     {

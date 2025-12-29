@@ -10,8 +10,10 @@ import {
   IsUrl,
   Min,
   MaxLength,
+  ValidateNested,
 } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 import { LoaiBoCuc } from "@prisma/client";
 
 export class CreatePhanMucDto {
@@ -122,4 +124,23 @@ export class UpdatePhanMucDto {
   @IsOptional()
   @IsBoolean({ message: "Trạng thái hiển thị phải là true/false" })
   hienThi?: boolean;
+}
+
+export class ReorderItemDto {
+  @ApiProperty({ description: "ID của phần mục" })
+  @IsString()
+  id: string;
+
+  @ApiProperty({ description: "Thứ tự mới" })
+  @IsInt()
+  @Min(0)
+  thuTu: number;
+}
+
+export class ReorderDto {
+  @ApiProperty({ type: [ReorderItemDto], description: "Danh sách phần mục cần sắp xếp lại" })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ReorderItemDto)
+  items: ReorderItemDto[];
 }
