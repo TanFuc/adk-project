@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { X, ZoomIn, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ZoomIn, ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
 import { phanMucApi } from "@/api";
 import type { PhanMuc } from "@/types";
 import Navbar from "@/components/landing/Navbar";
@@ -100,6 +100,41 @@ export default function GalleryPage() {
     return patterns[index % patterns.length];
   };
 
+// Gallery Image Component with error handling
+function GalleryImage({ 
+  src, 
+  alt, 
+  onClick 
+}: { 
+  src: string; 
+  alt: string; 
+  onClick: () => void;
+}) {
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <div 
+      onClick={onClick}
+      className="w-full h-full cursor-pointer group"
+    >
+      {!imageError ? (
+        <img
+          src={src}
+          alt={alt}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
+          <div className="text-center">
+            <ImageOff className="w-8 h-8 text-gray-400 mx-auto mb-1" />
+            <p className="text-gray-500 text-xs">Không có ảnh</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
   return (
     <main className="min-h-screen bg-gray-50">
       <Navbar />
@@ -174,20 +209,16 @@ export default function GalleryPage() {
                 key={image.id}
                 variants={itemVariants}
                 whileHover={{ scale: 1.02, zIndex: 10 }}
-                onClick={() => setSelectedImageIndex(index)}
-                className={`${getMasonryClass(index)} relative group cursor-pointer rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all`}
+                className={`${getMasonryClass(index)} relative group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all bg-gray-100`}
               >
-                <img
+                <GalleryImage
                   src={image.src}
                   alt={image.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  onError={(e) => {
-                    e.currentTarget.src = "/images/placeholder.jpg";
-                  }}
+                  onClick={() => setSelectedImageIndex(index)}
                 />
 
                 {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
                       <ZoomIn className="w-6 h-6 text-gray-700" />

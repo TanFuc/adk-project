@@ -34,16 +34,31 @@ export function SettingsTab() {
     queryFn: () => adminApi.getAllSettings(),
   });
 
-  const upsertMutation = useMutation({
+  const createMutation = useMutation({
     mutationFn: (data: { key: string; value: unknown; moTa?: string }) =>
       adminApi.upsertSetting(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminSettings"] });
-      toast({ title: "Thành công", description: "Đã lưu cấu hình", variant: "success" });
+      queryClient.invalidateQueries({ queryKey: ["publicConfig"] }); // Invalidate public cache
+      toast({ title: "Thành công", description: "Đã tạo cấu hình mới", variant: "success" });
       closeModal();
     },
     onError: () => {
-      toast({ title: "Lỗi", description: "Không thể lưu cấu hình", variant: "destructive" });
+      toast({ title: "Lỗi", description: "Không thể tạo cấu hình", variant: "destructive" });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ key, data }: { key: string; data: { value: unknown; moTa?: string } }) =>
+      adminApi.updateSetting(key, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminSettings"] });
+      queryClient.invalidateQueries({ queryKey: ["publicConfig"] }); // Invalidate public cache
+      toast({ title: "Thành công", description: "Đã cập nhật cấu hình", variant: "success" });
+      closeModal();
+    },
+    onError: () => {
+      toast({ title: "Lỗi", description: "Không thể cập nhật cấu hình", variant: "destructive" });
     },
   });
 
@@ -51,6 +66,7 @@ export function SettingsTab() {
     mutationFn: (key: string) => adminApi.deleteSetting(key),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminSettings"] });
+      queryClient.invalidateQueries({ queryKey: ["publicConfig"] }); // Invalidate public cache
       toast({ title: "Thành công", description: "Đã xóa cấu hình", variant: "success" });
       setDeleteItem(null);
     },
@@ -98,11 +114,23 @@ export function SettingsTab() {
       return;
     }
 
-    upsertMutation.mutate({
-      key: formData.key,
-      value: parsedValue,
-      moTa: formData.moTa || undefined,
-    });
+    if (editingItem) {
+      // Update existing setting
+      updateMutation.mutate({
+        key: formData.key,
+        data: {
+          value: parsedValue,
+          moTa: formData.moTa || undefined,
+        },
+      });
+    } else {
+      // Create new setting
+      createMutation.mutate({
+        key: formData.key,
+        value: parsedValue,
+        moTa: formData.moTa || undefined,
+      });
+    }
   };
 
   const formatValue = (value: unknown): string => {
@@ -225,9 +253,12 @@ export function SettingsTab() {
             <Button variant="outline" onClick={closeModal}>
               Hủy
             </Button>
-            <Button onClick={handleSubmit} disabled={upsertMutation.isPending}>
+            <Button 
+              onClick={handleSubmit} 
+              disabled={createMutation.isPending || updateMutation.isPending}
+            >
               <Save className="w-4 h-4 mr-2" />
-              {upsertMutation.isPending ? "Đang lưu..." : "Lưu"}
+              {createMutation.isPending || updateMutation.isPending ? "Đang lưu..." : "Lưu"}
             </Button>
           </DialogFooter>
         </DialogContent>

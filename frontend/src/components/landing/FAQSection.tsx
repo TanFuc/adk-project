@@ -10,34 +10,34 @@ import type { HoiDapHopTac } from "@/types";
 // B2B Partnership FAQs - Fallback when no dynamic data
 const defaultFaqs = [
   {
-    question: "Toi can bao nhieu von de bat dau?",
+    question: "Tôi cần bao nhiêu vốn để bắt đầu?",
     answer:
-      "Von dau tu linh hoat tu 500 trieu - 2 ty dong tuy theo quy mo mat bang (40-100m2). Lien he de nhan bang du toan chi tiet phu hop voi dieu kien cua ban.",
+      "Vốn đầu tư linh hoạt từ 500 triệu - 2 tỷ đồng tùy theo quy mô mặt bằng (40-100m2). Liên hệ để nhận bảng dự toán chi tiết phù hợp với điều kiện của bạn.",
   },
   {
-    question: "ADK ho tro nguon hang nhu the nao?",
+    question: "ADK hỗ trợ nguồn hàng như thế nào?",
     answer:
-      "Cung cap danh muc san pham chuan hoa gom Thuoc, TPCN, Thuc pham sach va OCOP. Gia tot nhat tu kho tong, giao hang dinh ky, ho tro doi tra hang cham luan chuyen.",
+      "Cung cấp danh mục sản phẩm chuẩn hóa gồm Thuốc, TPCN, Thực phẩm sạch và OCOP. Giá tốt nhất từ kho tổng, giao hàng định kỳ, hỗ trợ đổi trả hàng chậm luân chuyển.",
   },
   {
-    question: "Toi co duoc dao tao nhan su khong?",
+    question: "Tôi có được đào tạo nhân sự không?",
     answer:
-      "Co. ADK dao tao toan dien cho duoc si va nhan vien ve: Ky nang ban le, Tu van dinh duong, Su dung he thong ERP, va Quy trinh van hanh chuan GPP.",
+      "Có. ADK đào tạo toàn diện cho dược sĩ và nhân viên về: Kỹ năng bán lẻ, Tư vấn dinh dưỡng, Sử dụng hệ thống ERP, và Quy trình vận hành chuẩn GPP.",
   },
   {
-    question: "Thoi gian hoan von du kien la bao lau?",
+    question: "Thời gian hoàn vốn dự kiến là bao lâu?",
     answer:
-      "Voi vi tri tot va van hanh dung quy trinh, thoi gian hoan von trung binh tu 18-24 thang. Doanh thu trung binh tu 300-500 trieu/thang tuy quy mo.",
+      "Với vị trí tốt và vận hành đúng quy trình, thời gian hoàn vốn trung bình từ 18-24 tháng. Doanh thu trung bình từ 300-500 triệu/tháng tùy quy mô.",
   },
   {
-    question: "ADK ho tro marketing nhu the nao?",
+    question: "ADK hỗ trợ marketing như thế nào?",
     answer:
-      "Ho tro marketing da kenh: Fanpage chung, SEO dia phuong, Chuong trinh khuyen mai toan he thong, Tai lieu truyen thong san co. Chi phi marketing duoc chia se trong he thong.",
+      "Hỗ trợ marketing đa kênh: Fanpage chung, SEO địa phương, Chương trình khuyến mãi toàn hệ thống, Tài liệu truyền thông sẵn có. Chi phí marketing được chia sẻ trong hệ thống.",
   },
   {
-    question: "Quy trinh hop tac nhu the nao?",
+    question: "Quy trình hợp tác như thế nào?",
     answer:
-      "Quy trinh 5 buoc: (1) Dang ky tu van - (2) Khao sat mat bang - (3) Ky hop dong - (4) Setup cua hang (30-45 ngay) - (5) Khai truong va van hanh.",
+      "Quy trình 5 bước: (1) Đăng ký tư vấn - (2) Khảo sát mặt bằng - (3) Ký hợp đồng - (4) Setup cửa hàng (30-45 ngày) - (5) Khai trương và vận hành.",
   },
 ];
 

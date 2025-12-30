@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { X, ImageOff } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { bannerPopupApi } from "@/api";
 import type { BannerPopup } from "@/types";
@@ -10,6 +10,7 @@ const POPUP_DISMISSED_KEY = "adk_popup_dismissed";
 export default function PopupManager() {
   const [isVisible, setIsVisible] = useState(false);
   const [hasShown, setHasShown] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const { data: popup } = useQuery<BannerPopup | null>({
     queryKey: ["active-popup"],
@@ -80,17 +81,24 @@ export default function PopupManager() {
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 onClick={handleRedirect}
-                className="relative overflow-hidden rounded-2xl shadow-2xl cursor-pointer group"
+                className="relative overflow-hidden rounded-2xl shadow-2xl cursor-pointer group bg-gray-100"
               >
                 {/* Image */}
-                <img
-                  src={popup.hinhAnh}
-                  alt="Sự kiện ADK"
-                  className="w-full h-auto object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = "/images/placeholder-event.jpg";
-                  }}
-                />
+                {!imageError ? (
+                  <img
+                    src={popup.hinhAnh}
+                    alt="Sự kiện ADK"
+                    className="w-full h-auto object-cover"
+                    onError={() => setImageError(true)}
+                  />
+                ) : (
+                  <div className="w-full aspect-[4/3] flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
+                    <div className="text-center">
+                      <ImageOff className="w-16 h-16 text-gray-400 mx-auto mb-3" />
+                      <p className="text-gray-500 text-sm">Không có ảnh sự kiện</p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Hover Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">

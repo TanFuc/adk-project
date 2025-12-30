@@ -45,6 +45,7 @@ export function EventsTab() {
     mutationFn: (data: Partial<SuKien>) => adminApi.createEvent(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminEvents"] });
+      queryClient.invalidateQueries({ queryKey: ["events"] }); // Invalidate public cache
       toast({ title: "Thành công", description: "Đã tạo sự kiện mới", variant: "success" });
       closeModal();
     },
@@ -58,6 +59,7 @@ export function EventsTab() {
       adminApi.updateEvent(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminEvents"] });
+      queryClient.invalidateQueries({ queryKey: ["events"] }); // Invalidate public cache
       toast({ title: "Thành công", description: "Đã cập nhật sự kiện", variant: "success" });
       closeModal();
     },
@@ -70,6 +72,7 @@ export function EventsTab() {
     mutationFn: (id: string) => adminApi.deleteEvent(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminEvents"] });
+      queryClient.invalidateQueries({ queryKey: ["events"] }); // Invalidate public cache
       toast({ title: "Thành công", description: "Đã xóa sự kiện", variant: "success" });
       setDeleteItem(null);
     },
@@ -82,6 +85,7 @@ export function EventsTab() {
     mutationFn: (id: string) => adminApi.toggleEventFeatured(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminEvents"] });
+      queryClient.invalidateQueries({ queryKey: ["events"] }); // Invalidate public cache
       toast({ title: "Thành công", description: "Đã cập nhật trạng thái nổi bật", variant: "success" });
     },
     onError: () => {

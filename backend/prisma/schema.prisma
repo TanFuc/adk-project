@@ -189,3 +189,19 @@ enum VaiTro {
   SUPER_ADMIN
   ADMIN
 }
+
+// Click Tracking - Theo dõi lượt click CTA
+model ClickTracking {
+  id         String  @id @default(uuid())
+  buttonName String  @map("button_name") // e.g., "register_partnership", "contact_cta"
+  pageUrl    String? @map("page_url")
+  userAgent  String? @map("user_agent")
+  ipAddress  String? @map("ip_address")
+  referrer   String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([buttonName])
+  @@index([createdAt])
+  @@map("click_tracking")
+}
