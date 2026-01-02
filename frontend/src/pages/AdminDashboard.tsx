@@ -310,9 +310,8 @@ export default function AdminDashboard() {
                           </td>
                           <td className="px-4 py-3">
                             <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                STATUS_LABELS[reg.trangThai].color
-                              }`}
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${STATUS_LABELS[reg.trangThai].color
+                                }`}
                             >
                               {STATUS_LABELS[reg.trangThai].label}
                             </span>
