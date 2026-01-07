@@ -1,9 +1,10 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
+import { CacheModule } from "@nestjs/cache-manager";
 import { APP_GUARD } from "@nestjs/core";
 import { PrismaModule } from "./prisma/prisma.module";
-import { RedisModule } from "./redis/redis.module";
+// import { RedisModule } from "./redis/redis.module"; // Temporarily disabled
 import { DangKyModule } from "./dang-ky/dang-ky.module";
 import { NoiDungModule } from "./noi-dung/noi-dung.module";
 import { CauHinhModule } from "./cau-hinh/cau-hinh.module";
@@ -23,6 +24,13 @@ import { ClickTrackingModule } from "./click-tracking/click-tracking.module";
       envFilePath: ".env",
     }),
 
+    // In-memory Cache (Redis disabled)
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 300000, // 5 minutes
+      max: 100, // max items
+    }),
+
     // Rate Limiting
     ThrottlerModule.forRoot([
       {
@@ -33,7 +41,7 @@ import { ClickTrackingModule } from "./click-tracking/click-tracking.module";
 
     // Database & Cache
     PrismaModule,
-    RedisModule,
+    // RedisModule, // Temporarily disabled - using in-memory cache above
 
     // Feature Modules
     DangKyModule,
