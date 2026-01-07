@@ -11,6 +11,11 @@ import {
   CheckCircle,
   XCircle,
   Phone,
+  Image,
+  Calendar,
+  Briefcase,
+  HelpCircle,
+  LayoutGrid,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,6 +30,14 @@ import { useToast } from "@/hooks/use-toast";
 import { adminApi } from "@/services/api";
 import type { DangKyDetail, DangKyStats, TrangThai } from "@/types";
 import { getProvinceLabel, getDistrictLabel } from "@/data/locations";
+import {
+  SectionsTab,
+  BannersTab,
+  EventsTab,
+  BusinessModelsTab,
+  FAQTab,
+  SettingsTab,
+} from "@/components/admin/tabs";
 
 const STATUS_LABELS: Record<TrangThai, { label: string; color: string }> = {
   CHO_XU_LY: { label: "Chờ xử lý", color: "bg-yellow-100 text-yellow-800" },
@@ -175,14 +188,30 @@ export default function AdminDashboard() {
 
         {/* Tabs */}
         <Tabs defaultValue="registrations" className="space-y-4">
-          <TabsList>
+          <TabsList className="flex-wrap h-auto gap-1 p-1">
             <TabsTrigger value="registrations" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               Đăng ký
             </TabsTrigger>
-            <TabsTrigger value="content" className="flex items-center gap-2">
-              <FileText className="w-4 h-4" />
-              Nội dung
+            <TabsTrigger value="sections" className="flex items-center gap-2">
+              <LayoutGrid className="w-4 h-4" />
+              Phần mục
+            </TabsTrigger>
+            <TabsTrigger value="banners" className="flex items-center gap-2">
+              <Image className="w-4 h-4" />
+              Banner
+            </TabsTrigger>
+            <TabsTrigger value="events" className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              Sự kiện
+            </TabsTrigger>
+            <TabsTrigger value="business" className="flex items-center gap-2">
+              <Briefcase className="w-4 h-4" />
+              Mô hình KD
+            </TabsTrigger>
+            <TabsTrigger value="faq" className="flex items-center gap-2">
+              <HelpCircle className="w-4 h-4" />
+              Hỏi đáp
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
@@ -281,9 +310,8 @@ export default function AdminDashboard() {
                           </td>
                           <td className="px-4 py-3">
                             <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                STATUS_LABELS[reg.trangThai].color
-                              }`}
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${STATUS_LABELS[reg.trangThai].color
+                                }`}
                             >
                               {STATUS_LABELS[reg.trangThai].label}
                             </span>
@@ -318,20 +346,34 @@ export default function AdminDashboard() {
             </div>
           </TabsContent>
 
-          {/* Content Tab */}
-          <TabsContent value="content">
-            <div className="bg-white rounded-xl shadow-sm border p-8 text-center text-gray-500">
-              <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-              <p>Quản lý nội dung sẽ được phát triển thêm</p>
-            </div>
+          {/* Sections Tab */}
+          <TabsContent value="sections">
+            <SectionsTab />
+          </TabsContent>
+
+          {/* Banners Tab */}
+          <TabsContent value="banners">
+            <BannersTab />
+          </TabsContent>
+
+          {/* Events Tab */}
+          <TabsContent value="events">
+            <EventsTab />
+          </TabsContent>
+
+          {/* Business Models Tab */}
+          <TabsContent value="business">
+            <BusinessModelsTab />
+          </TabsContent>
+
+          {/* FAQ Tab */}
+          <TabsContent value="faq">
+            <FAQTab />
           </TabsContent>
 
           {/* Settings Tab */}
           <TabsContent value="settings">
-            <div className="bg-white rounded-xl shadow-sm border p-8 text-center text-gray-500">
-              <Settings className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-              <p>Cấu hình hệ thống sẽ được phát triển thêm</p>
-            </div>
+            <SettingsTab />
           </TabsContent>
         </Tabs>
       </main>

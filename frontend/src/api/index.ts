@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { PhanMuc, BannerPopup, SuKien, CauHinh } from "@/types";
+import type { PhanMuc, BannerPopup, SuKien, CauHinh, MoHinhKinhDoanh, HoiDapHopTac } from "@/types";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -73,6 +73,27 @@ export const cauHinhApi = {
     } catch {
       return null;
     }
+  },
+};
+
+// Business Models API
+export const moHinhKinhDoanhApi = {
+  getAll: async (): Promise<MoHinhKinhDoanh[]> => {
+    const { data } = await api.get("/mo-hinh-kinh-doanh/public");
+    return data.data || data;
+  },
+
+  getById: async (id: string): Promise<MoHinhKinhDoanh> => {
+    const { data } = await api.get(`/mo-hinh-kinh-doanh/public/${id}`);
+    return data.data || data;
+  },
+};
+
+// Partnership FAQs API
+export const hoiDapHopTacApi = {
+  getAll: async (): Promise<HoiDapHopTac[]> => {
+    const { data } = await api.get("/hoi-dap-hop-tac/public");
+    return data.data || data;
   },
 };
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { PhanMuc } from "@/types";
-import { X, ZoomIn } from "lucide-react";
+import { X, ZoomIn, ImageOff } from "lucide-react";
 
 interface MasonryGridSectionProps {
   section: PhanMuc;
@@ -52,6 +52,42 @@ export default function MasonryGridSection({ section }: MasonryGridSectionProps)
     return patterns[index % patterns.length];
   };
 
+  // Masonry Image Component with error handling
+  function MasonryImage({
+    src,
+    alt,
+    onClick
+  }: {
+    src: string;
+    alt: string;
+    onClick: () => void;
+  }) {
+    const [imageError, setImageError] = useState(false);
+
+    return (
+      <div
+        onClick={onClick}
+        className="w-full h-full cursor-pointer group"
+      >
+        {!imageError ? (
+          <img
+            src={src}
+            alt={alt}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
+            <div className="text-center">
+              <ImageOff className="w-8 h-8 text-gray-400 mx-auto mb-1" />
+              <p className="text-gray-500 text-xs">Không có ảnh</p>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <section className="py-16 lg:py-24 bg-white">
       <div className="container-full">
@@ -83,20 +119,16 @@ export default function MasonryGridSection({ section }: MasonryGridSectionProps)
               key={index}
               variants={itemVariants}
               whileHover={{ scale: 1.02, zIndex: 10 }}
-              onClick={() => setSelectedImage(image)}
-              className={`${getMasonryClass(index)} relative group cursor-pointer rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow`}
+              className={`${getMasonryClass(index)} relative group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow bg-gray-100`}
             >
-              <img
+              <MasonryImage
                 src={image}
                 alt={`Hình ảnh ${index + 1}`}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                onError={(e) => {
-                  e.currentTarget.src = "/images/placeholder.jpg";
-                }}
+                onClick={() => setSelectedImage(image)}
               />
 
               {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center pointer-events-none">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.5 }}
                   whileHover={{ opacity: 1, scale: 1 }}

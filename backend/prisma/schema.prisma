@@ -37,14 +37,14 @@ enum TrangThai {
 
 // Page Sections - Dynamic Layout Engine - Phần Mục Trang
 model PhanMuc {
-  id         String      @id @default(uuid())
-  key        String      @unique // hero_main, concept_intro, etc.
-  loaiBoCuc  LoaiBoCuc   // Layout type
-  noiDung    Json        // { title, subtitle, richText }
-  hinhAnh    String[]    // Array of image URLs
-  ctaLink    String?     // Optional external redirect URL
-  thuTu      Int         @default(0)
-  hienThi    Boolean     @default(true)
+  id        String    @id @default(uuid())
+  key       String    @unique // hero_main, concept_intro, etc.
+  loaiBoCuc LoaiBoCuc // Layout type
+  noiDung   Json // { title, subtitle, richText }
+  hinhAnh   String[] // Array of image URLs
+  ctaLink   String? // Optional external redirect URL
+  thuTu     Int       @default(0)
+  hienThi   Boolean   @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -68,8 +68,8 @@ enum LoaiBoCuc {
 // Popup Banners - Banner Popup
 model BannerPopup {
   id           String  @id @default(uuid())
-  hinhAnh      String  // Image URL
-  duongDan     String  // Redirect URL
+  hinhAnh      String // Image URL
+  duongDan     String // Redirect URL
   hoatDong     Boolean @default(true)
   doTreHienThi Int     @default(3000) // Display delay in ms
   thuTuUuTien  Int     @default(0) // Priority order
@@ -84,13 +84,13 @@ model BannerPopup {
 // Campaign Events - Sự Kiện
 model SuKien {
   id          String    @id @default(uuid())
-  tieuDe      String    // Title
+  tieuDe      String // Title
   moTa        String?   @db.Text // Description
-  ngayBatDau  DateTime  // Start date
+  ngayBatDau  DateTime // Start date
   ngayKetThuc DateTime? // End date (optional for ongoing events)
-  anhBia      String    // Cover image
-  boSuuTapAnh String[]  // Gallery images array
-  noiDung     Json?     // Additional rich content
+  anhBia      String // Cover image
+  boSuuTapAnh String[] // Gallery images array
+  noiDung     Json? // Additional rich content
   noiBat      Boolean   @default(false) // Is featured
   hienThi     Boolean   @default(true)
 
@@ -104,13 +104,13 @@ model SuKien {
 
 // Business Modules - Mô Hình Kinh Doanh (B2B)
 model MoHinhKinhDoanh {
-  id              String  @id @default(uuid())
-  ten             String  // Module name
-  moTa            String  @db.Text // Description
-  anhIcon         String? // Icon URL
+  id               String  @id @default(uuid())
+  ten              String // Module name
+  moTa             String  @db.Text // Description
+  anhIcon          String? // Icon URL
   tiemNangLoiNhuan String? // Profit potential description
-  thuTu           Int     @default(0)
-  hienThi         Boolean @default(true)
+  thuTu            Int     @default(0)
+  hienThi          Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -121,10 +121,10 @@ model MoHinhKinhDoanh {
 
 // Partnership FAQs - Hỏi Đáp Hợp Tác (B2B)
 model HoiDapHopTac {
-  id      String @id @default(uuid())
+  id      String  @id @default(uuid())
   cauHoi  String // Question
-  traLoi  String @db.Text // Answer
-  thuTu   Int    @default(0)
+  traLoi  String  @db.Text // Answer
+  thuTu   Int     @default(0)
   hienThi Boolean @default(true)
 
   createdAt DateTime @default(now())
@@ -188,4 +188,20 @@ model QuanTriVien {
 enum VaiTro {
   SUPER_ADMIN
   ADMIN
+}
+
+// Click Tracking - Theo dõi lượt click CTA
+model ClickTracking {
+  id         String  @id @default(uuid())
+  buttonName String  @map("button_name") // e.g., "register_partnership", "contact_cta"
+  pageUrl    String? @map("page_url")
+  userAgent  String? @map("user_agent")
+  ipAddress  String? @map("ip_address")
+  referrer   String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([buttonName])
+  @@index([createdAt])
+  @@map("click_tracking")
 }

@@ -12,6 +12,8 @@ async function main() {
   await prisma.bannerPopup.deleteMany();
   await prisma.suKien.deleteMany();
   await prisma.cauHinh.deleteMany();
+  await prisma.moHinhKinhDoanh.deleteMany();
+  await prisma.hoiDapHopTac.deleteMany();
 
   // 1. Global Settings - Cấu hình hệ thống B2B
   console.log('Tạo cấu hình hệ thống B2B...');
@@ -138,7 +140,109 @@ async function main() {
     await prisma.suKien.create({ data: event });
   }
 
-  // 4. Page Sections - B2B Focused Content
+  // 4. Business Models - Mô hình kinh doanh
+  console.log('Tạo mô hình kinh doanh B2B...');
+  const businessModels = [
+    {
+      ten: 'Đa Dạng Nguồn Thu',
+      moTa: 'Tối ưu lợi nhuận từ thuốc GPP và thực phẩm sạch. Biên lợi nhuận gộp 25-40% tùy nhóm hàng. Không phụ thuộc một nguồn doanh thu duy nhất.',
+      anhIcon: '/images/icons/revenue.svg',
+      tiemNangLoiNhuan: '25-40%',
+      thuTu: 0,
+      hienThi: true,
+    },
+    {
+      ten: 'Vận Hành Tự Động',
+      moTa: 'Hệ thống ERP quản lý tồn kho, App bán hàng, Hóa đơn điện tử tích hợp sẵn. Tiết kiệm chi phí nhân sự và thời gian vận hành.',
+      anhIcon: '/images/icons/automation.svg',
+      tiemNangLoiNhuan: 'Tiết kiệm 30%',
+      thuTu: 1,
+      hienThi: true,
+    },
+    {
+      ten: 'Chuỗi Cung Ứng Chủ Động',
+      moTa: 'Kết nối trực tiếp nhà máy & vùng nguyên liệu. Giá gốc, không qua trung gian, giao hàng đúng hạn. Hỗ trợ đổi trả hàng chậm luân chuyển.',
+      anhIcon: '/images/icons/supply-chain.svg',
+      tiemNangLoiNhuan: 'Giá tốt nhất',
+      thuTu: 2,
+      hienThi: true,
+    },
+    {
+      ten: 'Thương Hiệu Uy Tín',
+      moTa: 'Hệ thống nhận diện thương hiệu đồng bộ, chuyên nghiệp. Được khách hàng tin tưởng với hơn 10 năm hoạt động trong ngành.',
+      anhIcon: '/images/icons/brand.svg',
+      tiemNangLoiNhuan: 'Uy tín 10+ năm',
+      thuTu: 3,
+      hienThi: true,
+    },
+    {
+      ten: 'Hỗ Trợ Vốn',
+      moTa: 'Tài trợ vốn nhập hàng ban đầu, chi phí vận hành tháng đầu tiên. Giảm áp lực tài chính cho đối tác mới.',
+      anhIcon: '/images/icons/funding.svg',
+      tiemNangLoiNhuan: 'Hỗ trợ 50%',
+      thuTu: 4,
+      hienThi: true,
+    },
+    {
+      ten: 'Setup Trọn Gói',
+      moTa: 'Thiết kế, thi công cửa hàng từ A-Z. Bàn giao trong 30-45 ngày, sẵn sàng kinh doanh ngay khi khai trương.',
+      anhIcon: '/images/icons/setup.svg',
+      tiemNangLoiNhuan: '30-45 ngày',
+      thuTu: 5,
+      hienThi: true,
+    },
+  ];
+
+  for (const model of businessModels) {
+    await prisma.moHinhKinhDoanh.create({ data: model });
+  }
+
+  // 5. Partnership FAQs - Hỏi đáp hợp tác
+  console.log('Tạo hỏi đáp hợp tác B2B...');
+  const partnershipFaqs = [
+    {
+      cauHoi: 'Tôi cần bao nhiêu vốn để bắt đầu?',
+      traLoi: 'Vốn đầu tư linh hoạt từ 500 triệu - 2 tỷ đồng tùy theo quy mô mặt bằng (40-100m²). Liên hệ để nhận bảng dự toán chi tiết phù hợp với điều kiện của bạn.',
+      thuTu: 0,
+      hienThi: true,
+    },
+    {
+      cauHoi: 'ADK hỗ trợ nguồn hàng như thế nào?',
+      traLoi: 'Cung cấp danh mục sản phẩm chuẩn hóa gồm Thuốc, TPCN, Thực phẩm sạch và OCOP. Giá tốt nhất từ kho tổng, giao hàng định kỳ, hỗ trợ đổi trả hàng chậm luân chuyển.',
+      thuTu: 1,
+      hienThi: true,
+    },
+    {
+      cauHoi: 'Tôi có được đào tạo nhân sự không?',
+      traLoi: 'Có. ADK đào tạo toàn diện cho dược sĩ và nhân viên về: Kỹ năng bán lẻ, Tư vấn dinh dưỡng, Sử dụng hệ thống ERP, và Quy trình vận hành chuẩn GPP.',
+      thuTu: 2,
+      hienThi: true,
+    },
+    {
+      cauHoi: 'Thời gian hoàn vốn dự kiến là bao lâu?',
+      traLoi: 'Với vị trí tốt và vận hành đúng quy trình, thời gian hoàn vốn trung bình từ 18-24 tháng. Doanh thu trung bình từ 300-500 triệu/tháng tùy quy mô.',
+      thuTu: 3,
+      hienThi: true,
+    },
+    {
+      cauHoi: 'ADK hỗ trợ marketing như thế nào?',
+      traLoi: 'Hỗ trợ marketing đa kênh: Fanpage chung, SEO địa phương, Chương trình khuyến mãi toàn hệ thống, Tài liệu truyền thông sẵn có. Chi phí marketing được chia sẻ trong hệ thống.',
+      thuTu: 4,
+      hienThi: true,
+    },
+    {
+      cauHoi: 'Quy trình hợp tác như thế nào?',
+      traLoi: 'Quy trình 5 bước: (1) Đăng ký tư vấn → (2) Khảo sát mặt bằng → (3) Ký hợp đồng → (4) Setup cửa hàng (30-45 ngày) → (5) Khai trương và vận hành.',
+      thuTu: 5,
+      hienThi: true,
+    },
+  ];
+
+  for (const faq of partnershipFaqs) {
+    await prisma.hoiDapHopTac.create({ data: faq });
+  }
+
+  // 6. Page Sections - B2B Focused Content
   console.log('Tạo nội dung trang B2B...');
   const sections = [
     {
@@ -377,7 +481,65 @@ async function main() {
     await prisma.noiDung.create({ data: feature });
   }
 
-  console.log('=== Seed B2B hoàn tất! ===');
+  // 7. Admin Users - Quản trị viên
+  console.log('Tạo tài khoản quản trị viên...');
+  
+  // Helper function to hash password (same as AuthService)
+  function hashPassword(password: string): string {
+    const { randomBytes, scryptSync } = require('crypto');
+    const salt = randomBytes(16).toString('hex');
+    const hash = scryptSync(password, salt, 64).toString('hex');
+    return `${salt}:${hash}`;
+  }
+
+  // Clear existing admins first
+  await prisma.quanTriVien.deleteMany();
+
+  const adminUsers = [
+    {
+      email: 'admin@adkpharma.vn',
+      matKhau: hashPassword('Admin@2025'), // Default password: Admin@2025
+      hoTen: 'Super Admin ADK',
+      vaiTro: 'SUPER_ADMIN' as const,
+      hoatDong: true,
+    },
+    {
+      email: 'manager@adkpharma.vn',
+      matKhau: hashPassword('Manager@2025'), // Default password: Manager@2025
+      hoTen: 'Quản Lý Hệ Thống',
+      vaiTro: 'ADMIN' as const,
+      hoatDong: true,
+    },
+    {
+      email: 'support@adkpharma.vn',
+      matKhau: hashPassword('Support@2025'), // Default password: Support@2025
+      hoTen: 'Nhân Viên Hỗ Trợ',
+      vaiTro: 'ADMIN' as const,
+      hoatDong: true,
+    },
+  ];
+
+  for (const admin of adminUsers) {
+    await prisma.quanTriVien.create({ data: admin });
+    console.log(`  ✓ Tạo admin: ${admin.email}`);
+  }
+
+  console.log('\n=== Seed B2B hoàn tất! ===');
+  console.log('\n📋 Thông tin đăng nhập:');
+  console.log('┌─────────────────────────────────────────────────────┐');
+  console.log('│ SUPER ADMIN                                         │');
+  console.log('│ Email: admin@adkpharma.vn                          │');
+  console.log('│ Mật khẩu: Admin@2025                               │');
+  console.log('├─────────────────────────────────────────────────────┤');
+  console.log('│ ADMIN                                               │');
+  console.log('│ Email: manager@adkpharma.vn                        │');
+  console.log('│ Mật khẩu: Manager@2025                             │');
+  console.log('├─────────────────────────────────────────────────────┤');
+  console.log('│ SUPPORT                                             │');
+  console.log('│ Email: support@adkpharma.vn                        │');
+  console.log('│ Mật khẩu: Support@2025                             │');
+  console.log('└─────────────────────────────────────────────────────┘');
+  console.log('\n⚠️  Vui lòng đổi mật khẩu sau khi đăng nhập lần đầu!\n');
 }
 
 main()

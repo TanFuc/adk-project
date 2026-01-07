@@ -5,13 +5,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import type { HoiDapHopTac } from "@/types";
 
-// B2B Partnership FAQs - NOT B2C customer questions
-const partnershipFaqs = [
+// B2B Partnership FAQs - Fallback when no dynamic data
+const defaultFaqs = [
   {
     question: "Tôi cần bao nhiêu vốn để bắt đầu?",
     answer:
-      "Vốn đầu tư linh hoạt từ 500 triệu - 2 tỷ đồng tùy theo quy mô mặt bằng (40-100m²). Liên hệ để nhận bảng dự toán chi tiết phù hợp với điều kiện của bạn.",
+      "Vốn đầu tư linh hoạt từ 500 triệu - 2 tỷ đồng tùy theo quy mô mặt bằng (40-100m2). Liên hệ để nhận bảng dự toán chi tiết phù hợp với điều kiện của bạn.",
   },
   {
     question: "ADK hỗ trợ nguồn hàng như thế nào?",
@@ -36,11 +37,19 @@ const partnershipFaqs = [
   {
     question: "Quy trình hợp tác như thế nào?",
     answer:
-      "Quy trình 5 bước: (1) Đăng ký tư vấn → (2) Khảo sát mặt bằng → (3) Ký hợp đồng → (4) Setup cửa hàng (30-45 ngày) → (5) Khai trương và vận hành.",
+      "Quy trình 5 bước: (1) Đăng ký tư vấn - (2) Khảo sát mặt bằng - (3) Ký hợp đồng - (4) Setup cửa hàng (30-45 ngày) - (5) Khai trương và vận hành.",
   },
 ];
 
-export default function FAQSection() {
+interface FAQSectionProps {
+  faqs?: HoiDapHopTac[];
+}
+
+export default function FAQSection({ faqs }: FAQSectionProps) {
+  // Use dynamic data if available, otherwise use defaults
+  const displayFaqs = faqs && faqs.length > 0
+    ? faqs.map((faq) => ({ question: faq.cauHoi, answer: faq.traLoi }))
+    : defaultFaqs;
   return (
     <section className="py-16 lg:py-24 bg-gray-50">
       <div className="container-full">
@@ -72,7 +81,7 @@ export default function FAQSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <Accordion type="single" collapsible className="w-full">
-              {partnershipFaqs.map((faq, index) => (
+              {displayFaqs.map((faq, index) => (
                 <AccordionItem
                   key={index}
                   value={`item-${index}`}

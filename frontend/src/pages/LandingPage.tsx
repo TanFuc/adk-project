@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Pill, Leaf, TrendingUp, CheckCircle } from "lucide-react";
-import { phanMucApi } from "@/api";
-import type { PhanMuc } from "@/types";
+import { phanMucApi, hoiDapHopTacApi, moHinhKinhDoanhApi } from "@/api";
+import type { PhanMuc, HoiDapHopTac, MoHinhKinhDoanh } from "@/types";
 import Navbar from "@/components/landing/Navbar";
 import { DynamicSectionRenderer } from "@/components/sections";
 import FeaturesSection from "@/components/landing/FeaturesSection";
@@ -14,6 +14,18 @@ export default function LandingPage() {
   const { data: sections = [], isLoading } = useQuery<PhanMuc[]>({
     queryKey: ["sections", "all"],
     queryFn: phanMucApi.getAll,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: faqs = [] } = useQuery<HoiDapHopTac[]>({
+    queryKey: ["faqs"],
+    queryFn: hoiDapHopTacApi.getAll,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: businessModels = [] } = useQuery<MoHinhKinhDoanh[]>({
+    queryKey: ["businessModels"],
+    queryFn: moHinhKinhDoanhApi.getAll,
     staleTime: 5 * 60 * 1000,
   });
 
@@ -55,7 +67,7 @@ export default function LandingPage() {
           {gallerySection.length > 0 && <DynamicSectionRenderer sections={gallerySection} />}
 
           {/* Partnership FAQ */}
-          <FAQSection />
+          <FAQSection faqs={faqs} />
 
           {/* CTA Banner */}
           {ctaSection.length > 0 && <DynamicSectionRenderer sections={ctaSection} />}
@@ -67,7 +79,7 @@ export default function LandingPage() {
           <MarketInsightSection />
           <ADKModelSection />
           <FeaturesSection />
-          <FAQSection />
+          <FAQSection faqs={faqs} />
         </>
       )}
 
