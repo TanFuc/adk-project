@@ -62,7 +62,7 @@ async function main() {
   console.log('Tạo banner popup B2B...');
   await prisma.bannerPopup.create({
     data: {
-      hinhAnh: '/images/popup/partner-opportunity.jpg',
+      hinhAnh: 'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=1200&q=80',
       duongDan: 'https://bizmall.vn',
       hoatDong: true,
       doTreHienThi: 5000,
@@ -78,10 +78,10 @@ async function main() {
       moTa: 'Cơ hội vàng trở thành đối tác chiến lược của chuỗi Siêu Thị Thuốc ADK. Tìm hiểu mô hình kinh doanh, ROI dự kiến và quy trình hợp tác.',
       ngayBatDau: new Date('2025-02-15T08:00:00Z'),
       ngayKetThuc: new Date('2025-02-15T17:00:00Z'),
-      anhBia: '/images/events/investment-seminar.jpg',
+      anhBia: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&q=80',
       boSuuTapAnh: [
-        '/images/events/seminar-1.jpg',
-        '/images/events/seminar-2.jpg',
+        'https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=800&q=80',
+        'https://images.unsplash.com/photo-1560523159-4a9692d222ef?w=800&q=80',
       ],
       noiDung: {
         highlights: [
@@ -101,7 +101,7 @@ async function main() {
       moTa: 'Sự kiện chào mừng các đối tác mới gia nhập hệ thống ADK. Chia sẻ kinh nghiệm từ các nhà thuốc đã thành công.',
       ngayBatDau: new Date('2025-03-01T09:00:00Z'),
       ngayKetThuc: new Date('2025-03-01T12:00:00Z'),
-      anhBia: '/images/events/partner-signing.jpg',
+      anhBia: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1200&q=80',
       boSuuTapAnh: [],
       noiDung: {
         highlights: [
@@ -119,7 +119,7 @@ async function main() {
       moTa: 'Đào tạo chuyên sâu về quy trình vận hành, quản lý tồn kho, và ứng dụng công nghệ trong nhà thuốc.',
       ngayBatDau: new Date('2025-03-15T08:00:00Z'),
       ngayKetThuc: new Date('2025-03-15T17:00:00Z'),
-      anhBia: '/images/events/workshop-operation.jpg',
+      anhBia: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80',
       boSuuTapAnh: [],
       noiDung: {
         topics: [
@@ -154,7 +154,7 @@ async function main() {
           { value: '2025', label: 'Xu hướng mới' },
         ],
       },
-      hinhAnh: ['/images/hero/b2b-hero.jpg'],
+      hinhAnh: ['https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1920&q=80'],
       ctaLink: 'https://bizmall.vn',
       thuTu: 0,
       hienThi: true,
@@ -192,7 +192,7 @@ async function main() {
         },
         bottomText: 'Biến nhà thuốc truyền thống thành điểm đến Healthy Living Hub.',
       },
-      hinhAnh: ['/images/model/pharmacy-side.jpg', '/images/model/supermarket-side.jpg'],
+      hinhAnh: ['https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=800&q=80', 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80'],
       thuTu: 2,
       hienThi: true,
     },
@@ -245,12 +245,12 @@ async function main() {
         subtitle: 'Thiết kế đồng bộ, chuyên nghiệp',
       },
       hinhAnh: [
-        '/images/store/exterior-1.jpg',
-        '/images/store/interior-1.jpg',
-        '/images/store/pharmacy-counter.jpg',
-        '/images/store/organic-section.jpg',
-        '/images/store/checkout-area.jpg',
-        '/images/store/signage.jpg',
+        'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80',
+        'https://images.unsplash.com/photo-1576602976047-174e57a47881?w=800&q=80',
+        'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=800&q=80',
+        'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&q=80',
+        'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80',
+        'https://images.unsplash.com/photo-1534312527009-56c7016453e6?w=800&q=80',
       ],
       thuTu: 4,
       hienThi: true,
@@ -264,7 +264,7 @@ async function main() {
         ctaText: 'Đăng Ký Hợp Tác Ngay',
         secondaryText: 'Hotline tư vấn: 1800-1234',
       },
-      hinhAnh: ['/images/cta/partnership-bg.jpg'],
+      hinhAnh: ['https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&q=80'],
       ctaLink: 'https://bizmall.vn',
       thuTu: 5,
       hienThi: true,
