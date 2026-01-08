@@ -23,6 +23,13 @@ import { ClickTrackingModule } from './click-tracking/click-tracking.module';
       envFilePath: '.env',
     }),
 
+    // In-memory Cache (Redis disabled)
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 300000, // 5 minutes
+      max: 100, // max items
+    }),
+
     // Rate Limiting
     ThrottlerModule.forRoot([
       {
@@ -33,7 +40,7 @@ import { ClickTrackingModule } from './click-tracking/click-tracking.module';
 
     // Database & Cache
     PrismaModule,
-    RedisModule,
+    // RedisModule, // Temporarily disabled - using in-memory cache above
 
     // Feature Modules
     AuthModule,

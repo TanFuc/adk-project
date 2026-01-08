@@ -11,17 +11,35 @@ import { redisStore } from "cache-manager-redis-yet";
       useFactory: async (configService: ConfigService) => {
         const host = configService.get<string>("REDIS_HOST") || "localhost";
         const port = configService.get<number>("REDIS_PORT") || 6379;
+        const password = configService.get<string>("REDIS_PASSWORD");
+        const disableRedis = configService.get<string>("DISABLE_REDIS") === "true";
+
+        // If Redis is explicitly disabled, use in-memory cache
+        if (disableRedis) {
+          console.log(`ℹ️  Redis disabled by configuration. Using in-memory cache.`);
+          return {
+            ttl: 300000, // 5 minutes default TTL
+            max: 100, // Maximum number of items in cache
+          };
+        }
 
         try {
           // Try to connect to Redis
-          const store = await redisStore({
+          const storeConfig: any = {
             socket: {
               host,
               port,
               connectTimeout: 5000, // 5 second timeout
             },
             ttl: 300000, // 5 minutes default TTL
-          });
+          };
+
+          // Add password if provided
+          if (password) {
+            storeConfig.password = password;
+          }
+
+          const store = await redisStore(storeConfig);
 
           console.log(`✅ Redis connected successfully at ${host}:${port}`);
           return { store };
@@ -31,7 +49,10 @@ import { redisStore } from "cache-manager-redis-yet";
             `⚠️  Redis connection failed at ${host}:${port}. Using in-memory cache as fallback.`,
           );
           console.warn(
-            `   To use Redis, please install and start it, or use Docker: docker run -d -p 6379:6379 redis:7-alpine`,
+            `   Error: ${error.message}`,
+          );
+          console.warn(
+            `   To disable this warning, set DISABLE_REDIS=true in .env`,
           );
 
           // Return in-memory cache configuration
