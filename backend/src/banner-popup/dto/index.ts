@@ -7,92 +7,92 @@ import {
   IsUrl,
   Min,
   Max,
-} from "class-validator";
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+} from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateBannerPopupDto {
   @ApiProperty({
-    description: "URL hình ảnh banner",
-    example: "/images/popup-event.jpg",
+    description: 'Banner image URL',
+    example: '/images/popup-event.jpg',
   })
-  @IsString({ message: "Hình ảnh phải là chuỗi ký tự" })
-  @IsNotEmpty({ message: "Hình ảnh không được để trống" })
-  hinhAnh: string;
+  @IsString({ message: 'Image URL must be a string' })
+  @IsNotEmpty({ message: 'Image URL is required' })
+  imageUrl: string;
 
   @ApiProperty({
-    description: "URL chuyển hướng khi click",
-    example: "https://bizmall.vn",
+    description: 'Redirect URL on click',
+    example: 'https://bizmall.vn',
   })
-  @IsUrl({}, { message: "Đường dẫn phải là URL hợp lệ" })
-  @IsNotEmpty({ message: "Đường dẫn không được để trống" })
-  duongDan: string;
+  @IsUrl({}, { message: 'Redirect URL must be a valid URL' })
+  @IsNotEmpty({ message: 'Redirect URL is required' })
+  redirectUrl: string;
 
   @ApiPropertyOptional({
-    description: "Trạng thái hoạt động",
+    description: 'Active status',
     example: true,
   })
   @IsOptional()
-  @IsBoolean({ message: "Trạng thái hoạt động phải là true/false" })
-  hoatDong?: boolean;
+  @IsBoolean({ message: 'Active status must be true/false' })
+  isActive?: boolean;
 
   @ApiPropertyOptional({
-    description: "Độ trễ hiển thị (ms)",
+    description: 'Display delay in milliseconds',
     example: 3000,
     minimum: 0,
     maximum: 30000,
   })
   @IsOptional()
-  @IsInt({ message: "Độ trễ phải là số nguyên" })
-  @Min(0, { message: "Độ trễ không được âm" })
-  @Max(30000, { message: "Độ trễ không được quá 30 giây" })
-  doTreHienThi?: number;
+  @IsInt({ message: 'Display delay must be an integer' })
+  @Min(0, { message: 'Display delay cannot be negative' })
+  @Max(30000, { message: 'Display delay cannot exceed 30 seconds' })
+  displayDelay?: number;
 
   @ApiPropertyOptional({
-    description: "Thứ tự ưu tiên (số nhỏ = ưu tiên cao)",
+    description: 'Priority order (lower = higher priority)',
     example: 0,
   })
   @IsOptional()
-  @IsInt({ message: "Thứ tự ưu tiên phải là số nguyên" })
-  @Min(0, { message: "Thứ tự ưu tiên không được âm" })
-  thuTuUuTien?: number;
+  @IsInt({ message: 'Priority must be an integer' })
+  @Min(0, { message: 'Priority cannot be negative' })
+  priority?: number;
 }
 
 export class UpdateBannerPopupDto {
   @ApiPropertyOptional({
-    description: "URL hình ảnh banner",
+    description: 'Banner image URL',
   })
   @IsOptional()
-  @IsString({ message: "Hình ảnh phải là chuỗi ký tự" })
-  hinhAnh?: string;
+  @IsString({ message: 'Image URL must be a string' })
+  imageUrl?: string;
 
   @ApiPropertyOptional({
-    description: "URL chuyển hướng khi click",
+    description: 'Redirect URL on click',
   })
   @IsOptional()
-  @IsUrl({}, { message: "Đường dẫn phải là URL hợp lệ" })
-  duongDan?: string;
+  @IsUrl({}, { message: 'Redirect URL must be a valid URL' })
+  redirectUrl?: string;
 
   @ApiPropertyOptional({
-    description: "Trạng thái hoạt động",
+    description: 'Active status',
   })
   @IsOptional()
-  @IsBoolean({ message: "Trạng thái hoạt động phải là true/false" })
-  hoatDong?: boolean;
+  @IsBoolean({ message: 'Active status must be true/false' })
+  isActive?: boolean;
 
   @ApiPropertyOptional({
-    description: "Độ trễ hiển thị (ms)",
+    description: 'Display delay in milliseconds',
   })
   @IsOptional()
-  @IsInt({ message: "Độ trễ phải là số nguyên" })
-  @Min(0, { message: "Độ trễ không được âm" })
-  @Max(30000, { message: "Độ trễ không được quá 30 giây" })
-  doTreHienThi?: number;
+  @IsInt({ message: 'Display delay must be an integer' })
+  @Min(0, { message: 'Display delay cannot be negative' })
+  @Max(30000, { message: 'Display delay cannot exceed 30 seconds' })
+  displayDelay?: number;
 
   @ApiPropertyOptional({
-    description: "Thứ tự ưu tiên",
+    description: 'Priority order',
   })
   @IsOptional()
-  @IsInt({ message: "Thứ tự ưu tiên phải là số nguyên" })
-  @Min(0, { message: "Thứ tự ưu tiên không được âm" })
-  thuTuUuTien?: number;
+  @IsInt({ message: 'Priority must be an integer' })
+  @Min(0, { message: 'Priority cannot be negative' })
+  priority?: number;
 }

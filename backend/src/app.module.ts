@@ -1,26 +1,26 @@
-import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
-import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
-import { APP_GUARD } from "@nestjs/core";
-import { PrismaModule } from "./prisma/prisma.module";
-import { RedisModule } from "./redis/redis.module";
-import { DangKyModule } from "./dang-ky/dang-ky.module";
-import { NoiDungModule } from "./noi-dung/noi-dung.module";
-import { CauHinhModule } from "./cau-hinh/cau-hinh.module";
-import { AuthModule } from "./auth/auth.module";
-import { PhanMucModule } from "./phan-muc/phan-muc.module";
-import { BannerPopupModule } from "./banner-popup/banner-popup.module";
-import { SuKienModule } from "./su-kien/su-kien.module";
-import { MoHinhKinhDoanhModule } from "./mo-hinh-kinh-doanh/mo-hinh-kinh-doanh.module";
-import { HoiDapHopTacModule } from "./hoi-dap-hop-tac/hoi-dap-hop-tac.module";
-import { ClickTrackingModule } from "./click-tracking/click-tracking.module";
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { PrismaModule } from './prisma/prisma.module';
+import { RedisModule } from './redis/redis.module';
+import { AuthModule } from './auth/auth.module';
+import { RegistrationModule } from './registration/registration.module';
+import { ContentModule } from './content/content.module';
+import { ConfigurationModule } from './configuration/configuration.module';
+import { SectionModule } from './section/section.module';
+import { BannerPopupModule } from './banner-popup/banner-popup.module';
+import { EventModule } from './event/event.module';
+import { BusinessModelModule } from './business-model/business-model.module';
+import { PartnershipFaqModule } from './partnership-faq/partnership-faq.module';
+import { ClickTrackingModule } from './click-tracking/click-tracking.module';
 
 @Module({
   imports: [
     // Environment Configuration
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ".env",
+      envFilePath: '.env',
     }),
 
     // Rate Limiting
@@ -36,15 +36,15 @@ import { ClickTrackingModule } from "./click-tracking/click-tracking.module";
     RedisModule,
 
     // Feature Modules
-    DangKyModule,
-    NoiDungModule,
-    CauHinhModule,
     AuthModule,
-    PhanMucModule,
+    RegistrationModule,
+    ContentModule,
+    ConfigurationModule,
+    SectionModule,
     BannerPopupModule,
-    SuKienModule,
-    MoHinhKinhDoanhModule,
-    HoiDapHopTacModule,
+    EventModule,
+    BusinessModelModule,
+    PartnershipFaqModule,
     ClickTrackingModule,
   ],
   providers: [

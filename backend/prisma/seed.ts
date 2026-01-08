@@ -1,45 +1,45 @@
-import { PrismaClient, LoaiBoCuc, LoaiNoiDung } from '@prisma/client';
+import { PrismaClient, LayoutType, ContentType } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('=== B2B ADK Project Seed Data ===');
-  console.log('Xoá dữ liệu cũ B2C...');
+  console.log('Clearing existing data...');
 
   // Clear all existing data
-  await prisma.noiDung.deleteMany();
-  await prisma.phanMuc.deleteMany();
+  await prisma.content.deleteMany();
+  await prisma.section.deleteMany();
   await prisma.bannerPopup.deleteMany();
-  await prisma.suKien.deleteMany();
-  await prisma.cauHinh.deleteMany();
-  await prisma.moHinhKinhDoanh.deleteMany();
-  await prisma.hoiDapHopTac.deleteMany();
+  await prisma.event.deleteMany();
+  await prisma.configuration.deleteMany();
+  await prisma.businessModel.deleteMany();
+  await prisma.partnershipFaq.deleteMany();
 
-  // 1. Global Settings - Cấu hình hệ thống B2B
-  console.log('Tạo cấu hình hệ thống B2B...');
+  // 1. Global Settings - System Configuration B2B
+  console.log('Creating B2B system configuration...');
   const settings = [
     {
       key: 'primary_register_url',
       value: { url: 'https://bizmall.vn' },
-      moTa: 'URL đăng ký hợp tác (redirect CTA)',
+      description: 'Partnership registration URL (CTA redirect)',
     },
     {
       key: 'site_name',
       value: {
-        name: 'Dự Án Phát Triển Chuỗi Nhà Thuốc ADK',
+        name: 'ADK Pharmacy Chain Development Project',
         shortName: 'ADK Franchise',
-        tagline: 'Mô hình Siêu thị Thuốc & Thực phẩm sạch - Xu hướng 2025'
+        tagline: 'Pharmacy & Health Food Supermarket Model - 2025 Trend'
       },
-      moTa: 'Thông tin dự án',
+      description: 'Project information',
     },
     {
       key: 'contact_info',
       value: {
         hotline: '1800-1234',
         email: 'partnership@adkpharma.vn',
-        address: 'Trụ sở: Số 123, Đường ABC, Quận XYZ, TP.HCM',
+        address: 'HQ: 123 ABC Street, XYZ District, HCMC',
       },
-      moTa: 'Thông tin liên hệ B2B',
+      description: 'B2B contact information',
     },
     {
       key: 'social_links',
@@ -48,307 +48,307 @@ async function main() {
         zalo: 'https://zalo.me/adkpharma',
         youtube: 'https://youtube.com/@adkpharma',
       },
-      moTa: 'Liên kết mạng xã hội',
+      description: 'Social media links',
     },
   ];
 
   for (const setting of settings) {
-    await prisma.cauHinh.upsert({
+    await prisma.configuration.upsert({
       where: { key: setting.key },
-      update: { value: setting.value, moTa: setting.moTa },
+      update: { value: setting.value, description: setting.description },
       create: setting,
     });
   }
 
   // 2. Popup Banner - B2B Lead Capture
-  console.log('Tạo banner popup B2B...');
+  console.log('Creating B2B popup banner...');
   await prisma.bannerPopup.create({
     data: {
-      hinhAnh: '/images/popup/partner-opportunity.jpg',
-      duongDan: 'https://bizmall.vn',
-      hoatDong: true,
-      doTreHienThi: 5000,
-      thuTuUuTien: 0,
+      imageUrl: '/images/popup/partner-opportunity.jpg',
+      redirectUrl: 'https://bizmall.vn',
+      isActive: true,
+      displayDelay: 5000,
+      priority: 0,
     },
   });
 
-  // 3. Investment Events - Sự kiện đầu tư
-  console.log('Tạo sự kiện đầu tư B2B...');
+  // 3. Investment Events
+  console.log('Creating B2B investment events...');
   const events = [
     {
-      tieuDe: 'Hội Thảo Đầu Tư Nhượng Quyền ADK 2025',
-      moTa: 'Cơ hội vàng trở thành đối tác chiến lược của chuỗi Siêu Thị Thuốc ADK. Tìm hiểu mô hình kinh doanh, ROI dự kiến và quy trình hợp tác.',
-      ngayBatDau: new Date('2025-02-15T08:00:00Z'),
-      ngayKetThuc: new Date('2025-02-15T17:00:00Z'),
-      anhBia: '/images/events/investment-seminar.jpg',
-      boSuuTapAnh: [
+      title: 'ADK Franchise Investment Seminar 2025',
+      description: 'Golden opportunity to become a strategic partner of ADK Pharmacy Supermarket chain. Learn about business model, expected ROI and partnership process.',
+      startDate: new Date('2025-02-15T08:00:00Z'),
+      endDate: new Date('2025-02-15T17:00:00Z'),
+      coverImage: '/images/events/investment-seminar.jpg',
+      gallery: [
         '/images/events/seminar-1.jpg',
         '/images/events/seminar-2.jpg',
       ],
-      noiDung: {
+      content: {
         highlights: [
-          'Phân tích thị trường ngành dược phẩm 2025',
-          'Mô hình lợi nhuận từ Thuốc + Thực phẩm sạch',
-          'Gặp gỡ đội ngũ lãnh đạo ADK',
-          'Ký kết hợp tác tại chỗ - Ưu đãi đặc biệt',
+          'Pharmaceutical industry market analysis 2025',
+          'Profit model from Pharmacy + Health Food',
+          'Meet ADK leadership team',
+          'On-site partnership signing - Special offers',
         ],
-        location: 'Khách sạn Rex - Quận 1, TP.HCM',
-        targetAudience: 'Nhà đầu tư, Dược sĩ, Chủ nhà thuốc',
+        location: 'Rex Hotel - District 1, HCMC',
+        targetAudience: 'Investors, Pharmacists, Pharmacy Owners',
       },
-      noiBat: true,
-      hienThi: true,
+      isFeatured: true,
+      isVisible: true,
     },
     {
-      tieuDe: 'Lễ Ký Kết Đối Tác Chiến Lược Quý I/2025',
-      moTa: 'Sự kiện chào mừng các đối tác mới gia nhập hệ thống ADK. Chia sẻ kinh nghiệm từ các nhà thuốc đã thành công.',
-      ngayBatDau: new Date('2025-03-01T09:00:00Z'),
-      ngayKetThuc: new Date('2025-03-01T12:00:00Z'),
-      anhBia: '/images/events/partner-signing.jpg',
-      boSuuTapAnh: [],
-      noiDung: {
+      title: 'Strategic Partner Signing Ceremony Q1/2025',
+      description: 'Event welcoming new partners joining the ADK system. Experience sharing from successful pharmacies.',
+      startDate: new Date('2025-03-01T09:00:00Z'),
+      endDate: new Date('2025-03-01T12:00:00Z'),
+      coverImage: '/images/events/partner-signing.jpg',
+      gallery: [],
+      content: {
         highlights: [
-          'Chia sẻ từ đối tác thành công',
-          'Trao bảng nhận diện thương hiệu',
-          'Hỗ trợ setup cửa hàng từ A-Z',
+          'Sharing from successful partners',
+          'Brand identity board handover',
+          'A-Z store setup support',
         ],
-        location: 'Trụ sở ADK - TP.HCM',
+        location: 'ADK Headquarters - HCMC',
       },
-      noiBat: true,
-      hienThi: true,
+      isFeatured: true,
+      isVisible: true,
     },
     {
-      tieuDe: 'Workshop: Vận Hành Nhà Thuốc Hiện Đại',
-      moTa: 'Đào tạo chuyên sâu về quy trình vận hành, quản lý tồn kho, và ứng dụng công nghệ trong nhà thuốc.',
-      ngayBatDau: new Date('2025-03-15T08:00:00Z'),
-      ngayKetThuc: new Date('2025-03-15T17:00:00Z'),
-      anhBia: '/images/events/workshop-operation.jpg',
-      boSuuTapAnh: [],
-      noiDung: {
+      title: 'Workshop: Modern Pharmacy Operations',
+      description: 'In-depth training on operational processes, inventory management, and technology application in pharmacies.',
+      startDate: new Date('2025-03-15T08:00:00Z'),
+      endDate: new Date('2025-03-15T17:00:00Z'),
+      coverImage: '/images/events/workshop-operation.jpg',
+      gallery: [],
+      content: {
         topics: [
-          'Hệ thống ERP quản lý nhà thuốc',
-          'Tối ưu hóa tồn kho và nguồn hàng',
-          'Marketing đa kênh cho nhà thuốc',
-          'Kỹ năng tư vấn bán hàng chuyên nghiệp',
+          'ERP system for pharmacy management',
+          'Inventory and supply optimization',
+          'Omnichannel marketing for pharmacies',
+          'Professional sales consulting skills',
         ],
       },
-      noiBat: false,
-      hienThi: true,
+      isFeatured: false,
+      isVisible: true,
     },
   ];
 
   for (const event of events) {
-    await prisma.suKien.create({ data: event });
+    await prisma.event.create({ data: event });
   }
 
-  // 4. Business Models - Mô hình kinh doanh
-  console.log('Tạo mô hình kinh doanh B2B...');
+  // 4. Business Models
+  console.log('Creating B2B business models...');
   const businessModels = [
     {
-      ten: 'Đa Dạng Nguồn Thu',
-      moTa: 'Tối ưu lợi nhuận từ thuốc GPP và thực phẩm sạch. Biên lợi nhuận gộp 25-40% tùy nhóm hàng. Không phụ thuộc một nguồn doanh thu duy nhất.',
-      anhIcon: '/images/icons/revenue.svg',
-      tiemNangLoiNhuan: '25-40%',
-      thuTu: 0,
-      hienThi: true,
+      name: 'Diverse Revenue Streams',
+      description: 'Optimize profits from GPP pharmacy and health food. Gross profit margin 25-40% depending on product category. Not dependent on a single revenue source.',
+      iconUrl: '/images/icons/revenue.svg',
+      profitPotential: '25-40%',
+      sortOrder: 0,
+      isVisible: true,
     },
     {
-      ten: 'Vận Hành Tự Động',
-      moTa: 'Hệ thống ERP quản lý tồn kho, App bán hàng, Hóa đơn điện tử tích hợp sẵn. Tiết kiệm chi phí nhân sự và thời gian vận hành.',
-      anhIcon: '/images/icons/automation.svg',
-      tiemNangLoiNhuan: 'Tiết kiệm 30%',
-      thuTu: 1,
-      hienThi: true,
+      name: 'Automated Operations',
+      description: 'Integrated ERP inventory management, sales app, and e-invoicing. Save on staffing costs and operational time.',
+      iconUrl: '/images/icons/automation.svg',
+      profitPotential: 'Save 30%',
+      sortOrder: 1,
+      isVisible: true,
     },
     {
-      ten: 'Chuỗi Cung Ứng Chủ Động',
-      moTa: 'Kết nối trực tiếp nhà máy & vùng nguyên liệu. Giá gốc, không qua trung gian, giao hàng đúng hạn. Hỗ trợ đổi trả hàng chậm luân chuyển.',
-      anhIcon: '/images/icons/supply-chain.svg',
-      tiemNangLoiNhuan: 'Giá tốt nhất',
-      thuTu: 2,
-      hienThi: true,
+      name: 'Proactive Supply Chain',
+      description: 'Direct connection to factories & ingredient sources. Factory prices, no middlemen, on-time delivery. Support for slow-moving inventory returns.',
+      iconUrl: '/images/icons/supply-chain.svg',
+      profitPotential: 'Best prices',
+      sortOrder: 2,
+      isVisible: true,
     },
     {
-      ten: 'Thương Hiệu Uy Tín',
-      moTa: 'Hệ thống nhận diện thương hiệu đồng bộ, chuyên nghiệp. Được khách hàng tin tưởng với hơn 10 năm hoạt động trong ngành.',
-      anhIcon: '/images/icons/brand.svg',
-      tiemNangLoiNhuan: 'Uy tín 10+ năm',
-      thuTu: 3,
-      hienThi: true,
+      name: 'Trusted Brand',
+      description: 'Unified, professional brand identity system. Trusted by customers with over 10 years in the industry.',
+      iconUrl: '/images/icons/brand.svg',
+      profitPotential: '10+ years trust',
+      sortOrder: 3,
+      isVisible: true,
     },
     {
-      ten: 'Hỗ Trợ Vốn',
-      moTa: 'Tài trợ vốn nhập hàng ban đầu, chi phí vận hành tháng đầu tiên. Giảm áp lực tài chính cho đối tác mới.',
-      anhIcon: '/images/icons/funding.svg',
-      tiemNangLoiNhuan: 'Hỗ trợ 50%',
-      thuTu: 4,
-      hienThi: true,
+      name: 'Capital Support',
+      description: 'Initial inventory funding, first month operating costs covered. Reduce financial pressure for new partners.',
+      iconUrl: '/images/icons/funding.svg',
+      profitPotential: '50% support',
+      sortOrder: 4,
+      isVisible: true,
     },
     {
-      ten: 'Setup Trọn Gói',
-      moTa: 'Thiết kế, thi công cửa hàng từ A-Z. Bàn giao trong 30-45 ngày, sẵn sàng kinh doanh ngay khi khai trương.',
-      anhIcon: '/images/icons/setup.svg',
-      tiemNangLoiNhuan: '30-45 ngày',
-      thuTu: 5,
-      hienThi: true,
+      name: 'Turnkey Setup',
+      description: 'Store design and construction from A-Z. Handover in 30-45 days, ready to operate upon opening.',
+      iconUrl: '/images/icons/setup.svg',
+      profitPotential: '30-45 days',
+      sortOrder: 5,
+      isVisible: true,
     },
   ];
 
   for (const model of businessModels) {
-    await prisma.moHinhKinhDoanh.create({ data: model });
+    await prisma.businessModel.create({ data: model });
   }
 
-  // 5. Partnership FAQs - Hỏi đáp hợp tác
-  console.log('Tạo hỏi đáp hợp tác B2B...');
+  // 5. Partnership FAQs
+  console.log('Creating B2B partnership FAQs...');
   const partnershipFaqs = [
     {
-      cauHoi: 'Tôi cần bao nhiêu vốn để bắt đầu?',
-      traLoi: 'Vốn đầu tư linh hoạt từ 500 triệu - 2 tỷ đồng tùy theo quy mô mặt bằng (40-100m²). Liên hệ để nhận bảng dự toán chi tiết phù hợp với điều kiện của bạn.',
-      thuTu: 0,
-      hienThi: true,
+      question: 'How much capital do I need to start?',
+      answer: 'Flexible investment from 500 million - 2 billion VND depending on premises size (40-100m²). Contact us for a detailed estimate tailored to your conditions.',
+      sortOrder: 0,
+      isVisible: true,
     },
     {
-      cauHoi: 'ADK hỗ trợ nguồn hàng như thế nào?',
-      traLoi: 'Cung cấp danh mục sản phẩm chuẩn hóa gồm Thuốc, TPCN, Thực phẩm sạch và OCOP. Giá tốt nhất từ kho tổng, giao hàng định kỳ, hỗ trợ đổi trả hàng chậm luân chuyển.',
-      thuTu: 1,
-      hienThi: true,
+      question: 'How does ADK support product supply?',
+      answer: 'Standardized product catalog including medicines, supplements, health food and OCOP products. Best prices from central warehouse, regular delivery, slow-moving inventory return support.',
+      sortOrder: 1,
+      isVisible: true,
     },
     {
-      cauHoi: 'Tôi có được đào tạo nhân sự không?',
-      traLoi: 'Có. ADK đào tạo toàn diện cho dược sĩ và nhân viên về: Kỹ năng bán lẻ, Tư vấn dinh dưỡng, Sử dụng hệ thống ERP, và Quy trình vận hành chuẩn GPP.',
-      thuTu: 2,
-      hienThi: true,
+      question: 'Will I receive staff training?',
+      answer: 'Yes. ADK provides comprehensive training for pharmacists and staff on: Retail skills, Nutrition consulting, ERP system usage, and GPP standard operating procedures.',
+      sortOrder: 2,
+      isVisible: true,
     },
     {
-      cauHoi: 'Thời gian hoàn vốn dự kiến là bao lâu?',
-      traLoi: 'Với vị trí tốt và vận hành đúng quy trình, thời gian hoàn vốn trung bình từ 18-24 tháng. Doanh thu trung bình từ 300-500 triệu/tháng tùy quy mô.',
-      thuTu: 3,
-      hienThi: true,
+      question: 'What is the expected payback period?',
+      answer: 'With a good location and proper operations, average payback period is 18-24 months. Average monthly revenue 300-500 million VND depending on scale.',
+      sortOrder: 3,
+      isVisible: true,
     },
     {
-      cauHoi: 'ADK hỗ trợ marketing như thế nào?',
-      traLoi: 'Hỗ trợ marketing đa kênh: Fanpage chung, SEO địa phương, Chương trình khuyến mãi toàn hệ thống, Tài liệu truyền thông sẵn có. Chi phí marketing được chia sẻ trong hệ thống.',
-      thuTu: 4,
-      hienThi: true,
+      question: 'How does ADK support marketing?',
+      answer: 'Omnichannel marketing support: Shared fanpage, local SEO, system-wide promotions, ready-made marketing materials. Marketing costs shared across the system.',
+      sortOrder: 4,
+      isVisible: true,
     },
     {
-      cauHoi: 'Quy trình hợp tác như thế nào?',
-      traLoi: 'Quy trình 5 bước: (1) Đăng ký tư vấn → (2) Khảo sát mặt bằng → (3) Ký hợp đồng → (4) Setup cửa hàng (30-45 ngày) → (5) Khai trương và vận hành.',
-      thuTu: 5,
-      hienThi: true,
+      question: 'What is the partnership process?',
+      answer: '5-step process: (1) Register for consultation → (2) Site survey → (3) Sign contract → (4) Store setup (30-45 days) → (5) Grand opening and operations.',
+      sortOrder: 5,
+      isVisible: true,
     },
   ];
 
   for (const faq of partnershipFaqs) {
-    await prisma.hoiDapHopTac.create({ data: faq });
+    await prisma.partnershipFaq.create({ data: faq });
   }
 
   // 6. Page Sections - B2B Focused Content
-  console.log('Tạo nội dung trang B2B...');
+  console.log('Creating B2B page sections...');
   const sections = [
     {
       key: 'hero_main',
-      loaiBoCuc: LoaiBoCuc.HERO_IMAGE,
-      noiDung: {
-        title: 'DỰ ÁN PHÁT TRIỂN CHUỖI NHÀ THUỐC ADK',
-        subtitle: 'Mô hình Siêu thị Thuốc & Thực phẩm sạch - Xu hướng kinh doanh bền vững 2025.',
-        ctaText: 'Đăng Ký Hợp Tác Ngay',
+      layoutType: LayoutType.HERO_IMAGE,
+      content: {
+        title: 'ADK PHARMACY CHAIN DEVELOPMENT PROJECT',
+        subtitle: 'Pharmacy & Health Food Supermarket Model - Sustainable Business Trend 2025.',
+        ctaText: 'Register Partnership Now',
         stats: [
-          { value: '10+', label: 'Năm kinh nghiệm' },
-          { value: '100+', label: 'Đối tác' },
-          { value: '2025', label: 'Xu hướng mới' },
+          { value: '10+', label: 'Years experience' },
+          { value: '100+', label: 'Partners' },
+          { value: '2025', label: 'New trend' },
         ],
       },
-      hinhAnh: ['/images/hero/b2b-hero.jpg'],
+      images: ['/images/hero/b2b-hero.jpg'],
       ctaLink: 'https://bizmall.vn',
-      thuTu: 0,
-      hienThi: true,
+      sortOrder: 0,
+      isVisible: true,
     },
     {
       key: 'market_insight',
-      loaiBoCuc: LoaiBoCuc.TEXT_ONLY,
-      noiDung: {
-        title: 'Nắm Bắt Xu Hướng Tương Lai',
-        subtitle: 'Thị trường 2025',
-        description: 'Năm 2025, người tiêu dùng chuyển dịch từ "Chữa bệnh" sang "Chăm sóc sức khỏe chủ động". Mô hình ADK giải quyết bài toán này bằng sự kết hợp hoàn hảo giữa Nhà thuốc GPP và Siêu thị thực phẩm sạch.',
+      layoutType: LayoutType.TEXT_ONLY,
+      content: {
+        title: 'Capture Future Trends',
+        subtitle: 'Market 2025',
+        description: 'In 2025, consumers shift from "Treatment" to "Proactive Healthcare". The ADK model solves this with a perfect combination of GPP Pharmacy and Health Food Supermarket.',
         keyPoints: [
-          'Tăng trưởng ngành dược phẩm 8-10%/năm',
-          'Xu hướng Healthy Living lan rộng',
-          'Người tiêu dùng ưu tiên nguồn gốc rõ ràng',
+          'Pharmaceutical industry growth 8-10%/year',
+          'Healthy Living trend spreading',
+          'Consumers prioritize clear origin',
         ],
       },
-      hinhAnh: [],
-      thuTu: 1,
-      hienThi: true,
+      images: [],
+      sortOrder: 1,
+      isVisible: true,
     },
     {
       key: 'adk_model',
-      loaiBoCuc: LoaiBoCuc.SPLIT_IMAGE_TEXT,
-      noiDung: {
-        title: 'Mô Hình ADK',
-        subtitle: 'Giao thoa Y Học & Dinh Dưỡng',
+      layoutType: LayoutType.SPLIT_IMAGE_TEXT,
+      content: {
+        title: 'The ADK Model',
+        subtitle: 'Intersection of Medicine & Nutrition',
         leftColumn: {
-          title: 'Nhà Thuốc GPP Hiện Đại',
-          items: ['Thuốc kê đơn & OTC', 'Thực phẩm chức năng', 'Dược mỹ phẩm chính hãng'],
+          title: 'Modern GPP Pharmacy',
+          items: ['Prescription & OTC medicines', 'Dietary supplements', 'Authentic cosmeceuticals'],
         },
         rightColumn: {
-          title: 'Siêu Thị Tự Chọn',
-          items: ['Sữa hạt, Sữa tươi hữu cơ', 'Thực phẩm Organic', 'Đặc sản OCOP các vùng miền'],
+          title: 'Self-Service Supermarket',
+          items: ['Plant milk, Organic fresh milk', 'Organic food', 'Regional OCOP specialties'],
         },
-        bottomText: 'Biến nhà thuốc truyền thống thành điểm đến Healthy Living Hub.',
+        bottomText: 'Transform traditional pharmacy into a Healthy Living Hub destination.',
       },
-      hinhAnh: ['/images/model/pharmacy-side.jpg', '/images/model/supermarket-side.jpg'],
-      thuTu: 2,
-      hienThi: true,
+      images: ['/images/model/pharmacy-side.jpg', '/images/model/supermarket-side.jpg'],
+      sortOrder: 2,
+      isVisible: true,
     },
     {
       key: 'investment_benefits',
-      loaiBoCuc: LoaiBoCuc.BENTO_GRID,
-      noiDung: {
-        title: 'Lợi Ích Đầu Tư',
-        subtitle: 'Tại sao chọn ADK?',
+      layoutType: LayoutType.BENTO_GRID,
+      content: {
+        title: 'Investment Benefits',
+        subtitle: 'Why choose ADK?',
         items: [
           {
             id: 'revenue',
-            title: 'Đa Dạng Nguồn Thu',
-            description: 'Tối ưu lợi nhuận từ thuốc và thực phẩm sạch. Không phụ thuộc một nguồn doanh thu.',
+            title: 'Diverse Revenue Streams',
+            description: 'Optimize profits from pharmacy and health food. Not dependent on single revenue source.',
             icon: 'trending-up',
             size: 'large',
           },
           {
             id: 'automation',
-            title: 'Vận Hành Tự Động',
-            description: 'Hệ thống ERP, App quản lý, Hóa đơn điện tử tích hợp sẵn.',
+            title: 'Automated Operations',
+            description: 'Integrated ERP system, Management app, E-invoicing.',
             icon: 'cpu',
             size: 'medium',
           },
           {
             id: 'supply',
-            title: 'Chuỗi Cung Ứng Chủ Động',
-            description: 'Kết nối trực tiếp nhà máy & vùng nguyên liệu. Giá gốc, không qua trung gian.',
+            title: 'Proactive Supply Chain',
+            description: 'Direct connection to factories & ingredient sources. Factory prices, no middlemen.',
             icon: 'package',
             size: 'medium',
           },
           {
             id: 'support',
-            title: 'Hỗ Trợ Toàn Diện',
-            description: 'Tài trợ vốn, Setup cửa hàng từ A-Z, Marketing đa kênh.',
+            title: 'Comprehensive Support',
+            description: 'Capital funding, A-Z store setup, Omnichannel marketing.',
             icon: 'handshake',
             size: 'large',
           },
         ],
       },
-      hinhAnh: [],
-      thuTu: 3,
-      hienThi: true,
+      images: [],
+      sortOrder: 3,
+      isVisible: true,
     },
     {
       key: 'store_standards',
-      loaiBoCuc: LoaiBoCuc.MASONRY_GRID,
-      noiDung: {
-        title: 'Tiêu Chuẩn Cửa Hàng ADK',
-        subtitle: 'Thiết kế đồng bộ, chuyên nghiệp',
+      layoutType: LayoutType.MASONRY_GRID,
+      content: {
+        title: 'ADK Store Standards',
+        subtitle: 'Unified, professional design',
       },
-      hinhAnh: [
+      images: [
         '/images/store/exterior-1.jpg',
         '/images/store/interior-1.jpg',
         '/images/store/pharmacy-counter.jpg',
@@ -356,134 +356,134 @@ async function main() {
         '/images/store/checkout-area.jpg',
         '/images/store/signage.jpg',
       ],
-      thuTu: 4,
-      hienThi: true,
+      sortOrder: 4,
+      isVisible: true,
     },
     {
       key: 'cta_partnership',
-      loaiBoCuc: LoaiBoCuc.CTA_BANNER,
-      noiDung: {
-        title: 'Cơ Hội Trở Thành Đối Tác Chiến Lược',
-        subtitle: 'Đăng ký ngay để nhận tư vấn miễn phí và bảng dự toán chi tiết',
-        ctaText: 'Đăng Ký Hợp Tác Ngay',
-        secondaryText: 'Hotline tư vấn: 1800-1234',
+      layoutType: LayoutType.CTA_BANNER,
+      content: {
+        title: 'Opportunity to Become a Strategic Partner',
+        subtitle: 'Register now for free consultation and detailed estimate',
+        ctaText: 'Register Partnership Now',
+        secondaryText: 'Consultation hotline: 1800-1234',
       },
-      hinhAnh: ['/images/cta/partnership-bg.jpg'],
+      images: ['/images/cta/partnership-bg.jpg'],
       ctaLink: 'https://bizmall.vn',
-      thuTu: 5,
-      hienThi: true,
+      sortOrder: 5,
+      isVisible: true,
     },
   ];
 
   for (const section of sections) {
-    await prisma.phanMuc.create({ data: section });
+    await prisma.section.create({ data: section });
   }
 
-  // 5. Partnership FAQs - B2B Q&A
-  console.log('Tạo FAQ hợp tác B2B...');
+  // 7. Content - B2B FAQ Content
+  console.log('Creating B2B FAQ content...');
   const partnerFaqs = [
     {
-      loai: LoaiNoiDung.FAQ,
-      tieuDe: 'Tôi cần bao nhiêu vốn để bắt đầu?',
-      moTa: 'Vốn đầu tư linh hoạt từ 500 triệu - 2 tỷ đồng tùy theo quy mô mặt bằng (40-100m²). Liên hệ để nhận bảng dự toán chi tiết phù hợp với điều kiện của bạn.',
-      noiDung: { category: 'investment' },
-      thuTu: 0,
+      type: ContentType.FAQ,
+      title: 'How much capital do I need to start?',
+      description: 'Flexible investment from 500 million - 2 billion VND depending on premises size (40-100m²). Contact us for a detailed estimate tailored to your conditions.',
+      content: { category: 'investment' },
+      sortOrder: 0,
     },
     {
-      loai: LoaiNoiDung.FAQ,
-      tieuDe: 'ADK hỗ trợ nguồn hàng như thế nào?',
-      moTa: 'Cung cấp danh mục sản phẩm chuẩn hóa gồm Thuốc, TPCN, Thực phẩm sạch và OCOP. Giá tốt nhất từ kho tổng, giao hàng định kỳ, hỗ trợ đổi trả hàng chậm luân chuyển.',
-      noiDung: { category: 'supply' },
-      thuTu: 1,
+      type: ContentType.FAQ,
+      title: 'How does ADK support product supply?',
+      description: 'Standardized product catalog including medicines, supplements, health food and OCOP products. Best prices from central warehouse, regular delivery, slow-moving inventory return support.',
+      content: { category: 'supply' },
+      sortOrder: 1,
     },
     {
-      loai: LoaiNoiDung.FAQ,
-      tieuDe: 'Tôi có được đào tạo nhân sự không?',
-      moTa: 'Có. ADK đào tạo toàn diện cho dược sĩ và nhân viên về: Kỹ năng bán lẻ, Tư vấn dinh dưỡng, Sử dụng hệ thống ERP, và Quy trình vận hành chuẩn GPP.',
-      noiDung: { category: 'training' },
-      thuTu: 2,
+      type: ContentType.FAQ,
+      title: 'Will I receive staff training?',
+      description: 'Yes. ADK provides comprehensive training for pharmacists and staff on: Retail skills, Nutrition consulting, ERP system usage, and GPP standard operating procedures.',
+      content: { category: 'training' },
+      sortOrder: 2,
     },
     {
-      loai: LoaiNoiDung.FAQ,
-      tieuDe: 'Thời gian hoàn vốn dự kiến là bao lâu?',
-      moTa: 'Với vị trí tốt và vận hành đúng quy trình, thời gian hoàn vốn trung bình từ 18-24 tháng. Doanh thu trung bình từ 300-500 triệu/tháng tùy quy mô.',
-      noiDung: { category: 'roi' },
-      thuTu: 3,
+      type: ContentType.FAQ,
+      title: 'What is the expected payback period?',
+      description: 'With a good location and proper operations, average payback period is 18-24 months. Average monthly revenue 300-500 million VND depending on scale.',
+      content: { category: 'roi' },
+      sortOrder: 3,
     },
     {
-      loai: LoaiNoiDung.FAQ,
-      tieuDe: 'ADK hỗ trợ marketing như thế nào?',
-      moTa: 'Hỗ trợ marketing đa kênh: Fanpage chung, SEO địa phương, Chương trình khuyến mãi toàn hệ thống, Tài liệu truyền thông sẵn có. Chi phí marketing được chia sẻ trong hệ thống.',
-      noiDung: { category: 'marketing' },
-      thuTu: 4,
+      type: ContentType.FAQ,
+      title: 'How does ADK support marketing?',
+      description: 'Omnichannel marketing support: Shared fanpage, local SEO, system-wide promotions, ready-made marketing materials. Marketing costs shared across the system.',
+      content: { category: 'marketing' },
+      sortOrder: 4,
     },
     {
-      loai: LoaiNoiDung.FAQ,
-      tieuDe: 'Quy trình hợp tác như thế nào?',
-      moTa: 'Quy trình 5 bước: (1) Đăng ký tư vấn → (2) Khảo sát mặt bằng → (3) Ký hợp đồng → (4) Setup cửa hàng (30-45 ngày) → (5) Khai trương và vận hành.',
-      noiDung: { category: 'process' },
-      thuTu: 5,
+      type: ContentType.FAQ,
+      title: 'What is the partnership process?',
+      description: '5-step process: (1) Register for consultation → (2) Site survey → (3) Sign contract → (4) Store setup (30-45 days) → (5) Grand opening and operations.',
+      content: { category: 'process' },
+      sortOrder: 5,
     },
   ];
 
   for (const faq of partnerFaqs) {
-    await prisma.noiDung.create({ data: faq });
+    await prisma.content.create({ data: faq });
   }
 
-  // 6. Investment Features - Lợi ích đầu tư (thay thế B2C features)
-  console.log('Tạo features đầu tư B2B...');
+  // 8. Investment Features - B2B Features Content
+  console.log('Creating B2B investment features...');
   const investmentFeatures = [
     {
-      loai: LoaiNoiDung.FEATURE,
-      tieuDe: 'Đa Dạng Nguồn Thu',
-      moTa: 'Tối ưu lợi nhuận từ thuốc GPP và thực phẩm sạch. Biên lợi nhuận gộp 25-40% tùy nhóm hàng.',
-      noiDung: { icon: 'trending-up' },
-      thuTu: 0,
+      type: ContentType.FEATURE,
+      title: 'Diverse Revenue Streams',
+      description: 'Optimize profits from GPP pharmacy and health food. Gross profit margin 25-40% depending on product category.',
+      content: { icon: 'trending-up' },
+      sortOrder: 0,
     },
     {
-      loai: LoaiNoiDung.FEATURE,
-      tieuDe: 'Vận Hành Tự Động',
-      moTa: 'Hệ thống ERP quản lý tồn kho, App bán hàng, Hóa đơn điện tử tích hợp sẵn. Tiết kiệm chi phí nhân sự.',
-      noiDung: { icon: 'cpu' },
-      thuTu: 1,
+      type: ContentType.FEATURE,
+      title: 'Automated Operations',
+      description: 'Integrated ERP inventory management, sales app, and e-invoicing. Save on staffing costs.',
+      content: { icon: 'cpu' },
+      sortOrder: 1,
     },
     {
-      loai: LoaiNoiDung.FEATURE,
-      tieuDe: 'Chuỗi Cung Ứng Chủ Động',
-      moTa: 'Kết nối trực tiếp nhà máy & vùng nguyên liệu. Giá gốc, không qua trung gian, giao hàng đúng hạn.',
-      noiDung: { icon: 'package' },
-      thuTu: 2,
+      type: ContentType.FEATURE,
+      title: 'Proactive Supply Chain',
+      description: 'Direct connection to factories & ingredient sources. Factory prices, no middlemen, on-time delivery.',
+      content: { icon: 'package' },
+      sortOrder: 2,
     },
     {
-      loai: LoaiNoiDung.FEATURE,
-      tieuDe: 'Thương Hiệu Uy Tín',
-      moTa: 'Hệ thống nhận diện thương hiệu đồng bộ, chuyên nghiệp. Được khách hàng tin tưởng.',
-      noiDung: { icon: 'badge' },
-      thuTu: 3,
+      type: ContentType.FEATURE,
+      title: 'Trusted Brand',
+      description: 'Unified, professional brand identity system. Trusted by customers.',
+      content: { icon: 'badge' },
+      sortOrder: 3,
     },
     {
-      loai: LoaiNoiDung.FEATURE,
-      tieuDe: 'Hỗ Trợ Vốn',
-      moTa: 'Tài trợ vốn nhập hàng ban đầu, chi phí vận hành tháng đầu tiên. Giảm áp lực tài chính.',
-      noiDung: { icon: 'wallet' },
-      thuTu: 4,
+      type: ContentType.FEATURE,
+      title: 'Capital Support',
+      description: 'Initial inventory funding, first month operating costs covered. Reduce financial pressure.',
+      content: { icon: 'wallet' },
+      sortOrder: 4,
     },
     {
-      loai: LoaiNoiDung.FEATURE,
-      tieuDe: 'Setup Trọn Gói',
-      moTa: 'Thiết kế, thi công cửa hàng từ A-Z. Bàn giao trong 30-45 ngày, sẵn sàng kinh doanh.',
-      noiDung: { icon: 'store' },
-      thuTu: 5,
+      type: ContentType.FEATURE,
+      title: 'Turnkey Setup',
+      description: 'Store design and construction from A-Z. Handover in 30-45 days, ready to operate.',
+      content: { icon: 'store' },
+      sortOrder: 5,
     },
   ];
 
   for (const feature of investmentFeatures) {
-    await prisma.noiDung.create({ data: feature });
+    await prisma.content.create({ data: feature });
   }
 
-  // 7. Admin Users - Quản trị viên
-  console.log('Tạo tài khoản quản trị viên...');
-  
+  // 9. Admin Users
+  console.log('Creating admin users...');
+
   // Helper function to hash password (same as AuthService)
   function hashPassword(password: string): string {
     const { randomBytes, scryptSync } = require('crypto');
@@ -493,58 +493,58 @@ async function main() {
   }
 
   // Clear existing admins first
-  await prisma.quanTriVien.deleteMany();
+  await prisma.adminUser.deleteMany();
 
   const adminUsers = [
     {
       email: 'admin@adkpharma.vn',
-      matKhau: hashPassword('Admin@2025'), // Default password: Admin@2025
-      hoTen: 'Super Admin ADK',
-      vaiTro: 'SUPER_ADMIN' as const,
-      hoatDong: true,
+      password: hashPassword('Admin@2025'),
+      fullName: 'Super Admin ADK',
+      role: 'SUPER_ADMIN' as const,
+      isActive: true,
     },
     {
       email: 'manager@adkpharma.vn',
-      matKhau: hashPassword('Manager@2025'), // Default password: Manager@2025
-      hoTen: 'Quản Lý Hệ Thống',
-      vaiTro: 'ADMIN' as const,
-      hoatDong: true,
+      password: hashPassword('Manager@2025'),
+      fullName: 'System Manager',
+      role: 'ADMIN' as const,
+      isActive: true,
     },
     {
       email: 'support@adkpharma.vn',
-      matKhau: hashPassword('Support@2025'), // Default password: Support@2025
-      hoTen: 'Nhân Viên Hỗ Trợ',
-      vaiTro: 'ADMIN' as const,
-      hoatDong: true,
+      password: hashPassword('Support@2025'),
+      fullName: 'Support Staff',
+      role: 'ADMIN' as const,
+      isActive: true,
     },
   ];
 
   for (const admin of adminUsers) {
-    await prisma.quanTriVien.create({ data: admin });
-    console.log(`  ✓ Tạo admin: ${admin.email}`);
+    await prisma.adminUser.create({ data: admin });
+    console.log(`  ✓ Created admin: ${admin.email}`);
   }
 
-  console.log('\n=== Seed B2B hoàn tất! ===');
-  console.log('\n📋 Thông tin đăng nhập:');
+  console.log('\n=== B2B Seed Complete! ===');
+  console.log('\n📋 Login Information:');
   console.log('┌─────────────────────────────────────────────────────┐');
   console.log('│ SUPER ADMIN                                         │');
   console.log('│ Email: admin@adkpharma.vn                          │');
-  console.log('│ Mật khẩu: Admin@2025                               │');
+  console.log('│ Password: Admin@2025                               │');
   console.log('├─────────────────────────────────────────────────────┤');
   console.log('│ ADMIN                                               │');
   console.log('│ Email: manager@adkpharma.vn                        │');
-  console.log('│ Mật khẩu: Manager@2025                             │');
+  console.log('│ Password: Manager@2025                             │');
   console.log('├─────────────────────────────────────────────────────┤');
   console.log('│ SUPPORT                                             │');
   console.log('│ Email: support@adkpharma.vn                        │');
-  console.log('│ Mật khẩu: Support@2025                             │');
+  console.log('│ Password: Support@2025                             │');
   console.log('└─────────────────────────────────────────────────────┘');
-  console.log('\n⚠️  Vui lòng đổi mật khẩu sau khi đăng nhập lần đầu!\n');
+  console.log('\n⚠️  Please change password after first login!\n');
 }
 
 main()
   .catch((e) => {
-    console.error('Lỗi seed dữ liệu:', e);
+    console.error('Seed data error:', e);
     process.exit(1);
   })
   .finally(async () => {

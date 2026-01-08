@@ -1,67 +1,67 @@
-import { IsString, IsNotEmpty, IsEmail, MinLength } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import { IsString, IsNotEmpty, IsEmail, MinLength } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginDto {
   @ApiProperty({
-    description: "Email đăng nhập",
-    example: "admin@adk.vn",
+    description: 'Login email',
+    example: 'admin@adk.vn',
   })
-  @IsEmail({}, { message: "Email không đúng định dạng" })
-  @IsNotEmpty({ message: "Email không được để trống" })
+  @IsEmail({}, { message: 'Invalid email format' })
+  @IsNotEmpty({ message: 'Email is required' })
   email: string;
 
   @ApiProperty({
-    description: "Mật khẩu",
-    example: "password123",
+    description: 'Password',
+    example: 'password123',
   })
-  @IsString({ message: "Mật khẩu phải là chuỗi ký tự" })
-  @IsNotEmpty({ message: "Mật khẩu không được để trống" })
-  @MinLength(6, { message: "Mật khẩu phải có ít nhất 6 ký tự" })
-  matKhau: string;
+  @IsString({ message: 'Password must be a string' })
+  @IsNotEmpty({ message: 'Password is required' })
+  @MinLength(6, { message: 'Password must be at least 6 characters' })
+  password: string;
 }
 
 export class LoginResponseDto {
-  @ApiProperty({ description: "Access token" })
+  @ApiProperty({ description: 'Access token' })
   accessToken: string;
 
-  @ApiProperty({ description: "Token type" })
+  @ApiProperty({ description: 'Token type' })
   tokenType: string;
 
-  @ApiProperty({ description: "Thời gian hết hạn (giây)" })
+  @ApiProperty({ description: 'Expiration time in seconds' })
   expiresIn: number;
 
-  @ApiProperty({ description: "Thông tin admin" })
+  @ApiProperty({ description: 'Admin information' })
   admin: {
     id: string;
     email: string;
-    hoTen: string;
-    vaiTro: string;
+    fullName: string;
+    role: string;
   };
 }
 
 export class CreateAdminDto {
   @ApiProperty({
-    description: "Email đăng nhập",
-    example: "admin@adk.vn",
+    description: 'Login email',
+    example: 'admin@adk.vn',
   })
-  @IsEmail({}, { message: "Email không đúng định dạng" })
-  @IsNotEmpty({ message: "Email không được để trống" })
+  @IsEmail({}, { message: 'Invalid email format' })
+  @IsNotEmpty({ message: 'Email is required' })
   email: string;
 
   @ApiProperty({
-    description: "Mật khẩu",
-    example: "password123",
+    description: 'Password',
+    example: 'password123',
   })
-  @IsString({ message: "Mật khẩu phải là chuỗi ký tự" })
-  @IsNotEmpty({ message: "Mật khẩu không được để trống" })
-  @MinLength(6, { message: "Mật khẩu phải có ít nhất 6 ký tự" })
-  matKhau: string;
+  @IsString({ message: 'Password must be a string' })
+  @IsNotEmpty({ message: 'Password is required' })
+  @MinLength(6, { message: 'Password must be at least 6 characters' })
+  password: string;
 
   @ApiProperty({
-    description: "Họ và tên",
-    example: "Admin ADK",
+    description: 'Full name',
+    example: 'Admin ADK',
   })
-  @IsString({ message: "Họ tên phải là chuỗi ký tự" })
-  @IsNotEmpty({ message: "Họ tên không được để trống" })
-  hoTen: string;
+  @IsString({ message: 'Full name must be a string' })
+  @IsNotEmpty({ message: 'Full name is required' })
+  fullName: string;
 }

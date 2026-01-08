@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException, Inject, Logger } from "@nestjs/common";
-import { CACHE_MANAGER } from "@nestjs/cache-manager";
-import { Cache } from "cache-manager";
-import { BannerPopup } from "@prisma/client";
-import { PrismaService } from "../prisma/prisma.service";
-import { CreateBannerPopupDto, UpdateBannerPopupDto } from "./dto";
+import { Injectable, NotFoundException, Inject, Logger } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { BannerPopup } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateBannerPopupDto, UpdateBannerPopupDto } from './dto';
 
 @Injectable()
 export class BannerPopupService {
@@ -15,7 +15,7 @@ export class BannerPopupService {
   ) {}
 
   async findActivePopup(): Promise<BannerPopup | null> {
-    const cacheKey = "banner-popup:active";
+    const cacheKey = 'banner-popup:active';
     const cached = await this.cache.get<BannerPopup>(cacheKey);
 
     if (cached) {
@@ -23,8 +23,8 @@ export class BannerPopupService {
     }
 
     const popup = await this.prisma.bannerPopup.findFirst({
-      where: { hoatDong: true },
-      orderBy: { thuTuUuTien: "asc" },
+      where: { isActive: true },
+      orderBy: { priority: 'asc' },
     });
 
     if (popup) {
@@ -35,7 +35,7 @@ export class BannerPopupService {
   }
 
   async findAllActive(): Promise<BannerPopup[]> {
-    const cacheKey = "banner-popup:all-active";
+    const cacheKey = 'banner-popup:all-active';
     const cached = await this.cache.get<BannerPopup[]>(cacheKey);
 
     if (cached) {
@@ -43,8 +43,8 @@ export class BannerPopupService {
     }
 
     const popups = await this.prisma.bannerPopup.findMany({
-      where: { hoatDong: true },
-      orderBy: { thuTuUuTien: "asc" },
+      where: { isActive: true },
+      orderBy: { priority: 'asc' },
     });
 
     await this.cache.set(cacheKey, popups, 300000);
@@ -54,7 +54,7 @@ export class BannerPopupService {
 
   async findAll(): Promise<BannerPopup[]> {
     return this.prisma.bannerPopup.findMany({
-      orderBy: [{ hoatDong: "desc" }, { thuTuUuTien: "asc" }],
+      orderBy: [{ isActive: 'desc' }, { priority: 'asc' }],
     });
   }
 
@@ -64,7 +64,7 @@ export class BannerPopupService {
     });
 
     if (!popup) {
-      throw new NotFoundException("Không tìm thấy banner popup với ID này.");
+      throw new NotFoundException('Banner popup not found with this ID.');
     }
 
     return popup;
@@ -73,17 +73,17 @@ export class BannerPopupService {
   async create(dto: CreateBannerPopupDto): Promise<BannerPopup> {
     const popup = await this.prisma.bannerPopup.create({
       data: {
-        hinhAnh: dto.hinhAnh,
-        duongDan: dto.duongDan,
-        hoatDong: dto.hoatDong ?? true,
-        doTreHienThi: dto.doTreHienThi ?? 3000,
-        thuTuUuTien: dto.thuTuUuTien ?? 0,
+        imageUrl: dto.imageUrl,
+        redirectUrl: dto.redirectUrl,
+        isActive: dto.isActive ?? true,
+        displayDelay: dto.displayDelay ?? 3000,
+        priority: dto.priority ?? 0,
       },
     });
 
     await this.invalidateCaches();
 
-    this.logger.log(`Tạo banner popup mới: ${popup.id}`);
+    this.logger.log(`Created new banner popup: ${popup.id}`);
 
     return popup;
   }
@@ -94,7 +94,7 @@ export class BannerPopupService {
     });
 
     if (!existing) {
-      throw new NotFoundException("Không tìm thấy banner popup với ID này.");
+      throw new NotFoundException('Banner popup not found with this ID.');
     }
 
     const popup = await this.prisma.bannerPopup.update({
@@ -104,7 +104,7 @@ export class BannerPopupService {
 
     await this.invalidateCaches();
 
-    this.logger.log(`Cập nhật banner popup: ${id}`);
+    this.logger.log(`Updated banner popup: ${id}`);
 
     return popup;
   }
@@ -115,14 +115,14 @@ export class BannerPopupService {
     });
 
     if (!existing) {
-      throw new NotFoundException("Không tìm thấy banner popup với ID này.");
+      throw new NotFoundException('Banner popup not found with this ID.');
     }
 
     await this.prisma.bannerPopup.delete({ where: { id } });
 
     await this.invalidateCaches();
 
-    this.logger.log(`Xóa banner popup: ${id}`);
+    this.logger.log(`Deleted banner popup: ${id}`);
   }
 
   async toggleActive(id: string): Promise<BannerPopup> {
@@ -131,25 +131,25 @@ export class BannerPopupService {
     });
 
     if (!existing) {
-      throw new NotFoundException("Không tìm thấy banner popup với ID này.");
+      throw new NotFoundException('Banner popup not found with this ID.');
     }
 
     const popup = await this.prisma.bannerPopup.update({
       where: { id },
-      data: { hoatDong: !existing.hoatDong },
+      data: { isActive: !existing.isActive },
     });
 
     await this.invalidateCaches();
 
-    this.logger.log(`Toggle banner popup: ${id} -> ${popup.hoatDong}`);
+    this.logger.log(`Toggle banner popup: ${id} -> ${popup.isActive}`);
 
     return popup;
   }
 
   private async invalidateCaches(): Promise<void> {
     await Promise.all([
-      this.cache.del("banner-popup:active"),
-      this.cache.del("banner-popup:all-active"),
+      this.cache.del('banner-popup:active'),
+      this.cache.del('banner-popup:all-active'),
     ]);
   }
 }

@@ -7,54 +7,54 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Registration model - Đăng ký
-model DangKy {
-  id          String  @id @default(uuid())
-  hoTen       String // Họ và tên (required)
-  soDienThoai String // Phone (required) - encrypted
-  tinhThanh   String // Province (required)
-  quanHuyen   String // City/District (required)
-  diaChi      String? // Address (optional)
+// Registration model - User registrations from landing page
+model Registration {
+  id       String  @id @default(uuid())
+  fullName String  @map("full_name")
+  phone    String  // Encrypted phone number
+  province String
+  district String
+  address  String?
 
-  trangThai   TrangThai @default(CHO_XU_LY)
-  nguonDangKy String    @default("landing_page")
+  status RegistrationStatus @default(PENDING)
+  source String             @default("landing_page")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([soDienThoai])
-  @@index([trangThai])
+  @@index([phone])
+  @@index([status])
   @@index([createdAt])
-  @@map("dang_ky")
+  @@map("registration")
 }
 
-enum TrangThai {
-  CHO_XU_LY
-  DA_LIEN_HE
-  THANH_CONG
-  TU_CHOI
+enum RegistrationStatus {
+  PENDING
+  CONTACTED
+  SUCCESS
+  REJECTED
 }
 
-// Page Sections - Dynamic Layout Engine - Phần Mục Trang
-model PhanMuc {
-  id        String    @id @default(uuid())
-  key       String    @unique // hero_main, concept_intro, etc.
-  loaiBoCuc LoaiBoCuc // Layout type
-  noiDung   Json // { title, subtitle, richText }
-  hinhAnh   String[] // Array of image URLs
-  ctaLink   String? // Optional external redirect URL
-  thuTu     Int       @default(0)
-  hienThi   Boolean   @default(true)
+// Page Sections - Dynamic Layout Engine
+model Section {
+  id         String     @id @default(uuid())
+  key        String     @unique
+  layoutType LayoutType @map("layout_type")
+  content    Json
+  images     String[]
+  ctaLink    String?    @map("cta_link")
+  sortOrder  Int        @default(0) @map("sort_order")
+  isVisible  Boolean    @default(true) @map("is_visible")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([key])
-  @@index([loaiBoCuc, thuTu])
-  @@map("phan_muc")
+  @@index([layoutType, sortOrder])
+  @@map("section")
 }
 
-enum LoaiBoCuc {
+enum LayoutType {
   HERO_VIDEO
   HERO_IMAGE
   SPLIT_IMAGE_TEXT
@@ -65,93 +65,93 @@ enum LoaiBoCuc {
   CTA_BANNER
 }
 
-// Popup Banners - Banner Popup
+// Popup Banners
 model BannerPopup {
   id           String  @id @default(uuid())
-  hinhAnh      String // Image URL
-  duongDan     String // Redirect URL
-  hoatDong     Boolean @default(true)
-  doTreHienThi Int     @default(3000) // Display delay in ms
-  thuTuUuTien  Int     @default(0) // Priority order
+  imageUrl     String  @map("image_url")
+  redirectUrl  String  @map("redirect_url")
+  isActive     Boolean @default(true) @map("is_active")
+  displayDelay Int     @default(3000) @map("display_delay")
+  priority     Int     @default(0)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([hoatDong, thuTuUuTien])
+  @@index([isActive, priority])
   @@map("banner_popup")
 }
 
-// Campaign Events - Sự Kiện
-model SuKien {
+// Campaign Events
+model Event {
   id          String    @id @default(uuid())
-  tieuDe      String // Title
-  moTa        String?   @db.Text // Description
-  ngayBatDau  DateTime // Start date
-  ngayKetThuc DateTime? // End date (optional for ongoing events)
-  anhBia      String // Cover image
-  boSuuTapAnh String[] // Gallery images array
-  noiDung     Json? // Additional rich content
-  noiBat      Boolean   @default(false) // Is featured
-  hienThi     Boolean   @default(true)
+  title       String
+  description String?   @db.Text
+  startDate   DateTime  @map("start_date")
+  endDate     DateTime? @map("end_date")
+  coverImage  String    @map("cover_image")
+  gallery     String[]
+  content     Json?
+  isFeatured  Boolean   @default(false) @map("is_featured")
+  isVisible   Boolean   @default(true) @map("is_visible")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([ngayBatDau])
-  @@index([noiBat, hienThi])
-  @@map("su_kien")
+  @@index([startDate])
+  @@index([isFeatured, isVisible])
+  @@map("event")
 }
 
-// Business Modules - Mô Hình Kinh Doanh (B2B)
-model MoHinhKinhDoanh {
-  id               String  @id @default(uuid())
-  ten              String // Module name
-  moTa             String  @db.Text // Description
-  anhIcon          String? // Icon URL
-  tiemNangLoiNhuan String? // Profit potential description
-  thuTu            Int     @default(0)
-  hienThi          Boolean @default(true)
+// Business Models (B2B)
+model BusinessModel {
+  id              String  @id @default(uuid())
+  name            String
+  description     String  @db.Text
+  iconUrl         String? @map("icon_url")
+  profitPotential String? @map("profit_potential")
+  sortOrder       Int     @default(0) @map("sort_order")
+  isVisible       Boolean @default(true) @map("is_visible")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([thuTu])
-  @@map("mo_hinh_kinh_doanh")
+  @@index([sortOrder])
+  @@map("business_model")
 }
 
-// Partnership FAQs - Hỏi Đáp Hợp Tác (B2B)
-model HoiDapHopTac {
-  id      String  @id @default(uuid())
-  cauHoi  String // Question
-  traLoi  String  @db.Text // Answer
-  thuTu   Int     @default(0)
-  hienThi Boolean @default(true)
+// Partnership FAQs (B2B)
+model PartnershipFaq {
+  id        String  @id @default(uuid())
+  question  String
+  answer    String  @db.Text
+  sortOrder Int     @default(0) @map("sort_order")
+  isVisible Boolean @default(true) @map("is_visible")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([thuTu])
-  @@map("hoi_dap_hop_tac")
+  @@index([sortOrder])
+  @@map("partnership_faq")
 }
 
-// Content Management model - Nội dung (Legacy support)
-model NoiDung {
-  id      String      @id @default(uuid())
-  loai    LoaiNoiDung // HERO, FEATURE, FAQ, etc
-  tieuDe  String
-  moTa    String?     @db.Text
-  noiDung Json // Flexible JSON content
-  thuTu   Int         @default(0)
-  hienThi Boolean     @default(true)
+// Content Management model
+model Content {
+  id          String      @id @default(uuid())
+  type        ContentType
+  title       String
+  description String?     @db.Text
+  content     Json
+  sortOrder   Int         @default(0) @map("sort_order")
+  isVisible   Boolean     @default(true) @map("is_visible")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([loai, thuTu])
-  @@map("noi_dung")
+  @@index([type, sortOrder])
+  @@map("content")
 }
 
-enum LoaiNoiDung {
+enum ContentType {
   HERO
   FEATURE
   STATISTIC
@@ -160,40 +160,40 @@ enum LoaiNoiDung {
   TESTIMONIAL
 }
 
-// Settings/Config model - Cấu hình (GlobalSettings)
-model CauHinh {
-  id    String  @id @default(uuid())
-  key   String  @unique // primary_register_url, site_name, etc.
-  value Json
-  moTa  String?
+// Settings/Configuration model
+model Configuration {
+  id          String  @id @default(uuid())
+  key         String  @unique
+  value       Json
+  description String?
 
-  @@map("cau_hinh")
+  @@map("configuration")
 }
 
-// Admin User model - Quản trị viên
-model QuanTriVien {
-  id       String  @id @default(uuid())
-  email    String  @unique
-  matKhau  String // Hashed password
-  hoTen    String
-  vaiTro   VaiTro  @default(ADMIN)
-  hoatDong Boolean @default(true)
+// Admin User model
+model AdminUser {
+  id       String    @id @default(uuid())
+  email    String    @unique
+  password String
+  fullName String    @map("full_name")
+  role     AdminRole @default(ADMIN)
+  isActive Boolean   @default(true) @map("is_active")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("quan_tri_vien")
+  @@map("admin_user")
 }
 
-enum VaiTro {
+enum AdminRole {
   SUPER_ADMIN
   ADMIN
 }
 
-// Click Tracking - Theo dõi lượt click CTA
+// Click Tracking
 model ClickTracking {
   id         String  @id @default(uuid())
-  buttonName String  @map("button_name") // e.g., "register_partnership", "contact_cta"
+  buttonName String  @map("button_name")
   pageUrl    String? @map("page_url")
   userAgent  String? @map("user_agent")
   ipAddress  String? @map("ip_address")
