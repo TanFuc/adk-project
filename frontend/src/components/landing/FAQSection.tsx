@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import type { HoiDapHopTac } from "@/types";
+import type { PartnershipFaq } from "@/types";
 
 // B2B Partnership FAQs - Fallback when no dynamic data
 const defaultFaqs = [
@@ -42,13 +42,13 @@ const defaultFaqs = [
 ];
 
 interface FAQSectionProps {
-  faqs?: HoiDapHopTac[];
+  faqs?: PartnershipFaq[];
 }
 
 export default function FAQSection({ faqs }: FAQSectionProps) {
   // Use dynamic data if available, otherwise use defaults
   const displayFaqs = faqs && faqs.length > 0
-    ? faqs.map((faq) => ({ question: faq.cauHoi, answer: faq.traLoi }))
+    ? faqs.map((faq) => ({ question: faq.question, answer: faq.answer }))
     : defaultFaqs;
   return (
     <section className="py-16 lg:py-24 bg-gray-50">

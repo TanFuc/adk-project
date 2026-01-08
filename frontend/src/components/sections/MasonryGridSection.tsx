@@ -36,8 +36,8 @@ const itemVariants = {
 };
 
 export default function MasonryGridSection({ section }: MasonryGridSectionProps) {
-  const content = section.noiDung as MasonryContent;
-  const images = section.hinhAnh || [];
+  const content = section.content as MasonryContent;
+  const images = section.images || [];
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const getMasonryClass = (index: number) => {

@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Pill, Leaf, Users, Award, TrendingUp, Shield, Heart, Store } from "lucide-react";
-import { phanMucApi } from "@/api";
-import type { PhanMuc } from "@/types";
+import { sectionApi } from "@/api";
+import type { Section } from "@/types";
 import RedirectButton from "@/components/common/RedirectButton";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
@@ -77,9 +77,9 @@ const benefits = [
 ];
 
 export default function ConceptPage() {
-  const { data: _sections = [] } = useQuery<PhanMuc[]>({
+  const { data: _sections = [] } = useQuery<Section[]>({
     queryKey: ["sections", "concept"],
-    queryFn: () => phanMucApi.getByLoai("SPLIT_IMAGE_TEXT"),
+    queryFn: () => sectionApi.getByLayoutType("SPLIT_IMAGE_TEXT"),
   });
 
   return (

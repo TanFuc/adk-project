@@ -15,8 +15,8 @@ interface CarouselContent {
 }
 
 export default function CarouselSection({ section }: CarouselSectionProps) {
-  const content = section.noiDung as CarouselContent;
-  const images = section.hinhAnh || [];
+  const content = section.content as CarouselContent;
+  const images = section.images || [];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 

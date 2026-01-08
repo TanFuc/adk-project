@@ -17,21 +17,21 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { adminApi } from "@/services/api";
 import { ConfirmDialog } from "../ConfirmDialog";
-import type { MoHinhKinhDoanh } from "@/types";
+import type { BusinessModel } from "@/types";
 
 export function BusinessModelsTab() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<MoHinhKinhDoanh | null>(null);
-  const [deleteItem, setDeleteItem] = useState<MoHinhKinhDoanh | null>(null);
+  const [editingItem, setEditingItem] = useState<BusinessModel | null>(null);
+  const [deleteItem, setDeleteItem] = useState<BusinessModel | null>(null);
   const [formData, setFormData] = useState({
-    ten: "",
-    moTa: "",
-    anhIcon: "",
-    tiemNangLoiNhuan: "",
-    thuTu: 0,
-    hienThi: true,
+    name: "",
+    description: "",
+    iconUrl: "",
+    profitPotential: "",
+    sortOrder: 0,
+    isVisible: true,
   });
 
   const { data: models = [], isLoading } = useQuery({
@@ -40,7 +40,7 @@ export function BusinessModelsTab() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: Partial<MoHinhKinhDoanh>) => adminApi.createBusinessModel(data),
+    mutationFn: (data: Partial<BusinessModel>) => adminApi.createBusinessModel(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminBusinessModels"] });
       toast({ title: "Thành công", description: "Đã tạo mô hình kinh doanh mới", variant: "success" });
@@ -52,7 +52,7 @@ export function BusinessModelsTab() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<MoHinhKinhDoanh> }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<BusinessModel> }) =>
       adminApi.updateBusinessModel(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminBusinessModels"] });
@@ -90,25 +90,25 @@ export function BusinessModelsTab() {
   const openCreateModal = () => {
     setEditingItem(null);
     setFormData({
-      ten: "",
-      moTa: "",
-      anhIcon: "",
-      tiemNangLoiNhuan: "",
-      thuTu: models.length,
-      hienThi: true,
+      name: "",
+      description: "",
+      iconUrl: "",
+      profitPotential: "",
+      sortOrder: models.length,
+      isVisible: true,
     });
     setIsModalOpen(true);
   };
 
-  const openEditModal = (item: MoHinhKinhDoanh) => {
+  const openEditModal = (item: BusinessModel) => {
     setEditingItem(item);
     setFormData({
-      ten: item.ten,
-      moTa: item.moTa,
-      anhIcon: item.anhIcon || "",
-      tiemNangLoiNhuan: item.tiemNangLoiNhuan || "",
-      thuTu: item.thuTu,
-      hienThi: item.hienThi,
+      name: item.name,
+      description: item.description,
+      iconUrl: item.iconUrl || "",
+      profitPotential: item.profitPotential || "",
+      sortOrder: item.sortOrder,
+      isVisible: item.isVisible,
     });
     setIsModalOpen(true);
   };
@@ -119,7 +119,7 @@ export function BusinessModelsTab() {
   };
 
   const handleSubmit = () => {
-    if (!formData.ten || !formData.moTa) {
+    if (!formData.name || !formData.description) {
       toast({ title: "Lỗi", description: "Vui lòng điền đầy đủ thông tin bắt buộc", variant: "destructive" });
       return;
     }
@@ -186,31 +186,31 @@ export function BusinessModelsTab() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      {model.anhIcon && (
+                      {model.iconUrl && (
                         <img
-                          src={model.anhIcon}
-                          alt={model.ten}
+                          src={model.iconUrl}
+                          alt={model.name}
                           className="w-8 h-8 object-contain"
                         />
                       )}
-                      <span className="font-medium">{model.ten}</span>
+                      <span className="font-medium">{model.name}</span>
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <div className="text-sm text-gray-500 truncate max-w-xs">{model.moTa}</div>
+                    <div className="text-sm text-gray-500 truncate max-w-xs">{model.description}</div>
                   </td>
                   <td className="px-4 py-3">
-                    {model.tiemNangLoiNhuan && (
-                      <Badge variant="info">{model.tiemNangLoiNhuan}</Badge>
+                    {model.profitPotential && (
+                      <Badge variant="info">{model.profitPotential}</Badge>
                     )}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <Switch
-                        checked={model.hienThi}
+                        checked={model.isVisible}
                         onCheckedChange={() => toggleMutation.mutate(model.id)}
                       />
-                      {model.hienThi ? (
+                      {model.isVisible ? (
                         <Eye className="w-4 h-4 text-green-600" />
                       ) : (
                         <EyeOff className="w-4 h-4 text-gray-400" />
@@ -244,61 +244,61 @@ export function BusinessModelsTab() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="ten">Tên mô hình *</Label>
+              <Label htmlFor="name">Tên mô hình *</Label>
               <Input
-                id="ten"
-                value={formData.ten}
-                onChange={(e) => setFormData({ ...formData, ten: e.target.value })}
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="VD: Đa Dạng Nguồn Thu"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="moTa">Mô tả *</Label>
+              <Label htmlFor="description">Mô tả *</Label>
               <Textarea
-                id="moTa"
-                value={formData.moTa}
-                onChange={(e) => setFormData({ ...formData, moTa: e.target.value })}
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Mô tả chi tiết về mô hình"
                 rows={3}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="anhIcon">URL Icon (tùy chọn)</Label>
+              <Label htmlFor="iconUrl">URL Icon (tùy chọn)</Label>
               <Input
-                id="anhIcon"
-                value={formData.anhIcon}
-                onChange={(e) => setFormData({ ...formData, anhIcon: e.target.value })}
+                id="iconUrl"
+                value={formData.iconUrl}
+                onChange={(e) => setFormData({ ...formData, iconUrl: e.target.value })}
                 placeholder="https://example.com/icon.svg"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="tiemNangLoiNhuan">Tiềm năng lợi nhuận (tùy chọn)</Label>
+              <Label htmlFor="profitPotential">Tiềm năng lợi nhuận (tùy chọn)</Label>
               <Input
-                id="tiemNangLoiNhuan"
-                value={formData.tiemNangLoiNhuan}
-                onChange={(e) => setFormData({ ...formData, tiemNangLoiNhuan: e.target.value })}
+                id="profitPotential"
+                value={formData.profitPotential}
+                onChange={(e) => setFormData({ ...formData, profitPotential: e.target.value })}
                 placeholder="VD: 25-40% biên lợi nhuận"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="thuTu">Thứ tự</Label>
+                <Label htmlFor="sortOrder">Thứ tự</Label>
                 <Input
-                  id="thuTu"
+                  id="sortOrder"
                   type="number"
-                  value={formData.thuTu}
+                  value={formData.sortOrder}
                   onChange={(e) =>
-                    setFormData({ ...formData, thuTu: parseInt(e.target.value) || 0 })
+                    setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })
                   }
                 />
               </div>
               <div className="flex items-center gap-2 mt-6">
                 <Switch
-                  id="hienThi"
-                  checked={formData.hienThi}
-                  onCheckedChange={(checked) => setFormData({ ...formData, hienThi: checked })}
+                  id="isVisible"
+                  checked={formData.isVisible}
+                  onCheckedChange={(checked) => setFormData({ ...formData, isVisible: checked })}
                 />
-                <Label htmlFor="hienThi">Hiển thị</Label>
+                <Label htmlFor="isVisible">Hiển thị</Label>
               </div>
             </div>
           </div>
@@ -321,7 +321,7 @@ export function BusinessModelsTab() {
         open={!!deleteItem}
         onOpenChange={(open) => !open && setDeleteItem(null)}
         title="Xác nhận xóa"
-        description={`Bạn có chắc chắn muốn xóa mô hình "${deleteItem?.ten}"? Hành động này không thể hoàn tác.`}
+        description={`Bạn có chắc chắn muốn xóa mô hình "${deleteItem?.name}"? Hành động này không thể hoàn tác.`}
         confirmText="Xóa"
         onConfirm={() => deleteItem && deleteMutation.mutate(deleteItem.id)}
         isLoading={deleteMutation.isPending}

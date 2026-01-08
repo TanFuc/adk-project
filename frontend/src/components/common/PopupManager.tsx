@@ -24,8 +24,8 @@ export default function PopupManager() {
   }, []);
 
   const handleRedirect = useCallback(() => {
-    if (popup?.duongDan) {
-      window.location.href = popup.duongDan;
+    if (popup?.redirectUrl) {
+      window.location.href = popup.redirectUrl;
     }
   }, [popup]);
 
@@ -35,7 +35,7 @@ export default function PopupManager() {
     const wasDismissed = sessionStorage.getItem(POPUP_DISMISSED_KEY);
     if (wasDismissed) return;
 
-    const delay = popup.doTreHienThi || 3000;
+    const delay = popup.displayDelay || 3000;
     const timer = setTimeout(() => {
       setIsVisible(true);
       setHasShown(true);
@@ -86,7 +86,7 @@ export default function PopupManager() {
                 {/* Image */}
                 {!imageError ? (
                   <img
-                    src={popup.hinhAnh}
+                    src={popup.imageUrl}
                     alt="Sự kiện ADK"
                     className="w-full h-auto object-cover"
                     onError={() => setImageError(true)}

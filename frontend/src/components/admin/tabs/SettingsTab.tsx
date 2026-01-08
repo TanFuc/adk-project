@@ -15,18 +15,18 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { adminApi } from "@/services/api";
 import { ConfirmDialog } from "../ConfirmDialog";
-import type { CauHinh } from "@/types";
+import type { Configuration } from "@/types";
 
 export function SettingsTab() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<CauHinh | null>(null);
-  const [deleteItem, setDeleteItem] = useState<CauHinh | null>(null);
+  const [editingItem, setEditingItem] = useState<Configuration | null>(null);
+  const [deleteItem, setDeleteItem] = useState<Configuration | null>(null);
   const [formData, setFormData] = useState({
     key: "",
     value: "",
-    moTa: "",
+    description: "",
   });
 
   const { data: settings = [], isLoading } = useQuery({
@@ -35,7 +35,7 @@ export function SettingsTab() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: { key: string; value: unknown; moTa?: string }) =>
+    mutationFn: (data: { key: string; value: unknown; description?: string }) =>
       adminApi.upsertSetting(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminSettings"] });
@@ -49,7 +49,7 @@ export function SettingsTab() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ key, data }: { key: string; data: { value: unknown; moTa?: string } }) =>
+    mutationFn: ({ key, data }: { key: string; data: { value: unknown; description?: string } }) =>
       adminApi.updateSetting(key, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminSettings"] });
@@ -80,17 +80,17 @@ export function SettingsTab() {
     setFormData({
       key: "",
       value: "",
-      moTa: "",
+      description: "",
     });
     setIsModalOpen(true);
   };
 
-  const openEditModal = (item: CauHinh) => {
+  const openEditModal = (item: Configuration) => {
     setEditingItem(item);
     setFormData({
       key: item.key,
       value: JSON.stringify(item.value, null, 2),
-      moTa: item.moTa || "",
+      description: item.description || "",
     });
     setIsModalOpen(true);
   };
@@ -120,7 +120,7 @@ export function SettingsTab() {
         key: formData.key,
         data: {
           value: parsedValue,
-          moTa: formData.moTa || undefined,
+          description: formData.description || undefined,
         },
       });
     } else {
@@ -128,7 +128,7 @@ export function SettingsTab() {
       createMutation.mutate({
         key: formData.key,
         value: parsedValue,
-        moTa: formData.moTa || undefined,
+        description: formData.description || undefined,
       });
     }
   };
@@ -193,7 +193,7 @@ export function SettingsTab() {
                       {formatValue(setting.value)}
                     </pre>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-500">{setting.moTa || "-"}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500">{setting.description || "-"}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <Button variant="ghost" size="sm" onClick={() => openEditModal(setting)}>
@@ -240,11 +240,11 @@ export function SettingsTab() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="moTa">Mô tả (tùy chọn)</Label>
+              <Label htmlFor="description">Mô tả (tùy chọn)</Label>
               <Input
-                id="moTa"
-                value={formData.moTa}
-                onChange={(e) => setFormData({ ...formData, moTa: e.target.value })}
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Mô tả cấu hình này"
               />
             </div>

@@ -1,7 +1,7 @@
 import axios from "axios";
-import type { Section, BannerPopup, Event, Configuration, BusinessModel, PartnershipFaq } from "@/types";
+import type { Section, BannerPopup, Event, BusinessModel, PartnershipFaq } from "@/types";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -66,21 +66,12 @@ export const eventApi = {
 
 // Global Settings API
 export const configurationApi = {
-  get: async (key: string): Promise<Configuration | null> => {
+  getAll: async (): Promise<Record<string, unknown>> => {
     try {
-      const { data } = await api.get(`/configuration/public/${key}`);
+      const { data } = await api.get("/configuration/public");
       return data.data || data;
     } catch {
-      return null;
-    }
-  },
-
-  getLogo: async (): Promise<Configuration | null> => {
-    try {
-      const { data } = await api.get("/configuration/public/logo");
-      return data.data || data;
-    } catch {
-      return null;
+      return {};
     }
   },
 };
@@ -105,12 +96,5 @@ export const partnershipFaqApi = {
     return data.data || data;
   },
 };
-
-// Legacy exports for backward compatibility (deprecated)
-export const phanMucApi = sectionApi;
-export const suKienApi = eventApi;
-export const cauHinhApi = configurationApi;
-export const moHinhKinhDoanhApi = businessModelApi;
-export const hoiDapHopTacApi = partnershipFaqApi;
 
 export default api;

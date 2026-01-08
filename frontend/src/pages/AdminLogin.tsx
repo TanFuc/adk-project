@@ -12,7 +12,7 @@ import { authApi } from "@/services/api";
 
 const loginSchema = z.object({
   email: z.string().email("Email không đúng định dạng"),
-  matKhau: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+  password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -30,7 +30,7 @@ export default function AdminLogin() {
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
-      matKhau: "",
+      password: "",
     },
   });
 
@@ -43,7 +43,7 @@ export default function AdminLogin() {
 
       toast({
         title: "Đăng nhập thành công",
-        description: `Xin chào, ${response.admin.hoTen}!`,
+        description: `Xin chào, ${response.admin.fullName}!`,
         variant: "success",
       });
 
@@ -92,15 +92,15 @@ export default function AdminLogin() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="matKhau">Mật khẩu</Label>
+              <Label htmlFor="password">Mật khẩu</Label>
               <Input
-                id="matKhau"
+                id="password"
                 type="password"
                 placeholder="••••••••"
-                {...register("matKhau")}
-                className={errors.matKhau ? "border-red-500" : ""}
+                {...register("password")}
+                className={errors.password ? "border-red-500" : ""}
               />
-              {errors.matKhau && <p className="text-sm text-red-500">{errors.matKhau.message}</p>}
+              {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
             </div>
 
             <Button type="submit" variant="adk" className="w-full" disabled={isLoading}>

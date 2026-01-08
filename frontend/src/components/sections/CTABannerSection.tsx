@@ -15,8 +15,8 @@ interface CTAContent {
 }
 
 export default function CTABannerSection({ section }: CTABannerSectionProps) {
-  const content = section.noiDung as CTAContent;
-  const backgroundImage = section.hinhAnh[0];
+  const content = section.content as CTAContent;
+  const backgroundImage = section.images[0];
 
   return (
     <section className="relative py-20 lg:py-32 overflow-hidden">

@@ -2,8 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { X, ZoomIn, ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
-import { phanMucApi } from "@/api";
-import type { PhanMuc } from "@/types";
+import { sectionApi } from "@/api";
+import type { Section } from "@/types";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 
@@ -64,9 +64,9 @@ export default function GalleryPage() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
-  const { data: _sections = [] } = useQuery<PhanMuc[]>({
+  const { data: _sections = [] } = useQuery<Section[]>({
     queryKey: ["sections", "gallery"],
-    queryFn: () => phanMucApi.getByLoai("MASONRY_GRID"),
+    queryFn: () => sectionApi.getByLayoutType("MASONRY_GRID"),
   });
 
   const filteredImages =

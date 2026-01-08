@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Users,
-  FileText,
   Settings,
   LogOut,
   RefreshCw,
@@ -28,7 +27,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { adminApi } from "@/services/api";
-import type { DangKyDetail, DangKyStats, TrangThai } from "@/types";
+import type { Registration, RegistrationStats, RegistrationStatus } from "@/types";
 import { getProvinceLabel, getDistrictLabel } from "@/data/locations";
 import {
   SectionsTab,
@@ -39,24 +38,24 @@ import {
   SettingsTab,
 } from "@/components/admin/tabs";
 
-const STATUS_LABELS: Record<TrangThai, { label: string; color: string }> = {
-  CHO_XU_LY: { label: "Chờ xử lý", color: "bg-yellow-100 text-yellow-800" },
-  DA_LIEN_HE: { label: "Đã liên hệ", color: "bg-blue-100 text-blue-800" },
-  THANH_CONG: { label: "Thành công", color: "bg-green-100 text-green-800" },
-  TU_CHOI: { label: "Từ chối", color: "bg-red-100 text-red-800" },
+const STATUS_LABELS: Record<RegistrationStatus, { label: string; color: string }> = {
+  PENDING: { label: "Chờ xử lý", color: "bg-yellow-100 text-yellow-800" },
+  CONTACTED: { label: "Đang liên hệ", color: "bg-blue-100 text-blue-800" },
+  SUCCESSFUL: { label: "Thành công", color: "bg-green-100 text-green-800" },
+  REJECTED: { label: "Từ chối", color: "bg-red-100 text-red-800" },
 };
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [statusFilter, setStatusFilter] = useState<TrangThai | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<RegistrationStatus | "all">("all");
 
   // Get admin info from localStorage
   const adminInfo = JSON.parse(localStorage.getItem("admin") || "{}");
 
   // Fetch stats
-  const { data: stats } = useQuery<DangKyStats>({
+  const { data: stats } = useQuery<RegistrationStats>({
     queryKey: ["registrationStats"],
     queryFn: () => adminApi.getRegistrationStats(),
   });
@@ -70,8 +69,8 @@ export default function AdminDashboard() {
 
   // Update status mutation
   const updateStatusMutation = useMutation({
-    mutationFn: ({ id, trangThai }: { id: string; trangThai: TrangThai }) =>
-      adminApi.updateRegistrationStatus(id, trangThai),
+    mutationFn: ({ id, status }: { id: string; status: RegistrationStatus }) =>
+      adminApi.updateRegistrationStatus(id, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["registrations"] });
       queryClient.invalidateQueries({ queryKey: ["registrationStats"] });
@@ -156,7 +155,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Chờ xử lý</p>
-                <p className="text-2xl font-bold">{stats?.choXuLy || 0}</p>
+                <p className="text-2xl font-bold">{stats?.pending || 0}</p>
               </div>
             </div>
           </div>
@@ -168,7 +167,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Thành công</p>
-                <p className="text-2xl font-bold">{stats?.thanhCong || 0}</p>
+                <p className="text-2xl font-bold">{stats?.successful || 0}</p>
               </div>
             </div>
           </div>
@@ -180,7 +179,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Từ chối</p>
-                <p className="text-2xl font-bold">{stats?.tuChoi || 0}</p>
+                <p className="text-2xl font-bold">{stats?.rejected || 0}</p>
               </div>
             </div>
           </div>
@@ -228,17 +227,17 @@ export default function AdminDashboard() {
                 <div className="flex items-center gap-4">
                   <Select
                     value={statusFilter}
-                    onValueChange={(value) => setStatusFilter(value as TrangThai | "all")}
+                    onValueChange={(value) => setStatusFilter(value as RegistrationStatus | "all")}
                   >
                     <SelectTrigger className="w-40">
                       <SelectValue placeholder="Lọc trạng thái" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Tất cả</SelectItem>
-                      <SelectItem value="CHO_XU_LY">Chờ xử lý</SelectItem>
-                      <SelectItem value="DA_LIEN_HE">Đã liên hệ</SelectItem>
-                      <SelectItem value="THANH_CONG">Thành công</SelectItem>
-                      <SelectItem value="TU_CHOI">Từ chối</SelectItem>
+                      <SelectItem value="PENDING">Chờ xử lý</SelectItem>
+                      <SelectItem value="CONTACTED">Đã liên hệ</SelectItem>
+                      <SelectItem value="SUCCESSFUL">Thành công</SelectItem>
+                      <SelectItem value="REJECTED">Từ chối</SelectItem>
                     </SelectContent>
                   </Select>
                   <Button
@@ -292,37 +291,37 @@ export default function AdminDashboard() {
                         </td>
                       </tr>
                     ) : (
-                      registrationsData?.data.map((reg: DangKyDetail) => (
+                      registrationsData?.data.map((reg: Registration) => (
                         <tr key={reg.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 font-medium">{reg.hoTen}</td>
+                          <td className="px-4 py-3 font-medium">{reg.fullName}</td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
                               <Phone className="w-4 h-4 text-gray-400" />
-                              {reg.soDienThoai}
+                              {reg.phone}
                             </div>
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-600">
-                            {getDistrictLabel(reg.tinhThanh, reg.quanHuyen)},{" "}
-                            {getProvinceLabel(reg.tinhThanh)}
+                            {getDistrictLabel(reg.province, reg.district)},{" "}
+                            {getProvinceLabel(reg.province)}
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-500">
-                            {formatDate(reg.createdAt)}
+                            {formatDate(reg.registeredAt)}
                           </td>
                           <td className="px-4 py-3">
                             <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${STATUS_LABELS[reg.trangThai].color
-                                }`}
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${STATUS_LABELS[reg.status].color
+                            }`}
                             >
-                              {STATUS_LABELS[reg.trangThai].label}
+                              {STATUS_LABELS[reg.status].label}
                             </span>
                           </td>
                           <td className="px-4 py-3">
                             <Select
-                              value={reg.trangThai}
+                              value={reg.status}
                               onValueChange={(value) =>
                                 updateStatusMutation.mutate({
                                   id: reg.id,
-                                  trangThai: value as TrangThai,
+                                  status: value as RegistrationStatus,
                                 })
                               }
                             >
@@ -330,10 +329,10 @@ export default function AdminDashboard() {
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="CHO_XU_LY">Chờ xử lý</SelectItem>
-                                <SelectItem value="DA_LIEN_HE">Đã liên hệ</SelectItem>
-                                <SelectItem value="THANH_CONG">Thành công</SelectItem>
-                                <SelectItem value="TU_CHOI">Từ chối</SelectItem>
+                                <SelectItem value="PENDING">Chờ xử lý</SelectItem>
+                                <SelectItem value="CONTACTED">Đã liên hệ</SelectItem>
+                                <SelectItem value="SUCCESSFUL">Thành công</SelectItem>
+                                <SelectItem value="REJECTED">Từ chối</SelectItem>
                               </SelectContent>
                             </Select>
                           </td>

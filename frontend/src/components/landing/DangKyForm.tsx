@@ -21,14 +21,14 @@ import { PROVINCES, getDistrictsByProvince } from "@/data/locations";
 import type { District } from "@/types";
 
 const formSchema = z.object({
-  hoTen: z
+  fullName: z
     .string()
     .min(2, "Họ và tên phải có ít nhất 2 ký tự")
     .max(100, "Họ và tên không được quá 100 ký tự"),
-  soDienThoai: z.string().regex(/^(0|\+84)[0-9]{9,10}$/, "Số điện thoại không đúng định dạng"),
-  tinhThanh: z.string().min(1, "Vui lòng chọn Tỉnh/Thành phố"),
-  quanHuyen: z.string().min(1, "Vui lòng chọn Quận/Huyện"),
-  diaChi: z.string().max(500, "Địa chỉ không được quá 500 ký tự").optional(),
+  phone: z.string().regex(/^(0|\+84)[0-9]{9,10}$/, "Số điện thoại không đúng định dạng"),
+  province: z.string().min(1, "Vui lòng chọn Tỉnh/Thành phố"),
+  district: z.string().min(1, "Vui lòng chọn Quận/Huyện"),
+  address: z.string().max(500, "Địa chỉ không được quá 500 ký tự").optional(),
   dongYDieuKhoan: z.boolean().refine((v) => v === true, {
     message: "Vui lòng đồng ý với điều khoản để tiếp tục",
   }),
@@ -52,23 +52,23 @@ export default function DangKyForm() {
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      hoTen: "",
-      soDienThoai: "",
-      tinhThanh: "",
-      quanHuyen: "",
-      diaChi: "",
+      fullName: "",
+      phone: "",
+      province: "",
+      district: "",
+      address: "",
       dongYDieuKhoan: false,
     },
   });
 
-  const selectedProvince = watch("tinhThanh");
+  const selectedProvince = watch("province");
 
   // Update districts when province changes
   useEffect(() => {
     if (selectedProvince) {
       const newDistricts = getDistrictsByProvince(selectedProvince);
       setDistricts(newDistricts);
-      setValue("quanHuyen", ""); // Reset district selection
+      setValue("district", ""); // Reset district selection
     } else {
       setDistricts([]);
     }
@@ -78,7 +78,7 @@ export default function DangKyForm() {
     setIsSubmitting(true);
     try {
       const { dongYDieuKhoan: _dongYDieuKhoan, ...data } = values;
-      const response = await publicApi.createDangKy(data);
+      const response = await publicApi.createRegistration(data);
 
       setIsSuccess(true);
       toast({
@@ -153,40 +153,40 @@ export default function DangKyForm() {
     >
       {/* Họ và Tên */}
       <div className="space-y-2">
-        <Label htmlFor="hoTen">
+        <Label htmlFor="fullName">
           Họ và Tên <span className="text-red-500">*</span>
         </Label>
         <Input
-          id="hoTen"
+          id="fullName"
           placeholder="Nhập họ và tên của bạn"
-          {...register("hoTen")}
-          className={errors.hoTen ? "border-red-500" : ""}
+          {...register("fullName")}
+          className={errors.fullName ? "border-red-500" : ""}
         />
-        {errors.hoTen && <p className="text-sm text-red-500">{errors.hoTen.message}</p>}
+        {errors.fullName && <p className="text-sm text-red-500">{errors.fullName.message}</p>}
       </div>
 
       {/* Số Điện Thoại */}
       <div className="space-y-2">
-        <Label htmlFor="soDienThoai">
+        <Label htmlFor="phone">
           Số Điện Thoại <span className="text-red-500">*</span>
         </Label>
         <Input
-          id="soDienThoai"
+          id="phone"
           type="tel"
           placeholder="0901234567"
-          {...register("soDienThoai")}
-          className={errors.soDienThoai ? "border-red-500" : ""}
+          {...register("phone")}
+          className={errors.phone ? "border-red-500" : ""}
         />
-        {errors.soDienThoai && <p className="text-sm text-red-500">{errors.soDienThoai.message}</p>}
+        {errors.phone && <p className="text-sm text-red-500">{errors.phone.message}</p>}
       </div>
 
       {/* Tỉnh/Thành phố */}
       <div className="space-y-2">
-        <Label htmlFor="tinhThanh">
+        <Label htmlFor="province">
           Tỉnh/Thành phố <span className="text-red-500">*</span>
         </Label>
-        <Select onValueChange={(value) => setValue("tinhThanh", value)} value={watch("tinhThanh")}>
-          <SelectTrigger className={errors.tinhThanh ? "border-red-500" : ""}>
+        <Select onValueChange={(value) => setValue("province", value)} value={watch("province")}>
+          <SelectTrigger className={errors.province ? "border-red-500" : ""}>
             <SelectValue placeholder="Chọn Tỉnh/Thành phố" />
           </SelectTrigger>
           <SelectContent>
@@ -197,20 +197,20 @@ export default function DangKyForm() {
             ))}
           </SelectContent>
         </Select>
-        {errors.tinhThanh && <p className="text-sm text-red-500">{errors.tinhThanh.message}</p>}
+        {errors.province && <p className="text-sm text-red-500">{errors.province.message}</p>}
       </div>
 
       {/* Quận/Huyện */}
       <div className="space-y-2">
-        <Label htmlFor="quanHuyen">
+        <Label htmlFor="district">
           Quận/Huyện <span className="text-red-500">*</span>
         </Label>
         <Select
-          onValueChange={(value) => setValue("quanHuyen", value)}
-          value={watch("quanHuyen")}
+          onValueChange={(value) => setValue("district", value)}
+          value={watch("district")}
           disabled={!selectedProvince}
         >
-          <SelectTrigger className={errors.quanHuyen ? "border-red-500" : ""}>
+          <SelectTrigger className={errors.district ? "border-red-500" : ""}>
             <SelectValue
               placeholder={
                 selectedProvince ? "Chọn Quận/Huyện" : "Vui lòng chọn Tỉnh/Thành phố trước"
@@ -225,19 +225,19 @@ export default function DangKyForm() {
             ))}
           </SelectContent>
         </Select>
-        {errors.quanHuyen && <p className="text-sm text-red-500">{errors.quanHuyen.message}</p>}
+        {errors.district && <p className="text-sm text-red-500">{errors.district.message}</p>}
       </div>
 
       {/* Địa chỉ chi tiết */}
       <div className="space-y-2">
-        <Label htmlFor="diaChi">Địa chỉ chi tiết (không bắt buộc)</Label>
+        <Label htmlFor="address">Địa chỉ chi tiết (không bắt buộc)</Label>
         <Input
-          id="diaChi"
+          id="address"
           placeholder="Số nhà, đường, phường/xã..."
-          {...register("diaChi")}
-          className={errors.diaChi ? "border-red-500" : ""}
+          {...register("address")}
+          className={errors.address ? "border-red-500" : ""}
         />
-        {errors.diaChi && <p className="text-sm text-red-500">{errors.diaChi.message}</p>}
+        {errors.address && <p className="text-sm text-red-500">{errors.address.message}</p>}
       </div>
 
       {/* Điều khoản */}

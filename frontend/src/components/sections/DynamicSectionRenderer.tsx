@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import type { PhanMuc } from "@/types";
+import type { Section } from "@/types";
 import HeroImageSection from "./HeroImageSection";
 import SplitImageTextSection from "./SplitImageTextSection";
 import BentoGridSection from "./BentoGridSection";
@@ -8,12 +8,12 @@ import CTABannerSection from "./CTABannerSection";
 import CarouselSection from "./CarouselSection";
 
 interface DynamicSectionRendererProps {
-  sections: PhanMuc[];
+  sections: Section[];
 }
 
 export default function DynamicSectionRenderer({ sections }: DynamicSectionRendererProps) {
-  const renderSection = (section: PhanMuc) => {
-    switch (section.loaiBoCuc) {
+  const renderSection = (section: Section) => {
+    switch (section.layoutType) {
       case "HERO_IMAGE":
       case "HERO_VIDEO":
         return <HeroImageSection key={section.id} section={section} />;
@@ -38,10 +38,10 @@ export default function DynamicSectionRenderer({ sections }: DynamicSectionRende
           >
             <div className="container-full text-center max-w-4xl mx-auto">
               <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                {(section.noiDung as { title?: string }).title}
+                {(section.content as { title?: string }).title}
               </h2>
               <p className="text-lg text-gray-600">
-                {(section.noiDung as { description?: string }).description}
+                {(section.content as { description?: string }).description}
               </p>
             </div>
           </motion.section>
@@ -51,5 +51,5 @@ export default function DynamicSectionRenderer({ sections }: DynamicSectionRende
     }
   };
 
-  return <>{sections.sort((a, b) => a.thuTu - b.thuTu).map(renderSection)}</>;
+  return <>{sections.sort((a, b) => a.sortOrder - b.sortOrder).map(renderSection)}</>;
 }

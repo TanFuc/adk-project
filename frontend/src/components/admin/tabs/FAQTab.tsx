@@ -16,19 +16,19 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { adminApi } from "@/services/api";
 import { ConfirmDialog } from "../ConfirmDialog";
-import type { HoiDapHopTac } from "@/types";
+import type { PartnershipFaq } from "@/types";
 
 export function FAQTab() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<HoiDapHopTac | null>(null);
-  const [deleteItem, setDeleteItem] = useState<HoiDapHopTac | null>(null);
+  const [editingItem, setEditingItem] = useState<PartnershipFaq | null>(null);
+  const [deleteItem, setDeleteItem] = useState<PartnershipFaq | null>(null);
   const [formData, setFormData] = useState({
-    cauHoi: "",
-    traLoi: "",
-    thuTu: 0,
-    hienThi: true,
+    question: "",
+    answer: "",
+    sortOrder: 0,
+    isVisible: true,
   });
 
   const { data: faqs = [], isLoading } = useQuery({
@@ -37,7 +37,7 @@ export function FAQTab() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: Partial<HoiDapHopTac>) => adminApi.createFAQ(data),
+    mutationFn: (data: Partial<PartnershipFaq>) => adminApi.createFAQ(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminFAQs"] });
       toast({ title: "Thành công", description: "Đã tạo câu hỏi mới", variant: "success" });
@@ -49,7 +49,7 @@ export function FAQTab() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<HoiDapHopTac> }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<PartnershipFaq> }) =>
       adminApi.updateFAQ(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminFAQs"] });
@@ -87,21 +87,21 @@ export function FAQTab() {
   const openCreateModal = () => {
     setEditingItem(null);
     setFormData({
-      cauHoi: "",
-      traLoi: "",
-      thuTu: faqs.length,
-      hienThi: true,
+      question: "",
+      answer: "",
+      sortOrder: faqs.length,
+      isVisible: true,
     });
     setIsModalOpen(true);
   };
 
-  const openEditModal = (item: HoiDapHopTac) => {
+  const openEditModal = (item: PartnershipFaq) => {
     setEditingItem(item);
     setFormData({
-      cauHoi: item.cauHoi,
-      traLoi: item.traLoi,
-      thuTu: item.thuTu,
-      hienThi: item.hienThi,
+      question: item.question,
+      answer: item.answer,
+      sortOrder: item.sortOrder,
+      isVisible: item.isVisible,
     });
     setIsModalOpen(true);
   };
@@ -112,7 +112,7 @@ export function FAQTab() {
   };
 
   const handleSubmit = () => {
-    if (!formData.cauHoi || !formData.traLoi) {
+    if (!formData.question || !formData.answer) {
       toast({ title: "Lỗi", description: "Vui lòng điền đầy đủ thông tin", variant: "destructive" });
       return;
     }
@@ -177,18 +177,18 @@ export function FAQTab() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <div className="font-medium max-w-xs">{faq.cauHoi}</div>
+                    <div className="font-medium max-w-xs">{faq.question}</div>
                   </td>
                   <td className="px-4 py-3">
-                    <div className="text-sm text-gray-500 truncate max-w-md">{faq.traLoi}</div>
+                    <div className="text-sm text-gray-500 truncate max-w-md">{faq.answer}</div>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <Switch
-                        checked={faq.hienThi}
+                        checked={faq.isVisible}
                         onCheckedChange={() => toggleMutation.mutate(faq.id)}
                       />
-                      {faq.hienThi ? (
+                      {faq.isVisible ? (
                         <Eye className="w-4 h-4 text-green-600" />
                       ) : (
                         <EyeOff className="w-4 h-4 text-gray-400" />
@@ -220,43 +220,43 @@ export function FAQTab() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="cauHoi">Câu hỏi *</Label>
+              <Label htmlFor="question">Câu hỏi *</Label>
               <Input
-                id="cauHoi"
-                value={formData.cauHoi}
-                onChange={(e) => setFormData({ ...formData, cauHoi: e.target.value })}
+                id="question"
+                value={formData.question}
+                onChange={(e) => setFormData({ ...formData, question: e.target.value })}
                 placeholder="VD: Tôi cần bao nhiêu vốn để bắt đầu?"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="traLoi">Câu trả lời *</Label>
+              <Label htmlFor="answer">Câu trả lời *</Label>
               <Textarea
-                id="traLoi"
-                value={formData.traLoi}
-                onChange={(e) => setFormData({ ...formData, traLoi: e.target.value })}
+                id="answer"
+                value={formData.answer}
+                onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
                 placeholder="Nội dung câu trả lời chi tiết..."
                 rows={5}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="thuTu">Thứ tự</Label>
+                <Label htmlFor="sortOrder">Thứ tự</Label>
                 <Input
-                  id="thuTu"
+                  id="sortOrder"
                   type="number"
-                  value={formData.thuTu}
+                  value={formData.sortOrder}
                   onChange={(e) =>
-                    setFormData({ ...formData, thuTu: parseInt(e.target.value) || 0 })
+                    setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })
                   }
                 />
               </div>
               <div className="flex items-center gap-2 mt-6">
                 <Switch
-                  id="hienThi"
-                  checked={formData.hienThi}
-                  onCheckedChange={(checked) => setFormData({ ...formData, hienThi: checked })}
+                  id="isVisible"
+                  checked={formData.isVisible}
+                  onCheckedChange={(checked) => setFormData({ ...formData, isVisible: checked })}
                 />
-                <Label htmlFor="hienThi">Hiển thị</Label>
+                <Label htmlFor="isVisible">Hiển thị</Label>
               </div>
             </div>
           </div>

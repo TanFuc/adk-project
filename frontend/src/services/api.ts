@@ -156,9 +156,12 @@ export const adminApi = {
   },
 
   async updateRegistrationStatus(id: string, status: RegistrationStatus): Promise<Registration> {
-    const response = await api.patch<ApiResponse<Registration>>(`/registration/admin/${id}/status`, {
-      status,
-    });
+    const response = await api.patch<ApiResponse<Registration>>(
+      `/registration/admin/${id}/status`,
+      {
+        status,
+      }
+    );
     return response.data.data;
   },
 
@@ -274,7 +277,7 @@ export const adminApi = {
   async updateBusinessModel(id: string, data: Partial<BusinessModel>): Promise<BusinessModel> {
     const response = await api.patch<ApiResponse<BusinessModel>>(
       `/business-model/admin/${id}`,
-      data,
+      data
     );
     return response.data.data;
   },
@@ -285,7 +288,7 @@ export const adminApi = {
 
   async toggleBusinessModel(id: string): Promise<BusinessModel> {
     const response = await api.patch<ApiResponse<BusinessModel>>(
-      `/business-model/admin/${id}/toggle`,
+      `/business-model/admin/${id}/toggle`
     );
     return response.data.data;
   },
@@ -306,7 +309,10 @@ export const adminApi = {
   },
 
   async updateFAQ(id: string, data: Partial<PartnershipFaq>): Promise<PartnershipFaq> {
-    const response = await api.patch<ApiResponse<PartnershipFaq>>(`/partnership-faq/admin/${id}`, data);
+    const response = await api.patch<ApiResponse<PartnershipFaq>>(
+      `/partnership-faq/admin/${id}`,
+      data
+    );
     return response.data.data;
   },
 
@@ -315,7 +321,9 @@ export const adminApi = {
   },
 
   async toggleFAQ(id: string): Promise<PartnershipFaq> {
-    const response = await api.patch<ApiResponse<PartnershipFaq>>(`/partnership-faq/admin/${id}/toggle`);
+    const response = await api.patch<ApiResponse<PartnershipFaq>>(
+      `/partnership-faq/admin/${id}/toggle`
+    );
     return response.data.data;
   },
 
@@ -329,13 +337,23 @@ export const adminApi = {
     return response.data.data;
   },
 
-  async upsertSetting(data: { key: string; value: unknown; description?: string }): Promise<Configuration> {
+  async upsertSetting(data: {
+    key: string;
+    value: unknown;
+    description?: string;
+  }): Promise<Configuration> {
     const response = await api.post<ApiResponse<Configuration>>("/configuration/admin", data);
     return response.data.data;
   },
 
-  async updateSetting(key: string, data: { value: unknown; description?: string }): Promise<Configuration> {
-    const response = await api.patch<ApiResponse<Configuration>>(`/configuration/admin/${key}`, data);
+  async updateSetting(
+    key: string,
+    data: { value: unknown; description?: string }
+  ): Promise<Configuration> {
+    const response = await api.patch<ApiResponse<Configuration>>(
+      `/configuration/admin/${key}`,
+      data
+    );
     return response.data.data;
   },
 
@@ -344,12 +362,12 @@ export const adminApi = {
   },
 
   // === LOGO MANAGEMENT ===
-  async getLogo(): Promise<Configuration | null> {
+  async getPublicConfig(): Promise<Record<string, unknown>> {
     try {
-      const response = await api.get<ApiResponse<Configuration>>("/configuration/public/logo");
+      const response = await api.get<ApiResponse<Record<string, unknown>>>("/configuration/public");
       return response.data.data;
     } catch {
-      return null;
+      return {};
     }
   },
 

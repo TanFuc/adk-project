@@ -20,9 +20,9 @@ const iconMap: Record<string, typeof Pill> = {
 };
 
 export default function SplitImageTextSection({ section }: SplitImageTextSectionProps) {
-  const content = section.noiDung as SplitContent;
-  const leftImage = section.hinhAnh[0];
-  const rightImage = section.hinhAnh[1];
+  const content = section.content as SplitContent;
+  const leftImage = section.images[0];
+  const rightImage = section.images[1];
 
   return (
     <section className="py-16 lg:py-24 bg-white overflow-hidden">

@@ -14,9 +14,9 @@ interface HeroContent {
 }
 
 export default function HeroImageSection({ section }: HeroImageSectionProps) {
-  const content = section.noiDung as HeroContent;
-  const backgroundImage = section.hinhAnh[1] || section.hinhAnh[0];
-  const logoImage = section.hinhAnh[0];
+  const content = section.content as HeroContent;
+  const backgroundImage = section.images[1] || section.images[0];
+  const logoImage = section.images[0];
 
   return (
     <section className="relative min-h-screen bg-gradient-adk py-12 lg:py-20 overflow-hidden">

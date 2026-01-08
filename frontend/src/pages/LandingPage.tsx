@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Pill, Leaf, TrendingUp, CheckCircle } from "lucide-react";
-import { phanMucApi, hoiDapHopTacApi, moHinhKinhDoanhApi } from "@/api";
-import type { PhanMuc, HoiDapHopTac, MoHinhKinhDoanh } from "@/types";
+import { sectionApi, partnershipFaqApi, businessModelApi } from "@/api";
+import type { Section, PartnershipFaq, BusinessModel } from "@/types";
 import Navbar from "@/components/landing/Navbar";
 import { DynamicSectionRenderer } from "@/components/sections";
 import FeaturesSection from "@/components/landing/FeaturesSection";
@@ -11,32 +11,32 @@ import Footer from "@/components/landing/Footer";
 import RedirectButton from "@/components/common/RedirectButton";
 
 export default function LandingPage() {
-  const { data: sections = [], isLoading } = useQuery<PhanMuc[]>({
+  const { data: sections = [], isLoading } = useQuery<Section[]>({
     queryKey: ["sections", "all"],
-    queryFn: phanMucApi.getAll,
+    queryFn: sectionApi.getAll,
     staleTime: 5 * 60 * 1000,
   });
 
-  const { data: faqs = [] } = useQuery<HoiDapHopTac[]>({
+  const { data: faqs = [] } = useQuery<PartnershipFaq[]>({
     queryKey: ["faqs"],
-    queryFn: hoiDapHopTacApi.getAll,
+    queryFn: partnershipFaqApi.getAll,
     staleTime: 5 * 60 * 1000,
   });
 
-  const { data: businessModels = [] } = useQuery<MoHinhKinhDoanh[]>({
+  const { data: _businessModels = [] } = useQuery<BusinessModel[]>({
     queryKey: ["businessModels"],
-    queryFn: moHinhKinhDoanhApi.getAll,
+    queryFn: businessModelApi.getAll,
     staleTime: 5 * 60 * 1000,
   });
 
   // Filter sections for landing page
   const heroSection = sections.filter(
-    (s) => s.loaiBoCuc === "HERO_IMAGE" || s.loaiBoCuc === "HERO_VIDEO"
+    (s) => s.layoutType === "HERO_IMAGE" || s.layoutType === "HERO_VIDEO"
   );
-  const conceptSection = sections.filter((s) => s.loaiBoCuc === "SPLIT_IMAGE_TEXT");
-  const benefitsSection = sections.filter((s) => s.loaiBoCuc === "BENTO_GRID");
-  const gallerySection = sections.filter((s) => s.loaiBoCuc === "MASONRY_GRID");
-  const ctaSection = sections.filter((s) => s.loaiBoCuc === "CTA_BANNER");
+  const conceptSection = sections.filter((s) => s.layoutType === "SPLIT_IMAGE_TEXT");
+  const benefitsSection = sections.filter((s) => s.layoutType === "BENTO_GRID");
+  const gallerySection = sections.filter((s) => s.layoutType === "MASONRY_GRID");
+  const ctaSection = sections.filter((s) => s.layoutType === "CTA_BANNER");
 
   return (
     <main className="min-h-screen">

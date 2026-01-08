@@ -52,7 +52,7 @@ const itemVariants = {
 };
 
 export default function BentoGridSection({ section }: BentoGridSectionProps) {
-  const content = section.noiDung as BentoContent;
+  const content = section.content as BentoContent;
   const items = content.items || [];
 
   const getGridClass = (size: string, index: number) => {

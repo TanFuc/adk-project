@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Pencil, Trash2, Star, StarOff, Eye, EyeOff, RefreshCw } from "lucide-react";
+import { Plus, Pencil, Trash2, Star, StarOff, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
@@ -17,23 +17,23 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { adminApi } from "@/services/api";
 import { ConfirmDialog } from "../ConfirmDialog";
-import type { SuKien } from "@/types";
+import type { Event } from "@/types";
 
 export function EventsTab() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<SuKien | null>(null);
-  const [deleteItem, setDeleteItem] = useState<SuKien | null>(null);
+  const [editingItem, setEditingItem] = useState<Event | null>(null);
+  const [deleteItem, setDeleteItem] = useState<Event | null>(null);
   const [formData, setFormData] = useState({
-    tieuDe: "",
-    moTa: "",
-    ngayBatDau: "",
-    ngayKetThuc: "",
-    anhBia: "",
-    boSuuTapAnh: [] as string[],
-    noiBat: false,
-    hienThi: true,
+    title: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    coverImage: "",
+    gallery: [] as string[],
+    isFeatured: false,
+    isVisible: true,
   });
 
   const { data: events = [], isLoading } = useQuery({
@@ -42,7 +42,7 @@ export function EventsTab() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: Partial<SuKien>) => adminApi.createEvent(data),
+    mutationFn: (data: Partial<Event>) => adminApi.createEvent(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminEvents"] });
       queryClient.invalidateQueries({ queryKey: ["events"] }); // Invalidate public cache
@@ -55,7 +55,7 @@ export function EventsTab() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<SuKien> }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<Event> }) =>
       adminApi.updateEvent(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminEvents"] });
@@ -96,29 +96,29 @@ export function EventsTab() {
   const openCreateModal = () => {
     setEditingItem(null);
     setFormData({
-      tieuDe: "",
-      moTa: "",
-      ngayBatDau: new Date().toISOString().split("T")[0],
-      ngayKetThuc: "",
-      anhBia: "",
-      boSuuTapAnh: [],
-      noiBat: false,
-      hienThi: true,
+      title: "",
+      description: "",
+      startDate: new Date().toISOString().split("T")[0],
+      endDate: "",
+      coverImage: "",
+      gallery: [],
+      isFeatured: false,
+      isVisible: true,
     });
     setIsModalOpen(true);
   };
 
-  const openEditModal = (item: SuKien) => {
+  const openEditModal = (item: Event) => {
     setEditingItem(item);
     setFormData({
-      tieuDe: item.tieuDe,
-      moTa: item.moTa || "",
-      ngayBatDau: new Date(item.ngayBatDau).toISOString().split("T")[0],
-      ngayKetThuc: item.ngayKetThuc ? new Date(item.ngayKetThuc).toISOString().split("T")[0] : "",
-      anhBia: item.anhBia,
-      boSuuTapAnh: item.boSuuTapAnh,
-      noiBat: item.noiBat,
-      hienThi: item.hienThi,
+      title: item.title,
+      description: item.description || "",
+      startDate: new Date(item.startDate).toISOString().split("T")[0],
+      endDate: item.endDate ? new Date(item.endDate).toISOString().split("T")[0] : "",
+      coverImage: item.coverImage,
+      gallery: item.gallery,
+      isFeatured: item.isFeatured,
+      isVisible: item.isVisible,
     });
     setIsModalOpen(true);
   };
@@ -129,15 +129,15 @@ export function EventsTab() {
   };
 
   const handleSubmit = () => {
-    if (!formData.tieuDe || !formData.ngayBatDau || !formData.anhBia) {
+    if (!formData.title || !formData.startDate || !formData.coverImage) {
       toast({ title: "Lỗi", description: "Vui lòng điền đầy đủ thông tin bắt buộc", variant: "destructive" });
       return;
     }
 
     const data = {
       ...formData,
-      ngayBatDau: new Date(formData.ngayBatDau).toISOString(),
-      ngayKetThuc: formData.ngayKetThuc ? new Date(formData.ngayKetThuc).toISOString() : null,
+      startDate: new Date(formData.startDate).toISOString(),
+      endDate: formData.endDate ? new Date(formData.endDate).toISOString() : undefined,
     };
 
     if (editingItem) {
@@ -199,23 +199,23 @@ export function EventsTab() {
                 <tr key={event.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">
                     <img
-                      src={event.anhBia}
-                      alt={event.tieuDe}
+                      src={event.coverImage}
+                      alt={event.title}
                       className="w-20 h-12 object-cover rounded"
                     />
                   </td>
                   <td className="px-4 py-3">
-                    <div className="font-medium">{event.tieuDe}</div>
-                    {event.moTa && (
+                    <div className="font-medium">{event.title}</div>
+                    {event.description && (
                       <div className="text-sm text-gray-500 truncate max-w-xs">
-                        {event.moTa}
+                        {event.description}
                       </div>
                     )}
                   </td>
                   <td className="px-4 py-3 text-sm">
-                    <div>{formatDate(event.ngayBatDau)}</div>
-                    {event.ngayKetThuc && (
-                      <div className="text-gray-500">→ {formatDate(event.ngayKetThuc)}</div>
+                    <div>{formatDate(event.startDate)}</div>
+                    {event.endDate && (
+                      <div className="text-gray-500">→ {formatDate(event.endDate)}</div>
                     )}
                   </td>
                   <td className="px-4 py-3">
@@ -225,16 +225,16 @@ export function EventsTab() {
                           onClick={() => toggleFeaturedMutation.mutate(event.id)}
                           className="hover:opacity-70"
                         >
-                          {event.noiBat ? (
+                          {event.isFeatured ? (
                             <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                           ) : (
                             <StarOff className="w-4 h-4 text-gray-400" />
                           )}
                         </button>
-                        {event.noiBat && <Badge variant="warning">Nổi bật</Badge>}
+                        {event.isFeatured && <Badge variant="warning">Nổi bật</Badge>}
                       </div>
                       <div className="flex items-center gap-1">
-                        {event.hienThi ? (
+                        {event.isVisible ? (
                           <Badge variant="success">Hiển thị</Badge>
                         ) : (
                           <Badge variant="secondary">Ẩn</Badge>
@@ -267,69 +267,69 @@ export function EventsTab() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="tieuDe">Tiêu đề *</Label>
+              <Label htmlFor="title">Tiêu đề *</Label>
               <Input
-                id="tieuDe"
-                value={formData.tieuDe}
-                onChange={(e) => setFormData({ ...formData, tieuDe: e.target.value })}
+                id="title"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Tên sự kiện"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="moTa">Mô tả</Label>
+              <Label htmlFor="description">Mô tả</Label>
               <Textarea
-                id="moTa"
-                value={formData.moTa}
-                onChange={(e) => setFormData({ ...formData, moTa: e.target.value })}
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Mô tả sự kiện"
                 rows={3}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="ngayBatDau">Ngày bắt đầu *</Label>
+                <Label htmlFor="startDate">Ngày bắt đầu *</Label>
                 <Input
-                  id="ngayBatDau"
+                  id="startDate"
                   type="date"
-                  value={formData.ngayBatDau}
-                  onChange={(e) => setFormData({ ...formData, ngayBatDau: e.target.value })}
+                  value={formData.startDate}
+                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="ngayKetThuc">Ngày kết thúc</Label>
+                <Label htmlFor="endDate">Ngày kết thúc</Label>
                 <Input
-                  id="ngayKetThuc"
+                  id="endDate"
                   type="date"
-                  value={formData.ngayKetThuc}
-                  onChange={(e) => setFormData({ ...formData, ngayKetThuc: e.target.value })}
+                  value={formData.endDate}
+                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                 />
               </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="anhBia">URL Ảnh bìa *</Label>
+              <Label htmlFor="coverImage">URL Ảnh bìa *</Label>
               <Input
-                id="anhBia"
-                value={formData.anhBia}
-                onChange={(e) => setFormData({ ...formData, anhBia: e.target.value })}
+                id="coverImage"
+                value={formData.coverImage}
+                onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
                 placeholder="https://example.com/image.jpg"
               />
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Switch
-                  id="noiBat"
-                  checked={formData.noiBat}
-                  onCheckedChange={(checked) => setFormData({ ...formData, noiBat: checked })}
+                  id="isFeatured"
+                  checked={formData.isFeatured}
+                  onCheckedChange={(checked) => setFormData({ ...formData, isFeatured: checked })}
                 />
-                <Label htmlFor="noiBat">Nổi bật</Label>
+                <Label htmlFor="isFeatured">Nổi bật</Label>
               </div>
               <div className="flex items-center gap-2">
                 <Switch
-                  id="hienThi"
-                  checked={formData.hienThi}
-                  onCheckedChange={(checked) => setFormData({ ...formData, hienThi: checked })}
+                  id="isVisible"
+                  checked={formData.isVisible}
+                  onCheckedChange={(checked) => setFormData({ ...formData, isVisible: checked })}
                 />
-                <Label htmlFor="hienThi">Hiển thị</Label>
+                <Label htmlFor="isVisible">Hiển thị</Label>
               </div>
             </div>
           </div>
@@ -352,7 +352,7 @@ export function EventsTab() {
         open={!!deleteItem}
         onOpenChange={(open) => !open && setDeleteItem(null)}
         title="Xác nhận xóa"
-        description={`Bạn có chắc chắn muốn xóa sự kiện "${deleteItem?.tieuDe}"? Hành động này không thể hoàn tác.`}
+        description={`Bạn có chắc chắn muốn xóa sự kiện "${deleteItem?.title}"? Hành động này không thể hoàn tác.`}
         confirmText="Xóa"
         onConfirm={() => deleteItem && deleteMutation.mutate(deleteItem.id)}
         isLoading={deleteMutation.isPending}

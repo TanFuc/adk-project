@@ -24,9 +24,9 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { adminApi } from "@/services/api";
 import { ConfirmDialog } from "../ConfirmDialog";
-import type { PhanMuc, LoaiBoCuc } from "@/types";
+import type { Section, LayoutType } from "@/types";
 
-const LAYOUT_TYPES: { value: LoaiBoCuc; label: string }[] = [
+const LAYOUT_TYPES: { value: LayoutType; label: string }[] = [
   { value: "HERO_VIDEO", label: "Hero Video" },
   { value: "HERO_IMAGE", label: "Hero Image" },
   { value: "SPLIT_IMAGE_TEXT", label: "Split Image/Text" },
@@ -41,16 +41,16 @@ export function SectionsTab() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<PhanMuc | null>(null);
-  const [deleteItem, setDeleteItem] = useState<PhanMuc | null>(null);
+  const [editingItem, setEditingItem] = useState<Section | null>(null);
+  const [deleteItem, setDeleteItem] = useState<Section | null>(null);
   const [formData, setFormData] = useState({
     key: "",
-    loaiBoCuc: "HERO_IMAGE" as LoaiBoCuc,
-    noiDung: "{}",
-    hinhAnh: "",
+    layoutType: "HERO_IMAGE" as LayoutType,
+    content: "{}",
+    images: "",
     ctaLink: "",
-    thuTu: 0,
-    hienThi: true,
+    sortOrder: 0,
+    isVisible: true,
   });
 
   const { data: sections = [], isLoading } = useQuery({
@@ -59,7 +59,7 @@ export function SectionsTab() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: Partial<PhanMuc>) => adminApi.createSection(data),
+    mutationFn: (data: Partial<Section>) => adminApi.createSection(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminSections"] });
       toast({ title: "Thành công", description: "Đã tạo phần mục mới", variant: "success" });
@@ -71,7 +71,7 @@ export function SectionsTab() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<PhanMuc> }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<Section> }) =>
       adminApi.updateSection(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminSections"] });
@@ -99,26 +99,26 @@ export function SectionsTab() {
     setEditingItem(null);
     setFormData({
       key: "",
-      loaiBoCuc: "HERO_IMAGE",
-      noiDung: '{"title": "", "subtitle": ""}',
-      hinhAnh: "",
+      layoutType: "HERO_IMAGE",
+      content: '{"title": "", "subtitle": ""}',
+      images: "",
       ctaLink: "",
-      thuTu: sections.length,
-      hienThi: true,
+      sortOrder: sections.length,
+      isVisible: true,
     });
     setIsModalOpen(true);
   };
 
-  const openEditModal = (item: PhanMuc) => {
+  const openEditModal = (item: Section) => {
     setEditingItem(item);
     setFormData({
       key: item.key,
-      loaiBoCuc: item.loaiBoCuc,
-      noiDung: JSON.stringify(item.noiDung, null, 2),
-      hinhAnh: item.hinhAnh.join("\n"),
+      layoutType: item.layoutType,
+      content: JSON.stringify(item.content, null, 2),
+      images: item.images.join("\n"),
       ctaLink: item.ctaLink || "",
-      thuTu: item.thuTu,
-      hienThi: item.hienThi,
+      sortOrder: item.sortOrder,
+      isVisible: item.isVisible,
     });
     setIsModalOpen(true);
   };
@@ -129,32 +129,32 @@ export function SectionsTab() {
   };
 
   const handleSubmit = () => {
-    if (!formData.key || !formData.loaiBoCuc) {
+    if (!formData.key || !formData.layoutType) {
       toast({ title: "Lỗi", description: "Vui lòng điền đầy đủ thông tin bắt buộc", variant: "destructive" });
       return;
     }
 
-    let parsedNoiDung;
+    let parsedContent;
     try {
-      parsedNoiDung = JSON.parse(formData.noiDung);
+      parsedContent = JSON.parse(formData.content);
     } catch {
       toast({ title: "Lỗi", description: "Nội dung phải là JSON hợp lệ", variant: "destructive" });
       return;
     }
 
-    const hinhAnhArray = formData.hinhAnh
+    const imagesArray = formData.images
       .split("\n")
       .map((s) => s.trim())
       .filter((s) => s.length > 0);
 
     const data = {
       key: formData.key,
-      loaiBoCuc: formData.loaiBoCuc,
-      noiDung: parsedNoiDung,
-      hinhAnh: hinhAnhArray,
+      layoutType: formData.layoutType,
+      content: parsedContent,
+      images: imagesArray,
       ctaLink: formData.ctaLink || undefined,
-      thuTu: formData.thuTu,
-      hienThi: formData.hienThi,
+      sortOrder: formData.sortOrder,
+      isVisible: formData.isVisible,
     };
 
     if (editingItem) {
@@ -164,7 +164,7 @@ export function SectionsTab() {
     }
   };
 
-  const getLayoutLabel = (type: LoaiBoCuc) => {
+  const getLayoutLabel = (type: LayoutType) => {
     return LAYOUT_TYPES.find((t) => t.value === type)?.label || type;
   };
 
@@ -225,16 +225,16 @@ export function SectionsTab() {
                     <code className="bg-gray-100 px-2 py-1 rounded text-sm">{section.key}</code>
                   </td>
                   <td className="px-4 py-3">
-                    <Badge variant="secondary">{getLayoutLabel(section.loaiBoCuc)}</Badge>
+                    <Badge variant="secondary">{getLayoutLabel(section.layoutType)}</Badge>
                   </td>
                   <td className="px-4 py-3">
                     <div className="text-sm">
-                      {(section.noiDung as Record<string, unknown>)?.title?.toString() || "-"}
+                      {(section.content as Record<string, unknown>)?.title?.toString() || "-"}
                     </div>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      {section.hienThi ? (
+                      {section.isVisible ? (
                         <>
                           <Eye className="w-4 h-4 text-green-600" />
                           <Badge variant="success">Hiển thị</Badge>
@@ -283,11 +283,11 @@ export function SectionsTab() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="loaiBoCuc">Loại bố cục *</Label>
+                <Label htmlFor="layoutType">Loại bố cục *</Label>
                 <Select
-                  value={formData.loaiBoCuc}
+                  value={formData.layoutType}
                   onValueChange={(value) =>
-                    setFormData({ ...formData, loaiBoCuc: value as LoaiBoCuc })
+                    setFormData({ ...formData, layoutType: value as LayoutType })
                   }
                 >
                   <SelectTrigger>
@@ -304,22 +304,22 @@ export function SectionsTab() {
               </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="noiDung">Nội dung (JSON) *</Label>
+              <Label htmlFor="content">Nội dung (JSON) *</Label>
               <Textarea
-                id="noiDung"
-                value={formData.noiDung}
-                onChange={(e) => setFormData({ ...formData, noiDung: e.target.value })}
+                id="content"
+                value={formData.content}
+                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 placeholder='{"title": "Tiêu đề", "subtitle": "Mô tả"}'
                 rows={5}
                 className="font-mono text-sm"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="hinhAnh">URL Hình ảnh (mỗi URL một dòng)</Label>
+              <Label htmlFor="images">URL Hình ảnh (mỗi URL một dòng)</Label>
               <Textarea
-                id="hinhAnh"
-                value={formData.hinhAnh}
-                onChange={(e) => setFormData({ ...formData, hinhAnh: e.target.value })}
+                id="images"
+                value={formData.images}
+                onChange={(e) => setFormData({ ...formData, images: e.target.value })}
                 placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
                 rows={3}
               />
@@ -335,24 +335,24 @@ export function SectionsTab() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="thuTu">Thứ tự</Label>
+                <Label htmlFor="sortOrder">Thứ tự</Label>
                 <Input
-                  id="thuTu"
+                  id="sortOrder"
                   type="number"
-                  value={formData.thuTu}
+                  value={formData.sortOrder}
                   onChange={(e) =>
-                    setFormData({ ...formData, thuTu: parseInt(e.target.value) || 0 })
+                    setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })
                   }
                 />
               </div>
             </div>
             <div className="flex items-center gap-2">
               <Switch
-                id="hienThi"
-                checked={formData.hienThi}
-                onCheckedChange={(checked) => setFormData({ ...formData, hienThi: checked })}
+                id="isVisible"
+                checked={formData.isVisible}
+                onCheckedChange={(checked) => setFormData({ ...formData, isVisible: checked })}
               />
-              <Label htmlFor="hienThi">Hiển thị</Label>
+              <Label htmlFor="isVisible">Hiển thị</Label>
             </div>
           </div>
           <DialogFooter>

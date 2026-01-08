@@ -24,11 +24,11 @@ export function BannersTab() {
   const [editingItem, setEditingItem] = useState<BannerPopup | null>(null);
   const [deleteItem, setDeleteItem] = useState<BannerPopup | null>(null);
   const [formData, setFormData] = useState({
-    hinhAnh: "",
-    duongDan: "",
-    hoatDong: true,
-    doTreHienThi: 3000,
-    thuTuUuTien: 0,
+    imageUrl: "",
+    redirectUrl: "",
+    isActive: true,
+    displayDelay: 3000,
+    priority: 0,
   });
 
   const { data: banners = [], isLoading } = useQuery({
@@ -87,11 +87,11 @@ export function BannersTab() {
   const openCreateModal = () => {
     setEditingItem(null);
     setFormData({
-      hinhAnh: "",
-      duongDan: "",
-      hoatDong: true,
-      doTreHienThi: 3000,
-      thuTuUuTien: 0,
+      imageUrl: "",
+      redirectUrl: "",
+      isActive: true,
+      displayDelay: 3000,
+      priority: 0,
     });
     setIsModalOpen(true);
   };
@@ -99,11 +99,11 @@ export function BannersTab() {
   const openEditModal = (item: BannerPopup) => {
     setEditingItem(item);
     setFormData({
-      hinhAnh: item.hinhAnh,
-      duongDan: item.duongDan,
-      hoatDong: item.hoatDong,
-      doTreHienThi: item.doTreHienThi,
-      thuTuUuTien: item.thuTuUuTien,
+      imageUrl: item.imageUrl,
+      redirectUrl: item.redirectUrl,
+      isActive: item.isActive,
+      displayDelay: item.displayDelay,
+      priority: item.priority,
     });
     setIsModalOpen(true);
   };
@@ -114,7 +114,7 @@ export function BannersTab() {
   };
 
   const handleSubmit = () => {
-    if (!formData.hinhAnh || !formData.duongDan) {
+    if (!formData.imageUrl || !formData.redirectUrl) {
       toast({ title: "Lỗi", description: "Vui lòng điền đầy đủ thông tin", variant: "destructive" });
       return;
     }
@@ -175,31 +175,31 @@ export function BannersTab() {
                 <tr key={banner.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">
                     <img
-                      src={banner.hinhAnh}
+                      src={banner.imageUrl}
                       alt="Banner"
                       className="w-20 h-12 object-cover rounded"
                     />
                   </td>
                   <td className="px-4 py-3">
                     <a
-                      href={banner.duongDan}
+                      href={banner.redirectUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline flex items-center gap-1"
                     >
-                      {banner.duongDan.slice(0, 30)}...
+                      {banner.redirectUrl.slice(0, 30)}...
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </td>
-                  <td className="px-4 py-3">{banner.doTreHienThi}</td>
-                  <td className="px-4 py-3">{banner.thuTuUuTien}</td>
+                  <td className="px-4 py-3">{banner.displayDelay}</td>
+                  <td className="px-4 py-3">{banner.priority}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <Switch
-                        checked={banner.hoatDong}
+                        checked={banner.isActive}
                         onCheckedChange={() => toggleMutation.mutate(banner.id)}
                       />
-                      {banner.hoatDong ? (
+                      {banner.isActive ? (
                         <Eye className="w-4 h-4 text-green-600" />
                       ) : (
                         <EyeOff className="w-4 h-4 text-gray-400" />
@@ -231,54 +231,54 @@ export function BannersTab() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="hinhAnh">URL Hình ảnh *</Label>
+              <Label htmlFor="imageUrl">URL Hình ảnh *</Label>
               <Input
-                id="hinhAnh"
-                value={formData.hinhAnh}
-                onChange={(e) => setFormData({ ...formData, hinhAnh: e.target.value })}
+                id="imageUrl"
+                value={formData.imageUrl}
+                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
                 placeholder="https://example.com/image.jpg"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="duongDan">Đường dẫn khi click *</Label>
+              <Label htmlFor="redirectUrl">Đường dẫn khi click *</Label>
               <Input
-                id="duongDan"
-                value={formData.duongDan}
-                onChange={(e) => setFormData({ ...formData, duongDan: e.target.value })}
+                id="redirectUrl"
+                value={formData.redirectUrl}
+                onChange={(e) => setFormData({ ...formData, redirectUrl: e.target.value })}
                 placeholder="https://example.com"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="doTreHienThi">Độ trễ hiển thị (ms)</Label>
+                <Label htmlFor="displayDelay">Độ trễ hiển thị (ms)</Label>
                 <Input
-                  id="doTreHienThi"
+                  id="displayDelay"
                   type="number"
-                  value={formData.doTreHienThi}
+                  value={formData.displayDelay}
                   onChange={(e) =>
-                    setFormData({ ...formData, doTreHienThi: parseInt(e.target.value) || 3000 })
+                    setFormData({ ...formData, displayDelay: parseInt(e.target.value) || 3000 })
                   }
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="thuTuUuTien">Thứ tự ưu tiên</Label>
+                <Label htmlFor="priority">Thứ tự ưu tiên</Label>
                 <Input
-                  id="thuTuUuTien"
+                  id="priority"
                   type="number"
-                  value={formData.thuTuUuTien}
+                  value={formData.priority}
                   onChange={(e) =>
-                    setFormData({ ...formData, thuTuUuTien: parseInt(e.target.value) || 0 })
+                    setFormData({ ...formData, priority: parseInt(e.target.value) || 0 })
                   }
                 />
               </div>
             </div>
             <div className="flex items-center gap-2">
               <Switch
-                id="hoatDong"
-                checked={formData.hoatDong}
-                onCheckedChange={(checked) => setFormData({ ...formData, hoatDong: checked })}
+                id="isActive"
+                checked={formData.isActive}
+                onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
               />
-              <Label htmlFor="hoatDong">Hoạt động</Label>
+              <Label htmlFor="isActive">Hoạt động</Label>
             </div>
           </div>
           <DialogFooter>
