@@ -2,20 +2,20 @@ import axios, { AxiosError } from "axios";
 import type {
   ApiResponse,
   ApiError,
-  DangKyRequest,
-  DangKyResponse,
-  DangKyDetail,
-  DangKyStats,
-  NoiDung,
+  RegistrationRequest,
+  RegistrationResponse,
+  Registration,
+  RegistrationStats,
+  RegistrationStatus,
+  Content,
   LoginRequest,
   LoginResponse,
-  TrangThai,
-  PhanMuc,
+  Section,
   BannerPopup,
-  SuKien,
-  MoHinhKinhDoanh,
-  HoiDapHopTac,
-  CauHinh,
+  Event,
+  BusinessModel,
+  PartnershipFaq,
+  Configuration,
   ReorderItem,
 } from "@/types";
 
@@ -58,31 +58,31 @@ api.interceptors.response.use(
 // Public API
 export const publicApi = {
   // Registration
-  async createDangKy(data: DangKyRequest): Promise<DangKyResponse> {
-    const response = await api.post<ApiResponse<DangKyResponse>>("/dang-ky", data);
+  async createRegistration(data: RegistrationRequest): Promise<RegistrationResponse> {
+    const response = await api.post<ApiResponse<RegistrationResponse>>("/registration", data);
     return response.data.data;
   },
 
   // Content
-  async getPublicContent(): Promise<Record<string, NoiDung[]>> {
-    const response = await api.get<ApiResponse<Record<string, NoiDung[]>>>("/noi-dung/public");
+  async getPublicContent(): Promise<Record<string, Content[]>> {
+    const response = await api.get<ApiResponse<Record<string, Content[]>>>("/content/public");
     return response.data.data;
   },
 
-  async getContentByType(loai: string): Promise<NoiDung[]> {
-    const response = await api.get<ApiResponse<NoiDung[]>>(`/noi-dung/public/${loai}`);
+  async getContentByType(type: string): Promise<Content[]> {
+    const response = await api.get<ApiResponse<Content[]>>(`/content/public/${type}`);
     return response.data.data;
   },
 
   // Config
   async getPublicConfig(): Promise<Record<string, unknown>> {
-    const response = await api.get<ApiResponse<Record<string, unknown>>>("/cau-hinh/public");
+    const response = await api.get<ApiResponse<Record<string, unknown>>>("/configuration/public");
     return response.data.data;
   },
 
   // Page Sections
-  async getPublicSections(): Promise<PhanMuc[]> {
-    const response = await api.get<ApiResponse<PhanMuc[]>>("/phan-muc/public");
+  async getPublicSections(): Promise<Section[]> {
+    const response = await api.get<ApiResponse<Section[]>>("/section/public");
     return response.data.data;
   },
 
@@ -93,25 +93,25 @@ export const publicApi = {
   },
 
   // Events
-  async getPublicEvents(): Promise<SuKien[]> {
-    const response = await api.get<ApiResponse<SuKien[]>>("/su-kien/public");
+  async getPublicEvents(): Promise<Event[]> {
+    const response = await api.get<ApiResponse<Event[]>>("/event/public");
     return response.data.data;
   },
 
-  async getFeaturedEvents(): Promise<SuKien[]> {
-    const response = await api.get<ApiResponse<SuKien[]>>("/su-kien/public/featured");
+  async getFeaturedEvents(): Promise<Event[]> {
+    const response = await api.get<ApiResponse<Event[]>>("/event/public/featured");
     return response.data.data;
   },
 
   // Business Models
-  async getPublicBusinessModels(): Promise<MoHinhKinhDoanh[]> {
-    const response = await api.get<ApiResponse<MoHinhKinhDoanh[]>>("/mo-hinh-kinh-doanh/public");
+  async getPublicBusinessModels(): Promise<BusinessModel[]> {
+    const response = await api.get<ApiResponse<BusinessModel[]>>("/business-model/public");
     return response.data.data;
   },
 
   // Partnership FAQs
-  async getPublicFAQs(): Promise<HoiDapHopTac[]> {
-    const response = await api.get<ApiResponse<HoiDapHopTac[]>>("/hoi-dap-hop-tac/public");
+  async getPublicFAQs(): Promise<PartnershipFaq[]> {
+    const response = await api.get<ApiResponse<PartnershipFaq[]>>("/partnership-faq/public");
     return response.data.data;
   },
 };
@@ -123,8 +123,8 @@ export const authApi = {
     return response.data.data;
   },
 
-  async getMe(): Promise<{ email: string; vaiTro: string }> {
-    const response = await api.get<ApiResponse<{ email: string; vaiTro: string }>>("/auth/me");
+  async getMe(): Promise<{ email: string; role: string }> {
+    const response = await api.get<ApiResponse<{ email: string; role: string }>>("/auth/me");
     return response.data.data;
   },
 };
@@ -135,79 +135,79 @@ export const adminApi = {
   async getRegistrations(
     page = 1,
     limit = 20,
-    trangThai?: TrangThai
-  ): Promise<{ data: DangKyDetail[]; total: number; pages: number }> {
+    status?: RegistrationStatus
+  ): Promise<{ data: Registration[]; total: number; pages: number }> {
     const params = new URLSearchParams({ page: String(page), limit: String(limit) });
-    if (trangThai) params.append("trangThai", trangThai);
+    if (status) params.append("status", status);
     const response = await api.get<
-      ApiResponse<{ data: DangKyDetail[]; total: number; pages: number }>
-    >(`/dang-ky/admin?${params}`);
+      ApiResponse<{ data: Registration[]; total: number; pages: number }>
+    >(`/registration/admin?${params}`);
     return response.data.data;
   },
 
-  async getRegistrationStats(): Promise<DangKyStats> {
-    const response = await api.get<ApiResponse<DangKyStats>>("/dang-ky/admin/stats");
+  async getRegistrationStats(): Promise<RegistrationStats> {
+    const response = await api.get<ApiResponse<RegistrationStats>>("/registration/admin/stats");
     return response.data.data;
   },
 
-  async getRegistrationById(id: string): Promise<DangKyDetail> {
-    const response = await api.get<ApiResponse<DangKyDetail>>(`/dang-ky/admin/${id}`);
+  async getRegistrationById(id: string): Promise<Registration> {
+    const response = await api.get<ApiResponse<Registration>>(`/registration/admin/${id}`);
     return response.data.data;
   },
 
-  async updateRegistrationStatus(id: string, trangThai: TrangThai): Promise<DangKyDetail> {
-    const response = await api.patch<ApiResponse<DangKyDetail>>(`/dang-ky/admin/${id}/trang-thai`, {
-      trangThai,
+  async updateRegistrationStatus(id: string, status: RegistrationStatus): Promise<Registration> {
+    const response = await api.patch<ApiResponse<Registration>>(`/registration/admin/${id}/status`, {
+      status,
     });
     return response.data.data;
   },
 
   async deleteRegistration(id: string): Promise<void> {
-    await api.delete(`/dang-ky/admin/${id}`);
+    await api.delete(`/registration/admin/${id}`);
   },
 
   // Content
-  async getAllContent(): Promise<NoiDung[]> {
-    const response = await api.get<ApiResponse<NoiDung[]>>("/noi-dung/admin");
+  async getAllContent(): Promise<Content[]> {
+    const response = await api.get<ApiResponse<Content[]>>("/content/admin");
     return response.data.data;
   },
 
-  async createContent(data: Partial<NoiDung>): Promise<NoiDung> {
-    const response = await api.post<ApiResponse<NoiDung>>("/noi-dung/admin", data);
+  async createContent(data: Partial<Content>): Promise<Content> {
+    const response = await api.post<ApiResponse<Content>>("/content/admin", data);
     return response.data.data;
   },
 
-  async updateContent(id: string, data: Partial<NoiDung>): Promise<NoiDung> {
-    const response = await api.patch<ApiResponse<NoiDung>>(`/noi-dung/admin/${id}`, data);
+  async updateContent(id: string, data: Partial<Content>): Promise<Content> {
+    const response = await api.patch<ApiResponse<Content>>(`/content/admin/${id}`, data);
     return response.data.data;
   },
 
   async deleteContent(id: string): Promise<void> {
-    await api.delete(`/noi-dung/admin/${id}`);
+    await api.delete(`/content/admin/${id}`);
   },
 
-  // === PHAN MUC (Page Sections) ===
-  async getAllSections(): Promise<PhanMuc[]> {
-    const response = await api.get<ApiResponse<PhanMuc[]>>("/phan-muc/admin");
+  // === SECTIONS (Page Sections) ===
+  async getAllSections(): Promise<Section[]> {
+    const response = await api.get<ApiResponse<Section[]>>("/section/admin");
     return response.data.data;
   },
 
-  async createSection(data: Partial<PhanMuc>): Promise<PhanMuc> {
-    const response = await api.post<ApiResponse<PhanMuc>>("/phan-muc/admin", data);
+  async createSection(data: Partial<Section>): Promise<Section> {
+    const response = await api.post<ApiResponse<Section>>("/section/admin", data);
     return response.data.data;
   },
 
-  async updateSection(id: string, data: Partial<PhanMuc>): Promise<PhanMuc> {
-    const response = await api.patch<ApiResponse<PhanMuc>>(`/phan-muc/admin/${id}`, data);
+  async updateSection(id: string, data: Partial<Section>): Promise<Section> {
+    const response = await api.patch<ApiResponse<Section>>(`/section/admin/${id}`, data);
     return response.data.data;
   },
 
   async deleteSection(id: string): Promise<void> {
-    await api.delete(`/phan-muc/admin/${id}`);
+    await api.delete(`/section/admin/${id}`);
   },
 
   async reorderSections(items: ReorderItem[]): Promise<void> {
-    await api.patch("/phan-muc/admin/reorder", { items });
+    await api.patch("/section/admin/reorder", { items });
   },
 
   // === BANNER POPUP ===
@@ -235,112 +235,136 @@ export const adminApi = {
     return response.data.data;
   },
 
-  // === SU KIEN (Events) ===
-  async getAllEvents(): Promise<SuKien[]> {
-    const response = await api.get<ApiResponse<SuKien[]>>("/su-kien/admin");
+  // === EVENTS ===
+  async getAllEvents(): Promise<Event[]> {
+    const response = await api.get<ApiResponse<Event[]>>("/event/admin");
     return response.data.data;
   },
 
-  async createEvent(data: Partial<SuKien>): Promise<SuKien> {
-    const response = await api.post<ApiResponse<SuKien>>("/su-kien/admin", data);
+  async createEvent(data: Partial<Event>): Promise<Event> {
+    const response = await api.post<ApiResponse<Event>>("/event/admin", data);
     return response.data.data;
   },
 
-  async updateEvent(id: string, data: Partial<SuKien>): Promise<SuKien> {
-    const response = await api.patch<ApiResponse<SuKien>>(`/su-kien/admin/${id}`, data);
+  async updateEvent(id: string, data: Partial<Event>): Promise<Event> {
+    const response = await api.patch<ApiResponse<Event>>(`/event/admin/${id}`, data);
     return response.data.data;
   },
 
   async deleteEvent(id: string): Promise<void> {
-    await api.delete(`/su-kien/admin/${id}`);
+    await api.delete(`/event/admin/${id}`);
   },
 
-  async toggleEventFeatured(id: string): Promise<SuKien> {
-    const response = await api.patch<ApiResponse<SuKien>>(`/su-kien/admin/${id}/toggle-featured`);
+  async toggleEventFeatured(id: string): Promise<Event> {
+    const response = await api.patch<ApiResponse<Event>>(`/event/admin/${id}/toggle-featured`);
     return response.data.data;
   },
 
-  // === MO HINH KINH DOANH (Business Models) ===
-  async getAllBusinessModels(): Promise<MoHinhKinhDoanh[]> {
-    const response = await api.get<ApiResponse<MoHinhKinhDoanh[]>>("/mo-hinh-kinh-doanh/admin");
+  // === BUSINESS MODELS ===
+  async getAllBusinessModels(): Promise<BusinessModel[]> {
+    const response = await api.get<ApiResponse<BusinessModel[]>>("/business-model/admin");
     return response.data.data;
   },
 
-  async createBusinessModel(data: Partial<MoHinhKinhDoanh>): Promise<MoHinhKinhDoanh> {
-    const response = await api.post<ApiResponse<MoHinhKinhDoanh>>("/mo-hinh-kinh-doanh/admin", data);
+  async createBusinessModel(data: Partial<BusinessModel>): Promise<BusinessModel> {
+    const response = await api.post<ApiResponse<BusinessModel>>("/business-model/admin", data);
     return response.data.data;
   },
 
-  async updateBusinessModel(id: string, data: Partial<MoHinhKinhDoanh>): Promise<MoHinhKinhDoanh> {
-    const response = await api.patch<ApiResponse<MoHinhKinhDoanh>>(
-      `/mo-hinh-kinh-doanh/admin/${id}`,
+  async updateBusinessModel(id: string, data: Partial<BusinessModel>): Promise<BusinessModel> {
+    const response = await api.patch<ApiResponse<BusinessModel>>(
+      `/business-model/admin/${id}`,
       data,
     );
     return response.data.data;
   },
 
   async deleteBusinessModel(id: string): Promise<void> {
-    await api.delete(`/mo-hinh-kinh-doanh/admin/${id}`);
+    await api.delete(`/business-model/admin/${id}`);
   },
 
-  async toggleBusinessModel(id: string): Promise<MoHinhKinhDoanh> {
-    const response = await api.patch<ApiResponse<MoHinhKinhDoanh>>(
-      `/mo-hinh-kinh-doanh/admin/${id}/toggle`,
+  async toggleBusinessModel(id: string): Promise<BusinessModel> {
+    const response = await api.patch<ApiResponse<BusinessModel>>(
+      `/business-model/admin/${id}/toggle`,
     );
     return response.data.data;
   },
 
   async reorderBusinessModels(items: ReorderItem[]): Promise<void> {
-    await api.patch("/mo-hinh-kinh-doanh/admin/reorder", { items });
+    await api.patch("/business-model/admin/reorder", { items });
   },
 
-  // === HOI DAP HOP TAC (FAQs) ===
-  async getAllFAQs(): Promise<HoiDapHopTac[]> {
-    const response = await api.get<ApiResponse<HoiDapHopTac[]>>("/hoi-dap-hop-tac/admin");
+  // === PARTNERSHIP FAQs ===
+  async getAllFAQs(): Promise<PartnershipFaq[]> {
+    const response = await api.get<ApiResponse<PartnershipFaq[]>>("/partnership-faq/admin");
     return response.data.data;
   },
 
-  async createFAQ(data: Partial<HoiDapHopTac>): Promise<HoiDapHopTac> {
-    const response = await api.post<ApiResponse<HoiDapHopTac>>("/hoi-dap-hop-tac/admin", data);
+  async createFAQ(data: Partial<PartnershipFaq>): Promise<PartnershipFaq> {
+    const response = await api.post<ApiResponse<PartnershipFaq>>("/partnership-faq/admin", data);
     return response.data.data;
   },
 
-  async updateFAQ(id: string, data: Partial<HoiDapHopTac>): Promise<HoiDapHopTac> {
-    const response = await api.patch<ApiResponse<HoiDapHopTac>>(`/hoi-dap-hop-tac/admin/${id}`, data);
+  async updateFAQ(id: string, data: Partial<PartnershipFaq>): Promise<PartnershipFaq> {
+    const response = await api.patch<ApiResponse<PartnershipFaq>>(`/partnership-faq/admin/${id}`, data);
     return response.data.data;
   },
 
   async deleteFAQ(id: string): Promise<void> {
-    await api.delete(`/hoi-dap-hop-tac/admin/${id}`);
+    await api.delete(`/partnership-faq/admin/${id}`);
   },
 
-  async toggleFAQ(id: string): Promise<HoiDapHopTac> {
-    const response = await api.patch<ApiResponse<HoiDapHopTac>>(`/hoi-dap-hop-tac/admin/${id}/toggle`);
+  async toggleFAQ(id: string): Promise<PartnershipFaq> {
+    const response = await api.patch<ApiResponse<PartnershipFaq>>(`/partnership-faq/admin/${id}/toggle`);
     return response.data.data;
   },
 
   async reorderFAQs(items: ReorderItem[]): Promise<void> {
-    await api.patch("/hoi-dap-hop-tac/admin/reorder", { items });
+    await api.patch("/partnership-faq/admin/reorder", { items });
   },
 
-  // === CAU HINH (Settings) ===
-  async getAllSettings(): Promise<CauHinh[]> {
-    const response = await api.get<ApiResponse<CauHinh[]>>("/cau-hinh/admin");
+  // === CONFIGURATION (Settings) ===
+  async getAllSettings(): Promise<Configuration[]> {
+    const response = await api.get<ApiResponse<Configuration[]>>("/configuration/admin");
     return response.data.data;
   },
 
-  async upsertSetting(data: { key: string; value: unknown; moTa?: string }): Promise<CauHinh> {
-    const response = await api.post<ApiResponse<CauHinh>>("/cau-hinh/admin", data);
+  async upsertSetting(data: { key: string; value: unknown; description?: string }): Promise<Configuration> {
+    const response = await api.post<ApiResponse<Configuration>>("/configuration/admin", data);
     return response.data.data;
   },
 
-  async updateSetting(key: string, data: { value: unknown; moTa?: string }): Promise<CauHinh> {
-    const response = await api.patch<ApiResponse<CauHinh>>(`/cau-hinh/admin/${key}`, data);
+  async updateSetting(key: string, data: { value: unknown; description?: string }): Promise<Configuration> {
+    const response = await api.patch<ApiResponse<Configuration>>(`/configuration/admin/${key}`, data);
     return response.data.data;
   },
 
   async deleteSetting(key: string): Promise<void> {
-    await api.delete(`/cau-hinh/admin/${key}`);
+    await api.delete(`/configuration/admin/${key}`);
+  },
+
+  // === LOGO MANAGEMENT ===
+  async getLogo(): Promise<Configuration | null> {
+    try {
+      const response = await api.get<ApiResponse<Configuration>>("/configuration/public/logo");
+      return response.data.data;
+    } catch {
+      return null;
+    }
+  },
+
+  async updateLogo(logoData: {
+    main?: string;
+    light?: string;
+    dark?: string;
+    favicon?: string;
+  }): Promise<Configuration> {
+    const response = await api.post<ApiResponse<Configuration>>("/configuration/admin", {
+      key: "logo",
+      value: logoData,
+      description: "Website logo configuration",
+    });
+    return response.data.data;
   },
 };
 

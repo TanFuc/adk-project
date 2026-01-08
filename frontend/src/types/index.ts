@@ -19,54 +19,54 @@ export interface ApiError {
 }
 
 // Registration Types
-export interface DangKyRequest {
-  hoTen: string;
-  soDienThoai: string;
-  tinhThanh: string;
-  quanHuyen: string;
-  diaChi?: string;
+export interface RegistrationRequest {
+  fullName: string;
+  phone: string;
+  province: string;
+  district: string;
+  address?: string;
 }
 
-export interface DangKyResponse {
+export interface RegistrationResponse {
   id: string;
   message: string;
   redirectUrl?: string;
 }
 
-export type TrangThai = "CHO_XU_LY" | "DA_LIEN_HE" | "THANH_CONG" | "TU_CHOI";
+export type RegistrationStatus = "PENDING" | "CONTACTED" | "SUCCESSFUL" | "REJECTED";
 
-export interface DangKyDetail {
+export interface Registration {
   id: string;
-  hoTen: string;
-  soDienThoai: string;
-  tinhThanh: string;
-  quanHuyen: string;
-  diaChi?: string;
-  trangThai: TrangThai;
-  nguonDangKy: string;
-  createdAt: string;
+  fullName: string;
+  phone: string;
+  province: string;
+  district: string;
+  address?: string;
+  status: RegistrationStatus;
+  source: string;
+  registeredAt: string;
   updatedAt: string;
 }
 
-export interface DangKyStats {
+export interface RegistrationStats {
   total: number;
-  choXuLy: number;
-  daLienHe: number;
-  thanhCong: number;
-  tuChoi: number;
+  pending: number;
+  contacted: number;
+  successful: number;
+  rejected: number;
 }
 
 // Content Types
-export type LoaiNoiDung = "HERO" | "FEATURE" | "STATISTIC" | "FAQ" | "PARTNER" | "TESTIMONIAL";
+export type ContentType = "HERO" | "FEATURE" | "STATISTIC" | "FAQ" | "PARTNER" | "TESTIMONIAL";
 
-export interface NoiDung {
+export interface Content {
   id: string;
-  loai: LoaiNoiDung;
-  tieuDe: string;
-  moTa?: string;
-  noiDung: Record<string, unknown>;
-  thuTu: number;
-  hienThi: boolean;
+  type: ContentType;
+  title: string;
+  description?: string;
+  content: Record<string, unknown>;
+  sortOrder: number;
+  isVisible: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -74,7 +74,7 @@ export interface NoiDung {
 // Auth Types
 export interface LoginRequest {
   email: string;
-  matKhau: string;
+  password: string;
 }
 
 export interface LoginResponse {
@@ -84,8 +84,8 @@ export interface LoginResponse {
   admin: {
     id: string;
     email: string;
-    hoTen: string;
-    vaiTro: string;
+    fullName: string;
+    role: string;
   };
 }
 
@@ -101,7 +101,7 @@ export interface District {
 }
 
 // Page Section Types
-export type LoaiBoCuc =
+export type LayoutType =
   | "HERO_VIDEO"
   | "HERO_IMAGE"
   | "SPLIT_IMAGE_TEXT"
@@ -111,15 +111,15 @@ export type LoaiBoCuc =
   | "TEXT_ONLY"
   | "CTA_BANNER";
 
-export interface PhanMuc {
+export interface Section {
   id: string;
   key: string;
-  loaiBoCuc: LoaiBoCuc;
-  noiDung: Record<string, unknown>;
-  hinhAnh: string[];
+  layoutType: LayoutType;
+  content: Record<string, unknown>;
+  images: string[];
   ctaLink?: string;
-  thuTu: number;
-  hienThi: boolean;
+  sortOrder: number;
+  isVisible: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -127,73 +127,59 @@ export interface PhanMuc {
 // Popup Banner Types
 export interface BannerPopup {
   id: string;
-  hinhAnh: string;
-  duongDan: string;
-  hoatDong: boolean;
-  doTreHienThi: number;
-  thuTuUuTien: number;
+  imageUrl: string;
+  redirectUrl: string;
+  isActive: boolean;
+  displayDelay: number;
+  priority: number;
   createdAt: string;
   updatedAt: string;
 }
 
 // Campaign Event Types
-export interface SuKien {
+export interface Event {
   id: string;
-  tieuDe: string;
-  moTa?: string;
-  ngayBatDau: string;
-  ngayKetThuc?: string;
-  anhBia: string;
-  boSuuTapAnh: string[];
-  noiDung?: Record<string, unknown>;
-  noiBat: boolean;
-  hienThi: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-// Product Category Types
-export interface DanhMucSanPham {
-  id: string;
-  ten: string;
-  moTa?: string;
-  anhIcon?: string;
-  slug: string;
-  parentId?: string;
-  thuTu: number;
-  hienThi: boolean;
+  title: string;
+  description?: string;
+  startDate: string;
+  endDate?: string;
+  coverImage: string;
+  gallery: string[];
+  content?: Record<string, unknown>;
+  isFeatured: boolean;
+  isVisible: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
 // Global Settings Types
-export interface CauHinh {
+export interface Configuration {
   id: string;
   key: string;
   value: Record<string, unknown>;
-  moTa?: string;
+  description?: string;
 }
 
 // Business Model Types
-export interface MoHinhKinhDoanh {
+export interface BusinessModel {
   id: string;
-  ten: string;
-  moTa: string;
-  anhIcon?: string;
-  tiemNangLoiNhuan?: string;
-  thuTu: number;
-  hienThi: boolean;
+  name: string;
+  description: string;
+  iconUrl?: string;
+  profitPotential?: string;
+  sortOrder: number;
+  isVisible: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
 // Partnership FAQ Types
-export interface HoiDapHopTac {
+export interface PartnershipFaq {
   id: string;
-  cauHoi: string;
-  traLoi: string;
-  thuTu: number;
-  hienThi: boolean;
+  question: string;
+  answer: string;
+  sortOrder: number;
+  isVisible: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -201,5 +187,20 @@ export interface HoiDapHopTac {
 // Reorder Types
 export interface ReorderItem {
   id: string;
-  thuTu: number;
+  sortOrder: number;
 }
+
+// Legacy types for backward compatibility (deprecated - will be removed)
+export type DangKyRequest = RegistrationRequest;
+export type DangKyResponse = RegistrationResponse;
+export type TrangThai = RegistrationStatus;
+export type DangKyDetail = Registration;
+export type DangKyStats = RegistrationStats;
+export type LoaiNoiDung = ContentType;
+export type NoiDung = Content;
+export type LoaiBoCuc = LayoutType;
+export type PhanMuc = Section;
+export type SuKien = Event;
+export type CauHinh = Configuration;
+export type MoHinhKinhDoanh = BusinessModel;
+export type HoiDapHopTac = PartnershipFaq;

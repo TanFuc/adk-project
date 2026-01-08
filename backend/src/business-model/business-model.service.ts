@@ -150,7 +150,7 @@ export class BusinessModelService {
 
   async reorder(dto: ReorderDto): Promise<void> {
     await this.prisma.$transaction(
-      dto.items.map((item) =>
+      dto.items.map(item =>
         this.prisma.businessModel.update({
           where: { id: item.id },
           data: { sortOrder: item.sortOrder },
@@ -166,7 +166,7 @@ export class BusinessModelService {
   private async invalidateCaches(): Promise<void> {
     const keys = await this.cache.store.keys?.(`${this.CACHE_KEY}:*`);
     if (keys && keys.length > 0) {
-      await Promise.all(keys.map((key) => this.cache.del(key)));
+      await Promise.all(keys.map(key => this.cache.del(key)));
     }
     await this.cache.del(`${this.CACHE_KEY}:public`);
   }

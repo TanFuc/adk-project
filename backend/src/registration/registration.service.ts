@@ -4,7 +4,12 @@ import { Cache } from 'cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { RegistrationStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateRegistrationDto, RegistrationResponseDto, RegistrationDetailDto, RegistrationStatsDto } from './dto';
+import {
+  CreateRegistrationDto,
+  RegistrationResponseDto,
+  RegistrationDetailDto,
+  RegistrationStatsDto,
+} from './dto';
 import { encrypt, decrypt, hashForSearch } from '../common/utils/encryption.util';
 
 @Injectable()
@@ -25,7 +30,9 @@ export class RegistrationService {
 
     if (cached) {
       this.logger.warn(`Duplicate registration (cache): ${dto.phone.slice(0, 4)}****`);
-      throw new ConflictException('You have registered recently. Please wait 24 hours to register again.');
+      throw new ConflictException(
+        'You have registered recently. Please wait 24 hours to register again.',
+      );
     }
 
     // 2. Check DB duplicate (24h)
@@ -39,7 +46,7 @@ export class RegistrationService {
       select: { phone: true },
     });
 
-    const isDuplicate = recentRegistrations.some((reg) => {
+    const isDuplicate = recentRegistrations.some(reg => {
       try {
         const decryptedPhone = decrypt(reg.phone);
         return decryptedPhone === dto.phone;
@@ -109,7 +116,7 @@ export class RegistrationService {
       this.prisma.registration.count({ where }),
     ]);
 
-    const data: RegistrationDetailDto[] = registrations.map((reg) => ({
+    const data: RegistrationDetailDto[] = registrations.map(reg => ({
       ...reg,
       phone: this.maskPhone(decrypt(reg.phone)),
       address: reg.address ?? undefined,
@@ -212,7 +219,9 @@ export class RegistrationService {
   }
 
   private maskPhone(phone: string): string {
-    if (phone.length < 6) return phone;
+    if (phone.length < 6) {
+      return phone;
+    }
     return phone.slice(0, 4) + '****' + phone.slice(-2);
   }
 }

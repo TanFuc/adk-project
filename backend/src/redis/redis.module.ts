@@ -1,7 +1,7 @@
-import { Module, Global } from "@nestjs/common";
-import { CacheModule } from "@nestjs/cache-manager";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { redisStore } from "cache-manager-redis-yet";
+import { Module, Global } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Global()
 @Module({
@@ -9,10 +9,10 @@ import { redisStore } from "cache-manager-redis-yet";
     CacheModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
-        const host = configService.get<string>("REDIS_HOST") || "localhost";
-        const port = configService.get<number>("REDIS_PORT") || 6379;
-        const password = configService.get<string>("REDIS_PASSWORD");
-        const disableRedis = configService.get<string>("DISABLE_REDIS") === "true";
+        const host = configService.get<string>('REDIS_HOST') || 'localhost';
+        const port = configService.get<number>('REDIS_PORT') || 6379;
+        const password = configService.get<string>('REDIS_PASSWORD');
+        const disableRedis = configService.get<string>('DISABLE_REDIS') === 'true';
 
         // If Redis is explicitly disabled, use in-memory cache
         if (disableRedis) {
@@ -48,12 +48,8 @@ import { redisStore } from "cache-manager-redis-yet";
           console.warn(
             `⚠️  Redis connection failed at ${host}:${port}. Using in-memory cache as fallback.`,
           );
-          console.warn(
-            `   Error: ${error.message}`,
-          );
-          console.warn(
-            `   To disable this warning, set DISABLE_REDIS=true in .env`,
-          );
+          console.warn(`   Error: ${error.message}`);
+          console.warn(`   To disable this warning, set DISABLE_REDIS=true in .env`);
 
           // Return in-memory cache configuration
           return {

@@ -1,1 +1,1 @@
-export * from "./track-click.dto";
+export * from './track-click.dto';

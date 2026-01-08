@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { PhanMuc, BannerPopup, SuKien, CauHinh, MoHinhKinhDoanh, HoiDapHopTac } from "@/types";
+import type { Section, BannerPopup, Event, Configuration, BusinessModel, PartnershipFaq } from "@/types";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -11,19 +11,19 @@ const api = axios.create({
 });
 
 // Page Sections API
-export const phanMucApi = {
-  getAll: async (): Promise<PhanMuc[]> => {
-    const { data } = await api.get("/phan-muc/public");
+export const sectionApi = {
+  getAll: async (): Promise<Section[]> => {
+    const { data } = await api.get("/section/public");
     return data.data || data;
   },
 
-  getByKey: async (key: string): Promise<PhanMuc | null> => {
-    const { data } = await api.get(`/phan-muc/public/key/${key}`);
+  getByKey: async (key: string): Promise<Section | null> => {
+    const { data } = await api.get(`/section/public/key/${key}`);
     return data.data || data;
   },
 
-  getByLoai: async (loaiBoCuc: string): Promise<PhanMuc[]> => {
-    const { data } = await api.get(`/phan-muc/public/loai/${loaiBoCuc}`);
+  getByLayoutType: async (layoutType: string): Promise<Section[]> => {
+    const { data } = await api.get(`/section/public/layout/${layoutType}`);
     return data.data || data;
   },
 };
@@ -42,33 +42,42 @@ export const bannerPopupApi = {
 };
 
 // Events API
-export const suKienApi = {
-  getAll: async (): Promise<SuKien[]> => {
-    const { data } = await api.get("/su-kien/public");
+export const eventApi = {
+  getAll: async (): Promise<Event[]> => {
+    const { data } = await api.get("/event/public");
     return data.data || data;
   },
 
-  getFeatured: async (): Promise<SuKien[]> => {
-    const { data } = await api.get("/su-kien/public/featured");
+  getFeatured: async (): Promise<Event[]> => {
+    const { data } = await api.get("/event/public/featured");
     return data.data || data;
   },
 
-  getUpcoming: async (): Promise<SuKien[]> => {
-    const { data } = await api.get("/su-kien/public/upcoming");
+  getUpcoming: async (): Promise<Event[]> => {
+    const { data } = await api.get("/event/public/upcoming");
     return data.data || data;
   },
 
-  getById: async (id: string): Promise<SuKien> => {
-    const { data } = await api.get(`/su-kien/public/${id}`);
+  getById: async (id: string): Promise<Event> => {
+    const { data } = await api.get(`/event/public/${id}`);
     return data.data || data;
   },
 };
 
 // Global Settings API
-export const cauHinhApi = {
-  get: async (key: string): Promise<CauHinh | null> => {
+export const configurationApi = {
+  get: async (key: string): Promise<Configuration | null> => {
     try {
-      const { data } = await api.get(`/cau-hinh/public/${key}`);
+      const { data } = await api.get(`/configuration/public/${key}`);
+      return data.data || data;
+    } catch {
+      return null;
+    }
+  },
+
+  getLogo: async (): Promise<Configuration | null> => {
+    try {
+      const { data } = await api.get("/configuration/public/logo");
       return data.data || data;
     } catch {
       return null;
@@ -77,24 +86,31 @@ export const cauHinhApi = {
 };
 
 // Business Models API
-export const moHinhKinhDoanhApi = {
-  getAll: async (): Promise<MoHinhKinhDoanh[]> => {
-    const { data } = await api.get("/mo-hinh-kinh-doanh/public");
+export const businessModelApi = {
+  getAll: async (): Promise<BusinessModel[]> => {
+    const { data } = await api.get("/business-model/public");
     return data.data || data;
   },
 
-  getById: async (id: string): Promise<MoHinhKinhDoanh> => {
-    const { data } = await api.get(`/mo-hinh-kinh-doanh/public/${id}`);
+  getById: async (id: string): Promise<BusinessModel> => {
+    const { data } = await api.get(`/business-model/public/${id}`);
     return data.data || data;
   },
 };
 
 // Partnership FAQs API
-export const hoiDapHopTacApi = {
-  getAll: async (): Promise<HoiDapHopTac[]> => {
-    const { data } = await api.get("/hoi-dap-hop-tac/public");
+export const partnershipFaqApi = {
+  getAll: async (): Promise<PartnershipFaq[]> => {
+    const { data } = await api.get("/partnership-faq/public");
     return data.data || data;
   },
 };
+
+// Legacy exports for backward compatibility (deprecated)
+export const phanMucApi = sectionApi;
+export const suKienApi = eventApi;
+export const cauHinhApi = configurationApi;
+export const moHinhKinhDoanhApi = businessModelApi;
+export const hoiDapHopTacApi = partnershipFaqApi;
 
 export default api;

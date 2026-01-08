@@ -1,6 +1,6 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { PrismaService } from "../prisma/prisma.service";
-import { TrackClickDto } from "./dto";
+import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { TrackClickDto } from './dto';
 
 export interface ClickStats {
   buttonName: string;
@@ -28,7 +28,7 @@ export class ClickTrackingService {
         },
       });
 
-      this.logger.log(`Tracked click: ${dto.buttonName} from ${ipAddress || "unknown"}`);
+      this.logger.log(`Tracked click: ${dto.buttonName} from ${ipAddress || 'unknown'}`);
     } catch (error) {
       this.logger.error(`Failed to track click: ${error.message}`);
       // Don't throw error - tracking should not break user experience
@@ -70,12 +70,12 @@ export class ClickTrackingService {
 
     // Get stats for all buttons
     const allButtons = await this.prisma.clickTracking.groupBy({
-      by: ["buttonName"],
+      by: ['buttonName'],
       _count: true,
     });
 
     const stats = await Promise.all(
-      allButtons.map(async (button) => {
+      allButtons.map(async button => {
         const [total, clicks24h, clicks7d, clicks30d] = await Promise.all([
           this.prisma.clickTracking.count({ where: { buttonName: button.buttonName } }),
           this.prisma.clickTracking.count({
@@ -116,13 +116,13 @@ export class ClickTrackingService {
     const clicks = await this.prisma.clickTracking.findMany({
       where: whereClause,
       select: { createdAt: true },
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: 'asc' },
     });
 
     // Group by date
     const clicksByDate = clicks.reduce(
       (acc, click) => {
-        const date = click.createdAt.toISOString().split("T")[0];
+        const date = click.createdAt.toISOString().split('T')[0];
         acc[date] = (acc[date] || 0) + 1;
         return acc;
       },
@@ -134,7 +134,7 @@ export class ClickTrackingService {
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split("T")[0];
+      const dateStr = date.toISOString().split('T')[0];
       result.push({
         date: dateStr,
         clicks: clicksByDate[dateStr] || 0,

@@ -11,7 +11,7 @@ datasource db {
 model Registration {
   id       String  @id @default(uuid())
   fullName String  @map("full_name")
-  phone    String  // Encrypted phone number
+  phone    String // Encrypted phone number
   province String
   district String
   address  String?

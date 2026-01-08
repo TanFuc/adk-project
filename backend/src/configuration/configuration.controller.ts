@@ -49,7 +49,10 @@ export class ConfigurationController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update configuration (Admin)' })
-  async update(@Param('key') key: string, @Body() dto: UpdateConfigurationDto): Promise<Configuration> {
+  async update(
+    @Param('key') key: string,
+    @Body() dto: UpdateConfigurationDto,
+  ): Promise<Configuration> {
     return this.configurationService.update(key, dto);
   }
 
