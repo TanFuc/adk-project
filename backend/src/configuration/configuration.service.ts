@@ -125,6 +125,28 @@ export class ConfigurationService {
     return configuration;
   }
 
+  async upsert(dto: CreateConfigurationDto): Promise<Configuration> {
+    const configuration = await this.prisma.configuration.upsert({
+      where: { key: dto.key },
+      update: {
+        value: dto.value as Prisma.InputJsonValue,
+        description: dto.description,
+      },
+      create: {
+        key: dto.key,
+        value: dto.value as Prisma.InputJsonValue,
+        description: dto.description,
+      },
+    });
+
+    // Invalidate caches
+    await this.invalidateCaches(dto.key);
+
+    this.logger.log(`Upserted configuration: ${dto.key}`);
+
+    return configuration;
+  }
+
   async delete(key: string): Promise<void> {
     const existing = await this.prisma.configuration.findUnique({
       where: { key },

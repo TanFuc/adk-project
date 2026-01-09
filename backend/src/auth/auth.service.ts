@@ -1,8 +1,21 @@
-import { Injectable, UnauthorizedException, ConflictException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+  Logger,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
-import { LoginDto, LoginResponseDto, CreateAdminDto } from './dto';
+import {
+  LoginDto,
+  LoginResponseDto,
+  CreateAdminDto,
+  UpdateProfileDto,
+  ChangePasswordDto,
+} from './dto';
 import { AdminRole } from '@prisma/client';
 
 interface JwtPayload {
@@ -93,6 +106,76 @@ export class AuthService {
     this.logger.log(`Admin created: ${admin.email}`);
 
     return admin;
+  }
+
+  async updateProfile(
+    userId: string,
+    dto: UpdateProfileDto,
+  ): Promise<{ id: string; email: string; fullName: string }> {
+    const admin = await this.prisma.adminUser.findUnique({
+      where: { id: userId },
+    });
+
+    if (!admin) {
+      throw new NotFoundException('Admin not found.');
+    }
+
+    // Check if email is being changed and if it's already in use
+    if (dto.email && dto.email !== admin.email) {
+      const existing = await this.prisma.adminUser.findUnique({
+        where: { email: dto.email },
+      });
+
+      if (existing) {
+        throw new ConflictException('Email is already in use.');
+      }
+    }
+
+    const updated = await this.prisma.adminUser.update({
+      where: { id: userId },
+      data: {
+        email: dto.email,
+        fullName: dto.fullName,
+      },
+      select: { id: true, email: true, fullName: true },
+    });
+
+    this.logger.log(`Profile updated: ${updated.email}`);
+
+    return updated;
+  }
+
+  async changePassword(userId: string, dto: ChangePasswordDto): Promise<{ message: string }> {
+    const admin = await this.prisma.adminUser.findUnique({
+      where: { id: userId },
+    });
+
+    if (!admin) {
+      throw new NotFoundException('Admin not found.');
+    }
+
+    // Verify current password
+    const isValid = this.verifyPassword(dto.currentPassword, admin.password);
+    if (!isValid) {
+      throw new BadRequestException('Current password is incorrect.');
+    }
+
+    // Check if new password is different from current
+    if (dto.currentPassword === dto.newPassword) {
+      throw new BadRequestException('New password must be different from current password.');
+    }
+
+    // Hash and update password
+    const hashedPassword = this.hashPassword(dto.newPassword);
+
+    await this.prisma.adminUser.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    this.logger.log(`Password changed: ${admin.email}`);
+
+    return { message: 'Password changed successfully.' };
   }
 
   async validateToken(token: string): Promise<JwtPayload | null> {

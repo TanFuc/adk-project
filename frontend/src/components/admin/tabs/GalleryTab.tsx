@@ -61,11 +61,11 @@ export function GalleryTab() {
       queryClient.invalidateQueries({ queryKey: ["adminPhotos"] });
       queryClient.invalidateQueries({ queryKey: ["photos"] });
       queryClient.invalidateQueries({ queryKey: ["adminPhotoCategories"] });
-      toast({ title: "Thanh cong", description: "Da them hinh anh moi", variant: "success" });
+      toast({ title: "Thành công", description: "Đã thêm hình ảnh mới", variant: "success" });
       closeModal();
     },
     onError: () => {
-      toast({ title: "Loi", description: "Khong the them hinh anh", variant: "destructive" });
+      toast({ title: "Lỗi", description: "Không thể thêm hình ảnh", variant: "destructive" });
     },
   });
 
@@ -75,11 +75,11 @@ export function GalleryTab() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminPhotos"] });
       queryClient.invalidateQueries({ queryKey: ["photos"] });
-      toast({ title: "Thanh cong", description: "Da cap nhat hinh anh", variant: "success" });
+      toast({ title: "Thành công", description: "Đã cập nhật hình ảnh", variant: "success" });
       closeModal();
     },
     onError: () => {
-      toast({ title: "Loi", description: "Khong the cap nhat hinh anh", variant: "destructive" });
+      toast({ title: "Lỗi", description: "Không thể cập nhật hình ảnh", variant: "destructive" });
     },
   });
 
@@ -89,11 +89,11 @@ export function GalleryTab() {
       queryClient.invalidateQueries({ queryKey: ["adminPhotos"] });
       queryClient.invalidateQueries({ queryKey: ["photos"] });
       queryClient.invalidateQueries({ queryKey: ["adminPhotoCategories"] });
-      toast({ title: "Thanh cong", description: "Da xoa hinh anh", variant: "success" });
+      toast({ title: "Thành công", description: "Đã xóa hình ảnh", variant: "success" });
       setDeleteItem(null);
     },
     onError: () => {
-      toast({ title: "Loi", description: "Khong the xoa hinh anh", variant: "destructive" });
+      toast({ title: "Lỗi", description: "Không thể xóa hình ảnh", variant: "destructive" });
     },
   });
 
@@ -102,10 +102,10 @@ export function GalleryTab() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminPhotos"] });
       queryClient.invalidateQueries({ queryKey: ["photos"] });
-      toast({ title: "Thanh cong", description: "Da cap nhat trang thai", variant: "success" });
+      toast({ title: "Thành công", description: "Đã cập nhật trạng thái", variant: "success" });
     },
     onError: () => {
-      toast({ title: "Loi", description: "Khong the cap nhat trang thai", variant: "destructive" });
+      toast({ title: "Lỗi", description: "Không thể cập nhật trạng thái", variant: "destructive" });
     },
   });
 
@@ -142,7 +142,7 @@ export function GalleryTab() {
 
   const handleSubmit = () => {
     if (!formData.title || !formData.imageUrl || !formData.categoryId) {
-      toast({ title: "Loi", description: "Vui long dien day du thong tin bat buoc", variant: "destructive" });
+      toast({ title: "Lỗi", description: "Vui lòng điền đầy đủ thông tin bắt buộc", variant: "destructive" });
       return;
     }
 
@@ -158,15 +158,15 @@ export function GalleryTab() {
       <div className="p-4 border-b flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Image className="w-5 h-5 text-gray-600" />
-          <h2 className="text-lg font-semibold">Quan ly Thu vien Anh</h2>
+          <h2 className="text-lg font-semibold">Quản lý Thư viện Ảnh</h2>
         </div>
         <div className="flex items-center gap-2">
           <Select value={filterCategory} onValueChange={setFilterCategory}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Loc theo danh muc" />
+              <SelectValue placeholder="Lọc theo danh mục" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tat ca danh muc</SelectItem>
+              <SelectItem value="all">Tất cả danh mục</SelectItem>
               {categories.map((cat: PhotoCategory) => (
                 <SelectItem key={cat.id} value={cat.id}>
                   {cat.name}
@@ -183,7 +183,7 @@ export function GalleryTab() {
           </Button>
           <Button size="sm" onClick={openCreateModal} disabled={categories.length === 0}>
             <Plus className="w-4 h-4 mr-2" />
-            Them moi
+            Thêm mới
           </Button>
         </div>
       </div>
@@ -191,7 +191,7 @@ export function GalleryTab() {
       {categories.length === 0 && (
         <div className="p-4 bg-yellow-50 border-b border-yellow-200">
           <p className="text-yellow-800 text-sm">
-            Vui long tao it nhat mot danh muc truoc khi them hinh anh.
+            Vui lòng tạo ít nhất một danh mục trước khi thêm hình ảnh.
           </p>
         </div>
       )}
@@ -200,39 +200,49 @@ export function GalleryTab() {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Hinh anh</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Tieu de</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Danh muc</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Thu tu</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Trang thai</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Thao tac</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Hình ảnh</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Tiêu đề</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Danh mục</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Thứ tự</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Trạng thái</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Thao tác</th>
             </tr>
           </thead>
           <tbody className="divide-y">
             {isLoading ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                  Dang tai...
+                  Đang tải...
                 </td>
               </tr>
             ) : filteredPhotos.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                  Chua co hinh anh nao
+                  Chưa có hình ảnh nào
                 </td>
               </tr>
             ) : (
               filteredPhotos.map((photo) => (
                 <tr key={photo.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">
-                    <img
-                      src={photo.imageUrl}
-                      alt={photo.title}
-                      className="w-20 h-14 object-cover rounded"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = "/placeholder-image.jpg";
-                      }}
-                    />
+                    <div className="w-20 h-14 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
+                      <img
+                        src={photo.imageUrl}
+                        alt={photo.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent && !parent.querySelector('.placeholder-text')) {
+                            const placeholder = document.createElement('div');
+                            placeholder.className = 'placeholder-text text-gray-400 text-xs';
+                            placeholder.textContent = 'Ảnh lỗi';
+                            parent.appendChild(placeholder);
+                          }
+                        }}
+                      />
+                    </div>
                   </td>
                   <td className="px-4 py-3">
                     <div>
@@ -284,30 +294,30 @@ export function GalleryTab() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>{editingItem ? "Chinh sua Hinh anh" : "Them Hinh anh moi"}</DialogTitle>
+            <DialogTitle>{editingItem ? "Chỉnh sửa Hình ảnh" : "Thêm Hình ảnh mới"}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="title">Tieu de *</Label>
+              <Label htmlFor="title">Tiêu đề *</Label>
               <Input
                 id="title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="VD: Cua hang ADK Quan 1"
+                placeholder="VD: Cửa hàng ADK Quận 1"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="description">Mo ta</Label>
+              <Label htmlFor="description">Mô tả</Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Mo ta ngan ve hinh anh..."
+                placeholder="Mô tả ngắn về hình ảnh..."
                 rows={2}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="imageUrl">URL Hinh anh *</Label>
+              <Label htmlFor="imageUrl">URL Hình ảnh *</Label>
               <Input
                 id="imageUrl"
                 value={formData.imageUrl}
@@ -326,13 +336,13 @@ export function GalleryTab() {
               )}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="categoryId">Danh muc *</Label>
+              <Label htmlFor="categoryId">Danh mục *</Label>
               <Select
                 value={formData.categoryId}
                 onValueChange={(value) => setFormData({ ...formData, categoryId: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Chon danh muc" />
+                  <SelectValue placeholder="Chọn danh mục" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((cat: PhotoCategory) => (
@@ -345,7 +355,7 @@ export function GalleryTab() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="sortOrder">Thu tu hien thi</Label>
+                <Label htmlFor="sortOrder">Thứ tự hiển thị</Label>
                 <Input
                   id="sortOrder"
                   type="number"
@@ -361,19 +371,19 @@ export function GalleryTab() {
                   checked={formData.isVisible}
                   onCheckedChange={(checked) => setFormData({ ...formData, isVisible: checked })}
                 />
-                <Label htmlFor="isVisible">Hien thi</Label>
+                <Label htmlFor="isVisible">Hiển thị</Label>
               </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={closeModal}>
-              Huy
+              Hủy
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={createMutation.isPending || updateMutation.isPending}
             >
-              {createMutation.isPending || updateMutation.isPending ? "Dang luu..." : "Luu"}
+              {createMutation.isPending || updateMutation.isPending ? "Đang lưu..." : "Lưu"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -383,9 +393,9 @@ export function GalleryTab() {
       <ConfirmDialog
         open={!!deleteItem}
         onOpenChange={(open) => !open && setDeleteItem(null)}
-        title="Xac nhan xoa"
-        description="Ban co chac chan muon xoa hinh anh nay? Hanh dong nay khong the hoan tac."
-        confirmText="Xoa"
+        title="Xác nhận xóa"
+        description="Bạn có chắc chắn muốn xóa hình ảnh này? Hành động này không thể hoàn tác."
+        confirmText="Xóa"
         onConfirm={() => deleteItem && deleteMutation.mutate(deleteItem.id)}
         isLoading={deleteMutation.isPending}
       />

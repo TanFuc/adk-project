@@ -40,11 +40,11 @@ export function PhotoCategoriesTab() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminPhotoCategories"] });
       queryClient.invalidateQueries({ queryKey: ["photoCategories"] });
-      toast({ title: "Thanh cong", description: "Da tao danh muc moi", variant: "success" });
+      toast({ title: "Thành công", description: "Đã tạo danh mục mới", variant: "success" });
       closeModal();
     },
     onError: () => {
-      toast({ title: "Loi", description: "Khong the tao danh muc", variant: "destructive" });
+      toast({ title: "Lỗi", description: "Không thể tạo danh mục", variant: "destructive" });
     },
   });
 
@@ -54,11 +54,11 @@ export function PhotoCategoriesTab() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminPhotoCategories"] });
       queryClient.invalidateQueries({ queryKey: ["photoCategories"] });
-      toast({ title: "Thanh cong", description: "Da cap nhat danh muc", variant: "success" });
+      toast({ title: "Thành công", description: "Đã cập nhật danh mục", variant: "success" });
       closeModal();
     },
     onError: () => {
-      toast({ title: "Loi", description: "Khong the cap nhat danh muc", variant: "destructive" });
+      toast({ title: "Lỗi", description: "Không thể cập nhật danh mục", variant: "destructive" });
     },
   });
 
@@ -68,11 +68,11 @@ export function PhotoCategoriesTab() {
       queryClient.invalidateQueries({ queryKey: ["adminPhotoCategories"] });
       queryClient.invalidateQueries({ queryKey: ["photoCategories"] });
       queryClient.invalidateQueries({ queryKey: ["adminPhotos"] });
-      toast({ title: "Thanh cong", description: "Da xoa danh muc", variant: "success" });
+      toast({ title: "Thành công", description: "Đã xóa danh mục", variant: "success" });
       setDeleteItem(null);
     },
     onError: () => {
-      toast({ title: "Loi", description: "Khong the xoa danh muc", variant: "destructive" });
+      toast({ title: "Lỗi", description: "Không thể xóa danh mục", variant: "destructive" });
     },
   });
 
@@ -81,10 +81,10 @@ export function PhotoCategoriesTab() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminPhotoCategories"] });
       queryClient.invalidateQueries({ queryKey: ["photoCategories"] });
-      toast({ title: "Thanh cong", description: "Da cap nhat trang thai", variant: "success" });
+      toast({ title: "Thành công", description: "Đã cập nhật trạng thái", variant: "success" });
     },
     onError: () => {
-      toast({ title: "Loi", description: "Khong the cap nhat trang thai", variant: "destructive" });
+      toast({ title: "Lỗi", description: "Không thể cập nhật trạng thái", variant: "destructive" });
     },
   });
 
@@ -136,7 +136,7 @@ export function PhotoCategoriesTab() {
 
   const handleSubmit = () => {
     if (!formData.name || !formData.slug) {
-      toast({ title: "Loi", description: "Vui long dien day du thong tin", variant: "destructive" });
+      toast({ title: "Lỗi", description: "Vui lòng điền đầy đủ thông tin", variant: "destructive" });
       return;
     }
 
@@ -152,7 +152,7 @@ export function PhotoCategoriesTab() {
       <div className="p-4 border-b flex items-center justify-between">
         <div className="flex items-center gap-2">
           <FolderOpen className="w-5 h-5 text-gray-600" />
-          <h2 className="text-lg font-semibold">Quan ly Danh muc Anh</h2>
+          <h2 className="text-lg font-semibold">Quản lý Danh mục Ảnh</h2>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -164,7 +164,7 @@ export function PhotoCategoriesTab() {
           </Button>
           <Button size="sm" onClick={openCreateModal}>
             <Plus className="w-4 h-4 mr-2" />
-            Them moi
+            Thêm mới
           </Button>
         </div>
       </div>
@@ -173,25 +173,25 @@ export function PhotoCategoriesTab() {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Ten</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Tên</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Slug</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">So anh</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Thu tu</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Trang thai</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Thao tac</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Số ảnh</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Thứ tự</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Trạng thái</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Thao tác</th>
             </tr>
           </thead>
           <tbody className="divide-y">
             {isLoading ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                  Dang tai...
+                  Đang tải...
                 </td>
               </tr>
             ) : categories.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                  Chua co danh muc nao
+                  Chưa có danh mục nào
                 </td>
               </tr>
             ) : (
@@ -239,16 +239,16 @@ export function PhotoCategoriesTab() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>{editingItem ? "Chinh sua Danh muc" : "Them Danh muc moi"}</DialogTitle>
+            <DialogTitle>{editingItem ? "Chỉnh sửa Danh mục" : "Thêm Danh mục mới"}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Ten danh muc *</Label>
+              <Label htmlFor="name">Tên danh mục *</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => handleNameChange(e.target.value)}
-                placeholder="VD: Cua Hang"
+                placeholder="VD: Cửa Hàng"
               />
             </div>
             <div className="grid gap-2">
@@ -259,10 +259,10 @@ export function PhotoCategoriesTab() {
                 onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                 placeholder="VD: cua-hang"
               />
-              <p className="text-xs text-gray-500">Chi su dung chu thuong, so va dau gach ngang</p>
+              <p className="text-xs text-gray-500">Chỉ sử dụng chữ thường, số và dấu gạch ngang</p>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="sortOrder">Thu tu hien thi</Label>
+              <Label htmlFor="sortOrder">Thứ tự hiển thị</Label>
               <Input
                 id="sortOrder"
                 type="number"
@@ -278,18 +278,18 @@ export function PhotoCategoriesTab() {
                 checked={formData.isVisible}
                 onCheckedChange={(checked) => setFormData({ ...formData, isVisible: checked })}
               />
-              <Label htmlFor="isVisible">Hien thi</Label>
+              <Label htmlFor="isVisible">Hiển thị</Label>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={closeModal}>
-              Huy
+              Hủy
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={createMutation.isPending || updateMutation.isPending}
             >
-              {createMutation.isPending || updateMutation.isPending ? "Dang luu..." : "Luu"}
+              {createMutation.isPending || updateMutation.isPending ? "Đang lưu..." : "Lưu"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -299,9 +299,9 @@ export function PhotoCategoriesTab() {
       <ConfirmDialog
         open={!!deleteItem}
         onOpenChange={(open) => !open && setDeleteItem(null)}
-        title="Xac nhan xoa"
-        description="Ban co chac chan muon xoa danh muc nay? Tat ca hinh anh trong danh muc se bi xoa theo."
-        confirmText="Xoa"
+        title="Xác nhận xóa"
+        description="Bạn có chắc chắn muốn xóa danh mục này? Tất cả hình ảnh trong danh mục sẽ bị xóa theo."
+        confirmText="Xóa"
         onConfirm={() => deleteItem && deleteMutation.mutate(deleteItem.id)}
         isLoading={deleteMutation.isPending}
       />

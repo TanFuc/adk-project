@@ -256,6 +256,31 @@ export interface SocialLinks {
   tiktok?: string;
 }
 
+// Admin User Types
+export interface AdminUser {
+  id: string;
+  email: string;
+  fullName: string;
+  role: "SUPER_ADMIN" | "ADMIN";
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateAdminUserRequest {
+  email: string;
+  password: string;
+  fullName: string;
+  role?: "SUPER_ADMIN" | "ADMIN";
+}
+
+export interface UpdateAdminUserRequest {
+  email?: string;
+  fullName?: string;
+  role?: "SUPER_ADMIN" | "ADMIN";
+  isActive?: boolean;
+}
+
 // Legacy types for backward compatibility (deprecated - will be removed)
 export type DangKyRequest = RegistrationRequest;
 export type DangKyResponse = RegistrationResponse;

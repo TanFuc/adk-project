@@ -1,5 +1,5 @@
-import { IsString, IsNotEmpty, IsEmail, MinLength } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, IsEmail, MinLength, IsOptional } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class LoginDto {
   @ApiProperty({
@@ -64,4 +64,41 @@ export class CreateAdminDto {
   @IsString({ message: 'Full name must be a string' })
   @IsNotEmpty({ message: 'Full name is required' })
   fullName: string;
+}
+
+export class UpdateProfileDto {
+  @ApiPropertyOptional({
+    description: 'Full name',
+    example: 'Admin ADK Updated',
+  })
+  @IsString({ message: 'Full name must be a string' })
+  @IsOptional()
+  fullName?: string;
+
+  @ApiPropertyOptional({
+    description: 'Login email',
+    example: 'newemail@adk.vn',
+  })
+  @IsEmail({}, { message: 'Invalid email format' })
+  @IsOptional()
+  email?: string;
+}
+
+export class ChangePasswordDto {
+  @ApiProperty({
+    description: 'Current password',
+    example: 'oldPassword123',
+  })
+  @IsString({ message: 'Current password must be a string' })
+  @IsNotEmpty({ message: 'Current password is required' })
+  currentPassword: string;
+
+  @ApiProperty({
+    description: 'New password',
+    example: 'newPassword123',
+  })
+  @IsString({ message: 'New password must be a string' })
+  @IsNotEmpty({ message: 'New password is required' })
+  @MinLength(6, { message: 'New password must be at least 6 characters' })
+  newPassword: string;
 }

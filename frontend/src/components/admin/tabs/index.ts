@@ -7,3 +7,5 @@ export { SettingsTab } from "./SettingsTab";
 export { GalleryTab } from "./GalleryTab";
 export { PhotoCategoriesTab } from "./PhotoCategoriesTab";
 export { BrandingTab } from "./BrandingTab";
+export { ProfileTab } from "./ProfileTab";
+export { AdminUsersTab } from "./AdminUsersTab";

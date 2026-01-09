@@ -1,8 +1,14 @@
-import { Controller, Post, Body, UseGuards, Get, Request } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Request, Patch, Put } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
-import { LoginDto, LoginResponseDto, CreateAdminDto } from './dto';
+import {
+  LoginDto,
+  LoginResponseDto,
+  CreateAdminDto,
+  UpdateProfileDto,
+  ChangePasswordDto,
+} from './dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 interface AuthenticatedRequest {
@@ -51,5 +57,33 @@ export class AuthController {
       email: req.user.email,
       vaiTro: req.user.vaiTro,
     };
+  }
+
+  @Patch('profile')
+  @SkipThrottle()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Cập nhật thông tin tài khoản' })
+  @ApiResponse({ status: 200, description: 'Cập nhật thành công' })
+  @ApiResponse({ status: 409, description: 'Email đã được sử dụng' })
+  async updateProfile(
+    @Request() req: AuthenticatedRequest,
+    @Body() dto: UpdateProfileDto,
+  ): Promise<{ id: string; email: string; fullName: string }> {
+    return this.authService.updateProfile(req.user.sub, dto);
+  }
+
+  @Put('change-password')
+  @SkipThrottle()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Đổi mật khẩu' })
+  @ApiResponse({ status: 200, description: 'Đổi mật khẩu thành công' })
+  @ApiResponse({ status: 400, description: 'Mật khẩu hiện tại không đúng' })
+  async changePassword(
+    @Request() req: AuthenticatedRequest,
+    @Body() dto: ChangePasswordDto,
+  ): Promise<{ message: string }> {
+    return this.authService.changePassword(req.user.sub, dto);
   }
 }

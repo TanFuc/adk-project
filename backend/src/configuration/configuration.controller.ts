@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Configuration } from '@prisma/client';
@@ -43,6 +43,14 @@ export class ConfigurationController {
   @ApiOperation({ summary: 'Create new configuration (Admin)' })
   async create(@Body() dto: CreateConfigurationDto): Promise<Configuration> {
     return this.configurationService.create(dto);
+  }
+
+  @Put('admin/upsert')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create or update configuration (Admin)' })
+  async upsert(@Body() dto: CreateConfigurationDto): Promise<Configuration> {
+    return this.configurationService.upsert(dto);
   }
 
   @Patch('admin/:key')

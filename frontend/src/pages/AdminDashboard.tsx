@@ -18,6 +18,8 @@ import {
   ImagePlus,
   Layers,
   Palette,
+  UserCircle,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -42,6 +44,8 @@ import {
   GalleryTab,
   PhotoCategoriesTab,
   BrandingTab,
+  ProfileTab,
+  AdminUsersTab,
 } from "@/components/admin/tabs";
 
 const STATUS_LABELS: Record<RegistrationStatus, { label: string; color: string }> = {
@@ -230,6 +234,14 @@ export default function AdminDashboard() {
               <Palette className="w-4 h-4" />
               Thương hiệu
             </TabsTrigger>
+            <TabsTrigger value="admin-users" className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4" />
+              Quản lý Admin
+            </TabsTrigger>
+            <TabsTrigger value="profile" className="flex items-center gap-2">
+              <UserCircle className="w-4 h-4" />
+              Tài khoản
+            </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
               Cấu hình
@@ -401,6 +413,16 @@ export default function AdminDashboard() {
           {/* Branding Tab */}
           <TabsContent value="branding">
             <BrandingTab />
+          </TabsContent>
+
+          {/* Admin Users Tab */}
+          <TabsContent value="admin-users">
+            <AdminUsersTab />
+          </TabsContent>
+
+          {/* Profile Tab */}
+          <TabsContent value="profile">
+            <ProfileTab />
           </TabsContent>
 
           {/* Settings Tab */}

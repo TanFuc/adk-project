@@ -19,6 +19,9 @@ import type {
   ReorderItem,
   Photo,
   PhotoCategory,
+  AdminUser,
+  CreateAdminUserRequest,
+  UpdateAdminUserRequest,
 } from "@/types";
 
 const API_URL = import.meta.env.VITE_API_URL || "/api";
@@ -144,6 +147,25 @@ export const authApi = {
 
   async getMe(): Promise<{ email: string; role: string }> {
     const response = await api.get<ApiResponse<{ email: string; role: string }>>("/auth/me");
+    return response.data.data;
+  },
+
+  async updateProfile(data: {
+    fullName?: string;
+    email?: string;
+  }): Promise<{ id: string; email: string; fullName: string }> {
+    const response = await api.patch<ApiResponse<{ id: string; email: string; fullName: string }>>(
+      "/auth/profile",
+      data
+    );
+    return response.data.data;
+  },
+
+  async changePassword(data: {
+    currentPassword: string;
+    newPassword: string;
+  }): Promise<{ message: string }> {
+    const response = await api.put<ApiResponse<{ message: string }>>("/auth/change-password", data);
     return response.data.data;
   },
 };
@@ -361,7 +383,7 @@ export const adminApi = {
     value: unknown;
     description?: string;
   }): Promise<Configuration> {
-    const response = await api.post<ApiResponse<Configuration>>("/configuration/admin", data);
+    const response = await api.put<ApiResponse<Configuration>>("/configuration/admin/upsert", data);
     return response.data.data;
   },
 
@@ -396,7 +418,7 @@ export const adminApi = {
     dark?: string;
     favicon?: string;
   }): Promise<Configuration> {
-    const response = await api.post<ApiResponse<Configuration>>("/configuration/admin", {
+    const response = await api.put<ApiResponse<Configuration>>("/configuration/admin/upsert", {
       key: "logo",
       value: logoData,
       description: "Website logo configuration",
@@ -465,6 +487,45 @@ export const adminApi = {
 
   async reorderPhotos(items: ReorderItem[]): Promise<void> {
     await api.patch("/photo/admin/reorder", { items });
+  },
+
+  // === ADMIN USERS ===
+  async getAllAdminUsers(): Promise<AdminUser[]> {
+    const response = await api.get<ApiResponse<AdminUser[]>>("/admin-users");
+    return response.data.data;
+  },
+
+  async getAdminUser(id: string): Promise<AdminUser> {
+    const response = await api.get<ApiResponse<AdminUser>>(`/admin-users/${id}`);
+    return response.data.data;
+  },
+
+  async createAdminUser(data: CreateAdminUserRequest): Promise<AdminUser> {
+    const response = await api.post<ApiResponse<AdminUser>>("/admin-users", data);
+    return response.data.data;
+  },
+
+  async updateAdminUser(id: string, data: UpdateAdminUserRequest): Promise<AdminUser> {
+    const response = await api.patch<ApiResponse<AdminUser>>(`/admin-users/${id}`, data);
+    return response.data.data;
+  },
+
+  async resetAdminPassword(id: string, newPassword: string): Promise<{ message: string }> {
+    const response = await api.patch<ApiResponse<{ message: string }>>(
+      `/admin-users/${id}/reset-password`,
+      { newPassword }
+    );
+    return response.data.data;
+  },
+
+  async toggleAdminUser(id: string): Promise<AdminUser> {
+    const response = await api.patch<ApiResponse<AdminUser>>(`/admin-users/${id}/toggle-active`);
+    return response.data.data;
+  },
+
+  async deleteAdminUser(id: string): Promise<{ message: string }> {
+    const response = await api.delete<ApiResponse<{ message: string }>>(`/admin-users/${id}`);
+    return response.data.data;
   },
 };
 
