@@ -156,7 +156,11 @@ function StaticHeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <RedirectButton href="https://bizmall.vn" size="xl" variant="primary">
+            <RedirectButton 
+              size="xl" 
+              variant="primary"
+              buttonName="hero_register_partnership"
+            >
               Đăng Ký Hợp Tác Ngay
             </RedirectButton>
           </motion.div>

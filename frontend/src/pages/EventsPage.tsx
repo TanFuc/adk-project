@@ -289,9 +289,9 @@ export default function EventsPage() {
             transition={{ delay: 0.2 }}
           >
             <RedirectButton
-              href="https://bizmall.vn"
               size="lg"
               className="bg-white text-adk-green hover:bg-gray-100"
+              buttonName="events_page_register_partnership"
             >
               Đăng Ký Hợp Tác
             </RedirectButton>

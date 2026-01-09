@@ -97,4 +97,28 @@ export const partnershipFaqApi = {
   },
 };
 
+// Click Tracking API
+export interface TrackClickData {
+  buttonName: string;
+  pageUrl?: string;
+  referrer?: string;
+}
+
+export const clickTrackingApi = {
+  trackClick: async (data: TrackClickData): Promise<{ success: boolean }> => {
+    try {
+      const { data: response } = await api.post("/click-tracking", {
+        buttonName: data.buttonName,
+        pageUrl: data.pageUrl || window.location.href,
+        referrer: data.referrer || document.referrer,
+      });
+      return response;
+    } catch (error) {
+      // Don't throw error - tracking should not break user experience
+      console.error("Failed to track click:", error);
+      return { success: false };
+    }
+  },
+};
+
 export default api;

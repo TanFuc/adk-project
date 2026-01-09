@@ -89,7 +89,11 @@ export default function Navbar() {
 
             {/* CTA Button */}
             <div className="hidden lg:block">
-              <RedirectButton href="https://bizmall.vn" size="md" variant="primary">
+              <RedirectButton 
+                size="md" 
+                variant="primary"
+                buttonName="navbar_register_partnership"
+              >
                 Đăng Ký Hợp Tác
               </RedirectButton>
             </div>
@@ -136,10 +140,10 @@ export default function Navbar() {
 
                 <div className="pt-2 border-t">
                   <RedirectButton
-                    href="https://bizmall.vn"
                     size="md"
                     variant="primary"
                     className="w-full"
+                    buttonName="mobile_navbar_register_partnership"
                   >
                     Đăng Ký Hợp Tác
                   </RedirectButton>

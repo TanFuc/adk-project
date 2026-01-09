@@ -17,6 +17,8 @@ import type {
   PartnershipFaq,
   Configuration,
   ReorderItem,
+  Photo,
+  PhotoCategory,
 } from "@/types";
 
 const API_URL = import.meta.env.VITE_API_URL || "/api";
@@ -112,6 +114,23 @@ export const publicApi = {
   // Partnership FAQs
   async getPublicFAQs(): Promise<PartnershipFaq[]> {
     const response = await api.get<ApiResponse<PartnershipFaq[]>>("/partnership-faq/public");
+    return response.data.data;
+  },
+
+  // Photo Categories
+  async getPublicPhotoCategories(): Promise<PhotoCategory[]> {
+    const response = await api.get<ApiResponse<PhotoCategory[]>>("/photo-category/public");
+    return response.data.data;
+  },
+
+  // Photos
+  async getPublicPhotos(): Promise<Photo[]> {
+    const response = await api.get<ApiResponse<Photo[]>>("/photo/public");
+    return response.data.data;
+  },
+
+  async getPhotosByCategory(slug: string): Promise<Photo[]> {
+    const response = await api.get<ApiResponse<Photo[]>>(`/photo/public/category/${slug}`);
     return response.data.data;
   },
 };
@@ -383,6 +402,69 @@ export const adminApi = {
       description: "Website logo configuration",
     });
     return response.data.data;
+  },
+
+  // === PHOTO CATEGORIES ===
+  async getAllPhotoCategories(): Promise<PhotoCategory[]> {
+    const response = await api.get<ApiResponse<PhotoCategory[]>>("/photo-category/admin");
+    return response.data.data;
+  },
+
+  async createPhotoCategory(data: Partial<PhotoCategory>): Promise<PhotoCategory> {
+    const response = await api.post<ApiResponse<PhotoCategory>>("/photo-category/admin", data);
+    return response.data.data;
+  },
+
+  async updatePhotoCategory(id: string, data: Partial<PhotoCategory>): Promise<PhotoCategory> {
+    const response = await api.patch<ApiResponse<PhotoCategory>>(
+      `/photo-category/admin/${id}`,
+      data
+    );
+    return response.data.data;
+  },
+
+  async deletePhotoCategory(id: string): Promise<void> {
+    await api.delete(`/photo-category/admin/${id}`);
+  },
+
+  async togglePhotoCategory(id: string): Promise<PhotoCategory> {
+    const response = await api.patch<ApiResponse<PhotoCategory>>(
+      `/photo-category/admin/${id}/toggle`
+    );
+    return response.data.data;
+  },
+
+  async reorderPhotoCategories(items: ReorderItem[]): Promise<void> {
+    await api.patch("/photo-category/admin/reorder", { items });
+  },
+
+  // === PHOTOS ===
+  async getAllPhotos(): Promise<Photo[]> {
+    const response = await api.get<ApiResponse<Photo[]>>("/photo/admin");
+    return response.data.data;
+  },
+
+  async createPhoto(data: Partial<Photo>): Promise<Photo> {
+    const response = await api.post<ApiResponse<Photo>>("/photo/admin", data);
+    return response.data.data;
+  },
+
+  async updatePhoto(id: string, data: Partial<Photo>): Promise<Photo> {
+    const response = await api.patch<ApiResponse<Photo>>(`/photo/admin/${id}`, data);
+    return response.data.data;
+  },
+
+  async deletePhoto(id: string): Promise<void> {
+    await api.delete(`/photo/admin/${id}`);
+  },
+
+  async togglePhoto(id: string): Promise<Photo> {
+    const response = await api.patch<ApiResponse<Photo>>(`/photo/admin/${id}/toggle`);
+    return response.data.data;
+  },
+
+  async reorderPhotos(items: ReorderItem[]): Promise<void> {
+    await api.patch("/photo/admin/reorder", { items });
   },
 };
 

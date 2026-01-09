@@ -111,7 +111,10 @@ export default function ConceptPage() {
                 Siêu Thị Thuốc ADK - Mô hình kết hợp Nhà thuốc GPP đạt chuẩn và Siêu thị thực phẩm
                 sạch, hữu cơ. Giải pháp chăm sóc sức khỏe toàn diện cho mọi gia đình.
               </p>
-              <RedirectButton href="https://bizmall.vn" size="lg">
+              <RedirectButton 
+                size="lg"
+                buttonName="concept_page_learn_more"
+              >
                 Tìm Hiểu Thêm
               </RedirectButton>
             </motion.div>
@@ -278,7 +281,10 @@ export default function ConceptPage() {
               </div>
 
               <div className="mt-8">
-                <RedirectButton href="https://bizmall.vn" size="lg">
+                <RedirectButton 
+                  size="lg"
+                  buttonName="concept_page_register_partnership"
+                >
                   Đăng Ký Hợp Tác Ngay
                 </RedirectButton>
               </div>

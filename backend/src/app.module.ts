@@ -14,6 +14,8 @@ import { EventModule } from './event/event.module';
 import { BusinessModelModule } from './business-model/business-model.module';
 import { PartnershipFaqModule } from './partnership-faq/partnership-faq.module';
 import { ClickTrackingModule } from './click-tracking/click-tracking.module';
+import { PhotoCategoryModule } from './photo-category/photo-category.module';
+import { PhotoModule } from './photo/photo.module';
 
 @Module({
   imports: [
@@ -53,6 +55,8 @@ import { ClickTrackingModule } from './click-tracking/click-tracking.module';
     BusinessModelModule,
     PartnershipFaqModule,
     ClickTrackingModule,
+    PhotoCategoryModule,
+    PhotoModule,
   ],
   providers: [
     {

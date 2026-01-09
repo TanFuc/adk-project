@@ -205,3 +205,40 @@ model ClickTracking {
   @@index([createdAt])
   @@map("click_tracking")
 }
+
+// Photo Gallery
+model PhotoCategory {
+  id        String  @id @default(uuid())
+  name      String
+  slug      String  @unique
+  sortOrder Int     @default(0) @map("sort_order")
+  isVisible Boolean @default(true) @map("is_visible")
+
+  photos Photo[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([slug])
+  @@index([sortOrder])
+  @@map("photo_category")
+}
+
+model Photo {
+  id          String        @id @default(uuid())
+  title       String
+  description String?       @db.Text
+  imageUrl    String        @map("image_url")
+  categoryId  String        @map("category_id")
+  sortOrder   Int           @default(0) @map("sort_order")
+  isVisible   Boolean       @default(true) @map("is_visible")
+
+  category PhotoCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([categoryId])
+  @@index([sortOrder])
+  @@map("photo")
+}

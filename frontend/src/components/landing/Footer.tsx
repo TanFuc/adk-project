@@ -64,7 +64,12 @@ export default function Footer() {
                 Đăng ký ngay để nhận tư vấn miễn phí và bảng dự toán chi tiết
               </p>
             </div>
-            <RedirectButton href={registerUrl} size="lg" variant="primary">
+            <RedirectButton 
+              href={registerUrl} 
+              size="lg" 
+              variant="primary"
+              buttonName="footer_register_partnership"
+            >
               Đăng Ký Hợp Tác
             </RedirectButton>
           </div>

@@ -86,7 +86,12 @@ export default function HeroImageSection({ section }: HeroImageSectionProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
-              <RedirectButton href={section.ctaLink} size="xl" variant="primary">
+              <RedirectButton 
+                href={section.ctaLink} 
+                size="xl" 
+                variant="primary"
+                buttonName="hero_section_cta"
+              >
                 {content.ctaText || "Đăng Ký Ngay"}
               </RedirectButton>
             </motion.div>

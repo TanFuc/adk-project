@@ -2,13 +2,16 @@ import { forwardRef, useCallback } from "react";
 import { motion, type HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ExternalLink, ArrowRight } from "lucide-react";
+import { clickTrackingApi } from "@/api";
+import { useRegisterUrl } from "@/stores/configStore";
 
 interface RedirectButtonProps extends Omit<HTMLMotionProps<"button">, "onClick"> {
-  href: string;
+  href?: string; // Optional - defaults to primary_register_url from config
   variant?: "primary" | "secondary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg" | "xl";
   showIcon?: boolean;
   iconType?: "external" | "arrow";
+  buttonName?: string; // For click tracking
   children: React.ReactNode;
 }
 
@@ -36,6 +39,7 @@ const RedirectButton = forwardRef<HTMLButtonElement, RedirectButtonProps>(
       size = "md",
       showIcon = true,
       iconType = "arrow",
+      buttonName,
       children,
       className,
       disabled,
@@ -43,10 +47,32 @@ const RedirectButton = forwardRef<HTMLButtonElement, RedirectButtonProps>(
     },
     ref
   ) => {
-    const handleRedirect = useCallback(() => {
+    // Get register URL from global config
+    const { url: defaultRegisterUrl } = useRegisterUrl();
+    const targetUrl = href || defaultRegisterUrl;
+
+    const handleRedirect = useCallback(async () => {
       if (disabled) return;
-      window.location.href = href;
-    }, [href, disabled]);
+
+      // Track click before redirecting
+      if (buttonName) {
+        try {
+          await clickTrackingApi.trackClick({
+            buttonName,
+            pageUrl: window.location.href,
+            referrer: document.referrer,
+          });
+        } catch (error) {
+          // Tracking error should not prevent redirect
+          console.error("Click tracking failed:", error);
+        }
+      }
+
+      // Small delay to ensure tracking request is sent
+      setTimeout(() => {
+        window.location.href = targetUrl;
+      }, 100);
+    }, [targetUrl, disabled, buttonName]);
 
     const Icon = iconType === "external" ? ExternalLink : ArrowRight;
 

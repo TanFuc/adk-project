@@ -190,6 +190,72 @@ export interface ReorderItem {
   sortOrder: number;
 }
 
+// Photo Gallery Types
+export interface PhotoCategory {
+  id: string;
+  name: string;
+  slug: string;
+  sortOrder: number;
+  isVisible: boolean;
+  photoCount?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Photo {
+  id: string;
+  title: string;
+  description?: string;
+  imageUrl: string;
+  categoryId: string;
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  sortOrder: number;
+  isVisible: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Site Branding Types
+export interface SiteBranding {
+  logoUrl?: string;
+  siteName?: string;
+  tagline?: string;
+  faviconUrl?: string;
+}
+
+// Navbar Link Types
+export interface NavbarLink {
+  href: string;
+  label: string;
+  isVisible: boolean;
+  sortOrder: number;
+}
+
+// Footer Link Types
+export interface FooterLinks {
+  explore?: NavbarLink[];
+  partnership?: NavbarLink[];
+}
+
+// Contact Info Types
+export interface ContactInfo {
+  hotline?: string;
+  email?: string;
+  address?: string;
+}
+
+// Social Links Types
+export interface SocialLinks {
+  facebook?: string;
+  youtube?: string;
+  zalo?: string;
+  tiktok?: string;
+}
+
 // Legacy types for backward compatibility (deprecated - will be removed)
 export type DangKyRequest = RegistrationRequest;
 export type DangKyResponse = RegistrationResponse;
