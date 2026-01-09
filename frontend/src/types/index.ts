@@ -146,6 +146,7 @@ export interface Event {
   coverImage: string;
   gallery: string[];
   content?: Record<string, unknown>;
+  redirectUrl?: string; // URL to redirect when clicking "Xem chi tiết"
   isFeatured: boolean;
   isVisible: boolean;
   createdAt: string;

@@ -49,10 +49,10 @@ export default function LandingPage() {
     staleTime: 10 * 60 * 1000,
   });
 
-  const logoConfig = (config?.logo as LogoConfig) || {};
   const siteNameConfig = (config?.site_name as SiteNameConfig) || {};
 
-  const logoUrl = logoConfig.main || "/logo.png";
+  // Logo được sử dụng trực tiếp từ public folder
+  const logoUrl = "/logo.png";
   const shortName = siteNameConfig.shortName || "NHÀ THUỐC ADK";
 
   // Filter sections for landing page

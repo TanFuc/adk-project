@@ -39,11 +39,11 @@ export default function Navbar() {
     staleTime: 10 * 60 * 1000, // Cache for 10 minutes
   });
 
-  const logoConfig = (config?.logo as LogoConfig) || {};
   const siteNameConfig = (config?.site_name as SiteNameConfig) || {};
 
-  const logoUrl = logoConfig.main || "/logo.png";
-  const shortName = siteNameConfig.shortName || "ADK Franchise";
+  // Logo được sử dụng trực tiếp từ public folder
+  const logoUrl = "/logo.png";
+  const shortName = siteNameConfig.shortName || "Nhà Thuốc ADK";
 
   useEffect(() => {
     const handleScroll = () => {

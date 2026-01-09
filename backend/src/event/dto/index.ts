@@ -70,6 +70,14 @@ export class CreateEventDto {
   content?: Record<string, unknown>;
 
   @ApiPropertyOptional({
+    description: 'Redirect URL when clicking view details button',
+    example: 'https://bizmall.vn',
+  })
+  @IsOptional()
+  @IsString({ message: 'Redirect URL phải là chuỗi văn bản hợp lệ' })
+  redirectUrl?: string;
+
+  @ApiPropertyOptional({
     description: 'Featured event',
     example: true,
   })
@@ -138,6 +146,14 @@ export class UpdateEventDto {
   @IsOptional()
   @IsObject({ message: 'Content must be a JSON object' })
   content?: Record<string, unknown>;
+
+  @ApiPropertyOptional({
+    description: 'Redirect URL when clicking view details button',
+    example: 'https://bizmall.vn',
+  })
+  @IsOptional()
+  @IsString({ message: 'Redirect URL phải là chuỗi văn bản hợp lệ' })
+  redirectUrl?: string;
 
   @ApiPropertyOptional({
     description: 'Featured event',

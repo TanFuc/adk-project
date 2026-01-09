@@ -50,4 +50,26 @@ export class ClickTrackingController {
     const daysNum = days ? parseInt(days, 10) : 30;
     return this.clickTrackingService.getClickHistory(buttonName, daysNum);
   }
+
+  @Get('details')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @SkipThrottle()
+  @ApiOperation({ summary: 'Get detailed click records (Admin)' })
+  @ApiQuery({ name: 'buttonName', required: false, description: 'Filter by button name' })
+  @ApiQuery({ name: 'days', required: false, description: 'Number of days', type: Number })
+  @ApiQuery({ name: 'page', required: false, description: 'Page number', type: Number })
+  @ApiQuery({ name: 'limit', required: false, description: 'Items per page', type: Number })
+  @ApiResponse({ status: 200, description: 'Detailed click records' })
+  async getDetails(
+    @Query('buttonName') buttonName?: string,
+    @Query('days') days?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const daysNum = days ? parseInt(days, 10) : 30;
+    const pageNum = page ? parseInt(page, 10) : 1;
+    const limitNum = limit ? parseInt(limit, 10) : 50;
+    return this.clickTrackingService.getDetailedClicks(buttonName, daysNum, pageNum, limitNum);
+  }
 }

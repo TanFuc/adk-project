@@ -20,6 +20,8 @@ import {
   Palette,
   UserCircle,
   ShieldCheck,
+  BarChart3,
+  FileImage,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -46,6 +48,8 @@ import {
   BrandingTab,
   ProfileTab,
   AdminUsersTab,
+  AnalyticsTab,
+  ContentTab,
 } from "@/components/admin/tabs";
 
 const STATUS_LABELS: Record<RegistrationStatus, { label: string; color: string }> = {
@@ -202,6 +206,10 @@ export default function AdminDashboard() {
               <Users className="w-4 h-4" />
               Đăng ký
             </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4" />
+              Phân tích Click
+            </TabsTrigger>
             <TabsTrigger value="sections" className="flex items-center gap-2">
               <LayoutGrid className="w-4 h-4" />
               Phần mục
@@ -221,6 +229,10 @@ export default function AdminDashboard() {
             <TabsTrigger value="faq" className="flex items-center gap-2">
               <HelpCircle className="w-4 h-4" />
               Hỏi đáp
+            </TabsTrigger>
+            <TabsTrigger value="content" className="flex items-center gap-2">
+              <FileImage className="w-4 h-4" />
+              Nội dung
             </TabsTrigger>
             <TabsTrigger value="gallery" className="flex items-center gap-2">
               <ImagePlus className="w-4 h-4" />
@@ -375,6 +387,11 @@ export default function AdminDashboard() {
             </div>
           </TabsContent>
 
+          {/* Analytics Tab */}
+          <TabsContent value="analytics">
+            <AnalyticsTab />
+          </TabsContent>
+
           {/* Sections Tab */}
           <TabsContent value="sections">
             <SectionsTab />
@@ -398,6 +415,11 @@ export default function AdminDashboard() {
           {/* FAQ Tab */}
           <TabsContent value="faq">
             <FAQTab />
+          </TabsContent>
+
+          {/* Content Tab */}
+          <TabsContent value="content">
+            <ContentTab />
           </TabsContent>
 
           {/* Gallery Tab */}

@@ -101,6 +101,7 @@ export const partnershipFaqApi = {
 export interface TrackClickData {
   buttonName: string;
   pageUrl?: string;
+  redirectUrl?: string;
   referrer?: string;
 }
 
@@ -110,6 +111,7 @@ export const clickTrackingApi = {
       const { data: response } = await api.post("/click-tracking", {
         buttonName: data.buttonName,
         pageUrl: data.pageUrl || window.location.href,
+        redirectUrl: data.redirectUrl,
         referrer: data.referrer || document.referrer,
       });
       return response;

@@ -22,13 +22,16 @@ export class ClickTrackingService {
         data: {
           buttonName: dto.buttonName,
           pageUrl: dto.pageUrl,
+          redirectUrl: dto.redirectUrl,
           referrer: dto.referrer,
           userAgent,
           ipAddress,
         },
       });
 
-      this.logger.log(`Tracked click: ${dto.buttonName} from ${ipAddress || 'unknown'}`);
+      this.logger.log(
+        `Tracked click: ${dto.buttonName} from ${ipAddress || 'unknown'} to ${dto.redirectUrl || 'N/A'}`,
+      );
     } catch (error) {
       this.logger.error(`Failed to track click: ${error.message}`);
       // Don't throw error - tracking should not break user experience
@@ -142,5 +145,41 @@ export class ClickTrackingService {
     }
 
     return result;
+  }
+
+  async getDetailedClicks(
+    buttonName?: string,
+    days: number = 30,
+    page: number = 1,
+    limit: number = 50,
+  ): Promise<{
+    data: any[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    const whereClause = buttonName
+      ? { buttonName, createdAt: { gte: startDate } }
+      : { createdAt: { gte: startDate } };
+
+    const [data, total] = await Promise.all([
+      this.prisma.clickTracking.findMany({
+        where: whereClause,
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.clickTracking.count({ where: whereClause }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 }

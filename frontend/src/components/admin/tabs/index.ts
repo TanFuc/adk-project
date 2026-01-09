@@ -9,3 +9,5 @@ export { PhotoCategoriesTab } from "./PhotoCategoriesTab";
 export { BrandingTab } from "./BrandingTab";
 export { ProfileTab } from "./ProfileTab";
 export { AdminUsersTab } from "./AdminUsersTab";
+export { AnalyticsTab } from "./AnalyticsTab";
+export { ContentTab } from "./ContentTab";

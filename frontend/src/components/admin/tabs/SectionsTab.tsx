@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { adminApi } from "@/services/api";
+import { getErrorMessage } from "@/lib/error-handler";
 import { ConfirmDialog } from "../ConfirmDialog";
 import type { Section, LayoutType } from "@/types";
 
@@ -65,8 +66,13 @@ export function SectionsTab() {
       toast({ title: "Thành công", description: "Đã tạo phần mục mới", variant: "success" });
       closeModal();
     },
-    onError: () => {
-      toast({ title: "Lỗi", description: "Không thể tạo phần mục", variant: "destructive" });
+    onError: (error: any) => {
+      toast({ 
+        title: "Lỗi", 
+        description: getErrorMessage(error, "Không thể tạo phần mục"), 
+        variant: "destructive",
+        duration: 5000,
+      });
     },
   });
 
@@ -78,8 +84,13 @@ export function SectionsTab() {
       toast({ title: "Thành công", description: "Đã cập nhật phần mục", variant: "success" });
       closeModal();
     },
-    onError: () => {
-      toast({ title: "Lỗi", description: "Không thể cập nhật phần mục", variant: "destructive" });
+    onError: (error: any) => {
+      toast({ 
+        title: "Lỗi", 
+        description: getErrorMessage(error, "Không thể cập nhật phần mục"), 
+        variant: "destructive",
+        duration: 5000,
+      });
     },
   });
 
@@ -90,8 +101,13 @@ export function SectionsTab() {
       toast({ title: "Thành công", description: "Đã xóa phần mục", variant: "success" });
       setDeleteItem(null);
     },
-    onError: () => {
-      toast({ title: "Lỗi", description: "Không thể xóa phần mục", variant: "destructive" });
+    onError: (error: any) => {
+      toast({ 
+        title: "Lỗi", 
+        description: getErrorMessage(error, "Không thể xóa phần mục"), 
+        variant: "destructive",
+        duration: 5000,
+      });
     },
   });
 

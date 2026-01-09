@@ -135,6 +135,7 @@ export class EventService {
         coverImage: dto.coverImage,
         gallery: dto.gallery ?? [],
         content: (dto.content ?? {}) as Prisma.InputJsonValue,
+        redirectUrl: dto.redirectUrl,
         isFeatured: dto.isFeatured ?? false,
         isVisible: dto.isVisible ?? true,
       },

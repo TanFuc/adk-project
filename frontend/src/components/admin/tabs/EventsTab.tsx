@@ -32,6 +32,7 @@ export function EventsTab() {
     endDate: "",
     coverImage: "",
     gallery: [] as string[],
+    redirectUrl: "",
     isFeatured: false,
     isVisible: true,
   });
@@ -102,6 +103,7 @@ export function EventsTab() {
       endDate: "",
       coverImage: "",
       gallery: [],
+      redirectUrl: "",
       isFeatured: false,
       isVisible: true,
     });
@@ -117,6 +119,7 @@ export function EventsTab() {
       endDate: item.endDate ? new Date(item.endDate).toISOString().split("T")[0] : "",
       coverImage: item.coverImage,
       gallery: item.gallery,
+      redirectUrl: item.redirectUrl || "",
       isFeatured: item.isFeatured,
       isVisible: item.isVisible,
     });
@@ -313,6 +316,16 @@ export function EventsTab() {
                 onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
                 placeholder="https://example.com/image.jpg"
               />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="redirectUrl">URL Redirect (khi nhấn Xem chi tiết)</Label>
+              <Input
+                id="redirectUrl"
+                value={formData.redirectUrl}
+                onChange={(e) => setFormData({ ...formData, redirectUrl: e.target.value })}
+                placeholder="https://bizmall.vn hoặc URL sự kiện"
+              />
+              <p className="text-xs text-gray-500">Nếu để trống, sẽ chuyển đến trang chi tiết sự kiện</p>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">

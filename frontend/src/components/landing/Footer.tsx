@@ -42,13 +42,13 @@ export default function Footer() {
   });
 
   const siteName = (config?.site_name as SiteNameConfig) || {};
-  const logoConfig = (config?.logo as LogoConfig) || {};
   const contactInfo = (config?.contact_info as ContactInfoConfig) || {};
   const socialLinks = (config?.social_links as SocialLinksConfig) || {};
   const primaryRegisterUrl = (config?.primary_register_url as PrimaryRegisterUrlConfig) || {};
 
   const registerUrl = primaryRegisterUrl.url || "https://bizmall.vn";
-  const logoUrl = logoConfig.main || "/logo.png";
+  // Logo được sử dụng trực tiếp từ public folder
+  const logoUrl = "/logo.png";
   const shortName = siteName.shortName || "ADK Franchise";
   const tagline = siteName.tagline || "Mô hình Siêu thị Thuốc & Thực phẩm sạch - Xu hướng 2025";
   const hotline = contactInfo.hotline || "1800-1234";

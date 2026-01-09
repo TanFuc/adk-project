@@ -91,6 +91,7 @@ model Event {
   coverImage  String    @map("cover_image")
   gallery     String[]
   content     Json?
+  redirectUrl String?   @map("redirect_url") // URL to redirect when clicking "Xem chi tiết"
   isFeatured  Boolean   @default(false) @map("is_featured")
   isVisible   Boolean   @default(true) @map("is_visible")
 
@@ -192,12 +193,13 @@ enum AdminRole {
 
 // Click Tracking
 model ClickTracking {
-  id         String  @id @default(uuid())
-  buttonName String  @map("button_name")
-  pageUrl    String? @map("page_url")
-  userAgent  String? @map("user_agent")
-  ipAddress  String? @map("ip_address")
-  referrer   String?
+  id          String  @id @default(uuid())
+  buttonName  String  @map("button_name")
+  pageUrl     String? @map("page_url")
+  redirectUrl String? @map("redirect_url") // URL đích mà button chuyển hướng tới
+  userAgent   String? @map("user_agent")
+  ipAddress   String? @map("ip_address")
+  referrer    String?
 
   createdAt DateTime @default(now()) @map("created_at")
 
@@ -225,13 +227,13 @@ model PhotoCategory {
 }
 
 model Photo {
-  id          String        @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
-  description String?       @db.Text
-  imageUrl    String        @map("image_url")
-  categoryId  String        @map("category_id")
-  sortOrder   Int           @default(0) @map("sort_order")
-  isVisible   Boolean       @default(true) @map("is_visible")
+  description String? @db.Text
+  imageUrl    String  @map("image_url")
+  categoryId  String  @map("category_id")
+  sortOrder   Int     @default(0) @map("sort_order")
+  isVisible   Boolean @default(true) @map("is_visible")
 
   category PhotoCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 

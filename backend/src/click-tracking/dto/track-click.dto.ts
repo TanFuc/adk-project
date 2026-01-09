@@ -11,7 +11,15 @@ export class TrackClickDto {
   @IsString()
   pageUrl?: string;
 
-  @ApiPropertyOptional({ description: 'Referrer URL' })
+  @ApiPropertyOptional({
+    example: 'https://example.com/register',
+    description: 'URL đích mà button chuyển hướng tới',
+  })
+  @IsOptional()
+  @IsString()
+  redirectUrl?: string;
+
+  @ApiPropertyOptional({ description: 'Referrer URL (nguồn)' })
   @IsOptional()
   @IsString()
   referrer?: string;

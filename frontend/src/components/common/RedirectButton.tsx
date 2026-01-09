@@ -7,7 +7,7 @@ import { useRegisterUrl } from "@/stores/configStore";
 
 interface RedirectButtonProps extends Omit<HTMLMotionProps<"button">, "onClick"> {
   href?: string; // Optional - defaults to primary_register_url from config
-  variant?: "primary" | "secondary" | "outline" | "ghost";
+  variant?: "primary" | "secondary" | "outline" | "ghost" | "link";
   size?: "sm" | "md" | "lg" | "xl";
   showIcon?: boolean;
   iconType?: "external" | "arrow";
@@ -22,6 +22,7 @@ const variants = {
     "bg-adk-blue text-white hover:bg-adk-blue-dark shadow-lg shadow-adk-blue/25 hover:shadow-xl hover:shadow-adk-blue/30",
   outline: "border-2 border-adk-green text-adk-green hover:bg-adk-green hover:text-white",
   ghost: "text-adk-green hover:bg-adk-green/10",
+  link: "text-current hover:text-current", // Link variant for inline text buttons
 };
 
 const sizes = {
@@ -60,6 +61,7 @@ const RedirectButton = forwardRef<HTMLButtonElement, RedirectButtonProps>(
           await clickTrackingApi.trackClick({
             buttonName,
             pageUrl: window.location.href,
+            redirectUrl: targetUrl,
             referrer: document.referrer,
           });
         } catch (error) {

@@ -42,9 +42,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
         const responseObj = exceptionResponse as Record<string, unknown>;
         message = (responseObj.message as string) || message;
 
-        if (Array.isArray(responseObj.message)) {
+        // Handle validation errors with detailed messages
+        if (responseObj.errors && Array.isArray(responseObj.errors)) {
+          details = responseObj.errors;
+          message = 'Dữ liệu không hợp lệ';
+        } else if (Array.isArray(responseObj.message)) {
           details = responseObj.message;
-          message = 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.';
+          message = 'Dữ liệu không hợp lệ';
         }
       }
     }
