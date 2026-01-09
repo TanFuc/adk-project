@@ -1,9 +1,23 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import RedirectButton from "@/components/common/RedirectButton";
+import { publicApi } from "@/services/api";
+
+interface LogoConfig {
+  main?: string;
+  light?: string;
+  favicon?: string;
+}
+
+interface SiteNameConfig {
+  shortName?: string;
+  fullName?: string;
+  tagline?: string;
+}
 
 // B2B Navigation Links
 const navLinks = [
@@ -17,6 +31,19 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+
+  // Fetch public config
+  const { data: config } = useQuery({
+    queryKey: ["publicConfig"],
+    queryFn: () => publicApi.getPublicConfig(),
+    staleTime: 10 * 60 * 1000, // Cache for 10 minutes
+  });
+
+  const logoConfig = (config?.logo as LogoConfig) || {};
+  const siteNameConfig = (config?.site_name as SiteNameConfig) || {};
+
+  const logoUrl = logoConfig.main || "/logo.png";
+  const shortName = siteNameConfig.shortName || "ADK Franchise";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,8 +77,8 @@ export default function Navbar() {
                 className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white shadow-md flex items-center justify-center"
               >
                 <img
-                  src="/logo.png"
-                  alt="ADK Logo"
+                  src={logoUrl}
+                  alt={shortName}
                   className="w-8 h-8 lg:w-10 lg:h-10 object-contain rounded-full"
                 />
               </motion.div>
@@ -62,7 +89,7 @@ export default function Navbar() {
                     isScrolled ? "text-gray-900" : "text-gray-900"
                   )}
                 >
-                  Dự Án <span className="text-adk-green">ADK Franchise</span>
+                  Dự Án <span className="text-adk-green">{shortName}</span>
                 </span>
               </div>
             </Link>

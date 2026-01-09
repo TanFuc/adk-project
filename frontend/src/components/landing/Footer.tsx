@@ -11,6 +11,12 @@ interface SiteNameConfig {
   tagline?: string;
 }
 
+interface LogoConfig {
+  main?: string;
+  light?: string;
+  favicon?: string;
+}
+
 interface ContactInfoConfig {
   hotline?: string;
   email?: string;
@@ -36,11 +42,13 @@ export default function Footer() {
   });
 
   const siteName = (config?.site_name as SiteNameConfig) || {};
+  const logoConfig = (config?.logo as LogoConfig) || {};
   const contactInfo = (config?.contact_info as ContactInfoConfig) || {};
   const socialLinks = (config?.social_links as SocialLinksConfig) || {};
   const primaryRegisterUrl = (config?.primary_register_url as PrimaryRegisterUrlConfig) || {};
 
   const registerUrl = primaryRegisterUrl.url || "https://bizmall.vn";
+  const logoUrl = logoConfig.main || "/logo.png";
   const shortName = siteName.shortName || "ADK Franchise";
   const tagline = siteName.tagline || "Mô hình Siêu thị Thuốc & Thực phẩm sạch - Xu hướng 2025";
   const hotline = contactInfo.hotline || "1800-1234";
@@ -87,8 +95,8 @@ export default function Footer() {
                 className="w-12 h-12 rounded-full bg-white flex items-center justify-center"
               >
                 <img
-                  src="/logo.png"
-                  alt="ADK Logo"
+                  src={logoUrl}
+                  alt={shortName}
                   className="w-10 h-10 object-contain rounded-full"
                 />
               </motion.div>

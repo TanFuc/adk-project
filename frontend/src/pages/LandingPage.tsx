@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Pill, Leaf, TrendingUp, CheckCircle } from "lucide-react";
 import { sectionApi, partnershipFaqApi, businessModelApi } from "@/api";
+import { publicApi } from "@/services/api";
 import type { Section, PartnershipFaq, BusinessModel } from "@/types";
 import Navbar from "@/components/landing/Navbar";
 import { DynamicSectionRenderer } from "@/components/sections";
@@ -9,6 +10,18 @@ import FeaturesSection from "@/components/landing/FeaturesSection";
 import FAQSection from "@/components/landing/FAQSection";
 import Footer from "@/components/landing/Footer";
 import RedirectButton from "@/components/common/RedirectButton";
+
+interface LogoConfig {
+  main?: string;
+  light?: string;
+  favicon?: string;
+}
+
+interface SiteNameConfig {
+  shortName?: string;
+  fullName?: string;
+  tagline?: string;
+}
 
 export default function LandingPage() {
   const { data: sections = [], isLoading } = useQuery<Section[]>({
@@ -28,6 +41,19 @@ export default function LandingPage() {
     queryFn: businessModelApi.getAll,
     staleTime: 5 * 60 * 1000,
   });
+
+  // Fetch public config
+  const { data: config } = useQuery({
+    queryKey: ["publicConfig"],
+    queryFn: () => publicApi.getPublicConfig(),
+    staleTime: 10 * 60 * 1000,
+  });
+
+  const logoConfig = (config?.logo as LogoConfig) || {};
+  const siteNameConfig = (config?.site_name as SiteNameConfig) || {};
+
+  const logoUrl = logoConfig.main || "/logo.png";
+  const shortName = siteNameConfig.shortName || "NHÀ THUỐC ADK";
 
   // Filter sections for landing page
   const heroSection = sections.filter(
@@ -75,7 +101,7 @@ export default function LandingPage() {
       ) : (
         <>
           {/* Fallback to static content when CMS is empty */}
-          <StaticHeroSection />
+          <StaticHeroSection logoUrl={logoUrl} shortName={shortName} />
           <MarketInsightSection />
           <ADKModelSection />
           <FeaturesSection />
@@ -89,7 +115,7 @@ export default function LandingPage() {
 }
 
 // B2B Hero Section - Project Introduction
-function StaticHeroSection() {
+function StaticHeroSection({ logoUrl, shortName }: { logoUrl: string; shortName: string }) {
   return (
     <section className="relative min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-adk-green-dark py-12 lg:py-20 overflow-hidden">
       {/* Background Pattern */}
@@ -120,8 +146,8 @@ function StaticHeroSection() {
             className="inline-flex items-center justify-center w-24 h-24 lg:w-32 lg:h-32 rounded-full bg-white shadow-xl shadow-adk-green/30 mb-8"
           >
             <img
-              src="/logo.png"
-              alt="ADK Logo"
+              src={logoUrl}
+              alt={shortName}
               className="w-20 h-20 lg:w-28 lg:h-28 object-contain rounded-full"
             />
           </motion.div>
@@ -135,7 +161,7 @@ function StaticHeroSection() {
           >
             DỰ ÁN PHÁT TRIỂN CHUỖI
             <br />
-            <span className="text-adk-green">NHÀ THUỐC ADK</span>
+            <span className="text-adk-green">{shortName}</span>
           </motion.h1>
 
           {/* Subtitle - Investment Pitch */}

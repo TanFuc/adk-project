@@ -15,6 +15,9 @@ import {
   Briefcase,
   HelpCircle,
   LayoutGrid,
+  ImagePlus,
+  Layers,
+  Palette,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -36,6 +39,9 @@ import {
   BusinessModelsTab,
   FAQTab,
   SettingsTab,
+  GalleryTab,
+  PhotoCategoriesTab,
+  BrandingTab,
 } from "@/components/admin/tabs";
 
 const STATUS_LABELS: Record<RegistrationStatus, { label: string; color: string }> = {
@@ -212,6 +218,18 @@ export default function AdminDashboard() {
               <HelpCircle className="w-4 h-4" />
               Hỏi đáp
             </TabsTrigger>
+            <TabsTrigger value="gallery" className="flex items-center gap-2">
+              <ImagePlus className="w-4 h-4" />
+              Thư viện ảnh
+            </TabsTrigger>
+            <TabsTrigger value="photo-categories" className="flex items-center gap-2">
+              <Layers className="w-4 h-4" />
+              Danh mục ảnh
+            </TabsTrigger>
+            <TabsTrigger value="branding" className="flex items-center gap-2">
+              <Palette className="w-4 h-4" />
+              Thương hiệu
+            </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
               Cấu hình
@@ -368,6 +386,21 @@ export default function AdminDashboard() {
           {/* FAQ Tab */}
           <TabsContent value="faq">
             <FAQTab />
+          </TabsContent>
+
+          {/* Gallery Tab */}
+          <TabsContent value="gallery">
+            <GalleryTab />
+          </TabsContent>
+
+          {/* Photo Categories Tab */}
+          <TabsContent value="photo-categories">
+            <PhotoCategoriesTab />
+          </TabsContent>
+
+          {/* Branding Tab */}
+          <TabsContent value="branding">
+            <BrandingTab />
           </TabsContent>
 
           {/* Settings Tab */}

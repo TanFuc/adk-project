@@ -1,7 +1,33 @@
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import DangKyForm from "./DangKyForm";
+import { publicApi } from "@/services/api";
+
+interface LogoConfig {
+  main?: string;
+  light?: string;
+  favicon?: string;
+}
+
+interface SiteNameConfig {
+  shortName?: string;
+  fullName?: string;
+  tagline?: string;
+}
 
 export default function HeroSection() {
+  // Fetch public config
+  const { data: config } = useQuery({
+    queryKey: ["publicConfig"],
+    queryFn: () => publicApi.getPublicConfig(),
+    staleTime: 10 * 60 * 1000,
+  });
+
+  const logoConfig = (config?.logo as LogoConfig) || {};
+  const siteNameConfig = (config?.site_name as SiteNameConfig) || {};
+
+  const logoUrl = logoConfig.main || "/logo.png";
+  const shortName = siteNameConfig.shortName || "Nhà Thuốc ADK";
   return (
     <section className="relative min-h-screen bg-gradient-adk py-12 lg:py-20 overflow-hidden">
       {/* Background decorations */}
@@ -27,8 +53,8 @@ export default function HeroSection() {
               className="inline-flex items-center justify-center w-24 h-24 lg:w-32 lg:h-32 rounded-full bg-white shadow-xl shadow-adk-green/20 mb-8"
             >
               <img
-                src="/logo.png"
-                alt="ADK Logo"
+                src={logoUrl}
+                alt={shortName}
                 className="w-20 h-20 lg:w-28 lg:h-28 object-contain rounded-full"
               />
             </motion.div>
@@ -40,7 +66,7 @@ export default function HeroSection() {
               className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6"
             >
               Chào mừng đến
-              <span className="block text-adk-green">Nhà Thuốc ADK</span>
+              <span className="block text-adk-green">{shortName}</span>
             </motion.h1>
 
             <motion.p

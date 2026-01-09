@@ -4,3 +4,6 @@ export { EventsTab } from "./EventsTab";
 export { BusinessModelsTab } from "./BusinessModelsTab";
 export { FAQTab } from "./FAQTab";
 export { SettingsTab } from "./SettingsTab";
+export { GalleryTab } from "./GalleryTab";
+export { PhotoCategoriesTab } from "./PhotoCategoriesTab";
+export { BrandingTab } from "./BrandingTab";

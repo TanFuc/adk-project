@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { X, ZoomIn, ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
-import { sectionApi } from "@/api";
-import type { Section } from "@/types";
+import { X, ZoomIn, ChevronLeft, ChevronRight, ImageOff, Loader2 } from "lucide-react";
+import { publicApi } from "@/services/api";
+import type { Photo, PhotoCategory } from "@/types";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 
@@ -26,94 +26,20 @@ const itemVariants = {
   },
 };
 
-const categories = [
-  { key: "all", label: "Tất Cả" },
-  { key: "store", label: "Cửa Hàng" },
-  { key: "products", label: "Sản Phẩm" },
-  { key: "events", label: "Sự Kiện" },
-  { key: "team", label: "Đội Ngũ" },
-];
-
-// Mock gallery data - In production, this would come from API
-const galleryImages = [
-  { id: 1, src: "/images/gallery/store-1.jpg", category: "store", title: "Cửa hàng ADK Quận 1" },
-  { id: 2, src: "/images/gallery/store-2.jpg", category: "store", title: "Không gian mua sắm" },
-  {
-    id: 3,
-    src: "/images/gallery/products-1.jpg",
-    category: "products",
-    title: "Kệ thuốc chất lượng",
-  },
-  { id: 4, src: "/images/gallery/products-2.jpg", category: "products", title: "Thực phẩm hữu cơ" },
-  { id: 5, src: "/images/gallery/event-1.jpg", category: "events", title: "Sự kiện khai trương" },
-  {
-    id: 6,
-    src: "/images/gallery/event-2.jpg",
-    category: "events",
-    title: "Chương trình khuyến mãi",
-  },
-  { id: 7, src: "/images/gallery/team-1.jpg", category: "team", title: "Đội ngũ dược sĩ" },
-  { id: 8, src: "/images/gallery/team-2.jpg", category: "team", title: "Tư vấn khách hàng" },
-  { id: 9, src: "/images/gallery/store-3.jpg", category: "store", title: "Quầy thanh toán" },
-  { id: 10, src: "/images/gallery/products-3.jpg", category: "products", title: "Sản phẩm OCOP" },
-  { id: 11, src: "/images/gallery/event-3.jpg", category: "events", title: "Hội thảo sức khỏe" },
-  { id: 12, src: "/images/gallery/store-4.jpg", category: "store", title: "Khu thực phẩm sạch" },
-];
-
-export default function GalleryPage() {
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
-
-  const { data: _sections = [] } = useQuery<Section[]>({
-    queryKey: ["sections", "gallery"],
-    queryFn: () => sectionApi.getByLayoutType("MASONRY_GRID"),
-  });
-
-  const filteredImages =
-    activeCategory === "all"
-      ? galleryImages
-      : galleryImages.filter((img) => img.category === activeCategory);
-
-  const handlePrev = () => {
-    if (selectedImageIndex === null) return;
-    setSelectedImageIndex(
-      selectedImageIndex === 0 ? filteredImages.length - 1 : selectedImageIndex - 1
-    );
-  };
-
-  const handleNext = () => {
-    if (selectedImageIndex === null) return;
-    setSelectedImageIndex(
-      selectedImageIndex === filteredImages.length - 1 ? 0 : selectedImageIndex + 1
-    );
-  };
-
-  const getMasonryClass = (index: number) => {
-    const patterns = [
-      "col-span-1 row-span-1",
-      "col-span-1 row-span-2",
-      "col-span-1 row-span-1",
-      "col-span-2 row-span-1",
-      "col-span-1 row-span-1",
-      "col-span-1 row-span-2",
-    ];
-    return patterns[index % patterns.length];
-  };
-
 // Gallery Image Component with error handling
-function GalleryImage({ 
-  src, 
-  alt, 
-  onClick 
-}: { 
-  src: string; 
-  alt: string; 
+function GalleryImage({
+  src,
+  alt,
+  onClick
+}: {
+  src: string;
+  alt: string;
   onClick: () => void;
 }) {
   const [imageError, setImageError] = useState(false);
 
   return (
-    <div 
+    <div
       onClick={onClick}
       className="w-full h-full cursor-pointer group"
     >
@@ -135,6 +61,56 @@ function GalleryImage({
     </div>
   );
 }
+
+export default function GalleryPage() {
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+
+  // Fetch categories from API
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery<PhotoCategory[]>({
+    queryKey: ["photo-categories", "public"],
+    queryFn: () => publicApi.getPublicPhotoCategories(),
+  });
+
+  // Fetch photos from API
+  const { data: photos = [], isLoading: photosLoading } = useQuery<Photo[]>({
+    queryKey: ["photos", "public"],
+    queryFn: () => publicApi.getPublicPhotos(),
+  });
+
+  // Filter photos by category
+  const filteredPhotos = activeCategory === "all"
+    ? photos
+    : photos.filter((photo) => photo.category?.slug === activeCategory);
+
+  const handlePrev = () => {
+    if (selectedImageIndex === null) return;
+    setSelectedImageIndex(
+      selectedImageIndex === 0 ? filteredPhotos.length - 1 : selectedImageIndex - 1
+    );
+  };
+
+  const handleNext = () => {
+    if (selectedImageIndex === null) return;
+    setSelectedImageIndex(
+      selectedImageIndex === filteredPhotos.length - 1 ? 0 : selectedImageIndex + 1
+    );
+  };
+
+  const getMasonryClass = (index: number) => {
+    const patterns = [
+      "col-span-1 row-span-1",
+      "col-span-1 row-span-2",
+      "col-span-1 row-span-1",
+      "col-span-2 row-span-1",
+      "col-span-1 row-span-1",
+      "col-span-1 row-span-2",
+    ];
+    return patterns[index % patterns.length];
+  };
+
+  const isLoading = categoriesLoading || photosLoading;
+
   return (
     <main className="min-h-screen bg-gray-50">
       <Navbar />
@@ -175,19 +151,31 @@ function GalleryImage({
       <section className="py-8 bg-white border-b sticky top-0 z-40">
         <div className="container-full">
           <div className="flex flex-wrap justify-center gap-2 lg:gap-4">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setActiveCategory("all")}
+              className={`px-4 lg:px-6 py-2 lg:py-2.5 rounded-full font-medium transition-all ${
+                activeCategory === "all"
+                  ? "bg-adk-green text-white shadow-lg shadow-adk-green/25"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              Tất Cả
+            </motion.button>
             {categories.map((cat) => (
               <motion.button
-                key={cat.key}
+                key={cat.id}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setActiveCategory(cat.key)}
+                onClick={() => setActiveCategory(cat.slug)}
                 className={`px-4 lg:px-6 py-2 lg:py-2.5 rounded-full font-medium transition-all ${
-                  activeCategory === cat.key
+                  activeCategory === cat.slug
                     ? "bg-adk-green text-white shadow-lg shadow-adk-green/25"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
-                {cat.label}
+                {cat.name}
               </motion.button>
             ))}
           </div>
@@ -197,46 +185,61 @@ function GalleryImage({
       {/* Gallery Grid */}
       <section className="py-12 lg:py-20">
         <div className="container-full">
-          <motion.div
-            key={activeCategory}
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4 auto-rows-[150px] lg:auto-rows-[200px]"
-          >
-            {filteredImages.map((image, index) => (
-              <motion.div
-                key={image.id}
-                variants={itemVariants}
-                whileHover={{ scale: 1.02, zIndex: 10 }}
-                className={`${getMasonryClass(index)} relative group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all bg-gray-100`}
-              >
-                <GalleryImage
-                  src={image.src}
-                  alt={image.title}
-                  onClick={() => setSelectedImageIndex(index)}
-                />
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-adk-green" />
+              <span className="ml-2 text-gray-600">Đang tải...</span>
+            </div>
+          ) : filteredPhotos.length === 0 ? (
+            <div className="text-center py-20">
+              <ImageOff className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500 text-lg">Chưa có hình ảnh nào trong danh mục này</p>
+            </div>
+          ) : (
+            <motion.div
+              key={activeCategory}
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4 auto-rows-[150px] lg:auto-rows-[200px]"
+            >
+              {filteredPhotos.map((photo, index) => (
+                <motion.div
+                  key={photo.id}
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.02, zIndex: 10 }}
+                  className={`${getMasonryClass(index)} relative group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all bg-gray-100`}
+                >
+                  <GalleryImage
+                    src={photo.imageUrl}
+                    alt={photo.title}
+                    onClick={() => setSelectedImageIndex(index)}
+                  />
 
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
-                      <ZoomIn className="w-6 h-6 text-gray-700" />
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
+                        <ZoomIn className="w-6 h-6 text-gray-700" />
+                      </div>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <p className="text-white font-medium">{photo.title}</p>
+                      {photo.description && (
+                        <p className="text-white/70 text-sm mt-1 line-clamp-2">{photo.description}</p>
+                      )}
                     </div>
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <p className="text-white font-medium">{image.title}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
         </div>
       </section>
 
       {/* Lightbox */}
       <AnimatePresence>
-        {selectedImageIndex !== null && (
+        {selectedImageIndex !== null && filteredPhotos[selectedImageIndex] && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -283,16 +286,21 @@ function GalleryImage({
               onClick={(e) => e.stopPropagation()}
             >
               <img
-                src={filteredImages[selectedImageIndex].src}
-                alt={filteredImages[selectedImageIndex].title}
+                src={filteredPhotos[selectedImageIndex].imageUrl}
+                alt={filteredPhotos[selectedImageIndex].title}
                 className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
               />
               <div className="text-center mt-4">
                 <p className="text-white text-lg font-medium">
-                  {filteredImages[selectedImageIndex].title}
+                  {filteredPhotos[selectedImageIndex].title}
                 </p>
-                <p className="text-white/50 text-sm mt-1">
-                  {selectedImageIndex + 1} / {filteredImages.length}
+                {filteredPhotos[selectedImageIndex].description && (
+                  <p className="text-white/70 text-sm mt-1">
+                    {filteredPhotos[selectedImageIndex].description}
+                  </p>
+                )}
+                <p className="text-white/50 text-sm mt-2">
+                  {selectedImageIndex + 1} / {filteredPhotos.length}
                 </p>
               </div>
             </motion.div>
